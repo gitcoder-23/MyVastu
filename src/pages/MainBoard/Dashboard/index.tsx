@@ -44,7 +44,7 @@ const DashboardScreen = () => {
             <Ionicons
               name="notifications-outline"
               size={24}
-              color={COLORS.primaryGreen}
+              color={COLORS.primaryBlue}
             />
           </TouchableOpacity>
         </View>
@@ -75,13 +75,13 @@ const DashboardScreen = () => {
               <View
                 style={[
                   styles.iconBg,
-                  { backgroundColor: COLORS.secondaryGreen },
+                  { backgroundColor: COLORS.secondaryBlue },
                 ]}
               >
                 <Ionicons
                   name={item.icon}
                   size={28}
-                  color={COLORS.primaryGreen}
+                  color={COLORS.primaryBlue}
                 />
               </View>
               <Text style={styles.menuLabel}>{item.title}</Text>
@@ -91,7 +91,7 @@ const DashboardScreen = () => {
 
         {/* Daily Tip Section */}
         <View style={styles.tipCard}>
-          <Ionicons name="bulb-outline" size={24} color={COLORS.primaryGreen} />
+          <Ionicons name="bulb-outline" size={24} color={COLORS.primaryBlue} />
           <View style={styles.tipTextContainer}>
             <Text style={styles.tipTitle}>Daily Vastu Tip</Text>
             <Text style={styles.tipDescription}>
@@ -128,7 +128,7 @@ const styles = StyleSheet.create({
   userName: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: COLORS.primaryGreen,
+    color: COLORS.primaryBlue,
   },
   profileButton: {
     backgroundColor: COLORS.whiteColor,
@@ -141,7 +141,7 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
   },
   mainCard: {
-    backgroundColor: COLORS.primaryGreen,
+    backgroundColor: COLORS.primaryBlue,
     borderRadius: 24,
     padding: 25,
     flexDirection: 'row',
@@ -149,7 +149,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 30,
     elevation: 8,
-    shadowColor: COLORS.primaryGreen,
+    shadowColor: COLORS.primaryBlue,
     shadowOffset: { width: 0, height: 10 },
     shadowOpacity: 0.3,
     shadowRadius: 10,
@@ -158,7 +158,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   cardTitle: {
-    color: COLORS.secondaryGreen,
+    color: COLORS.secondaryBlue,
     fontSize: 16,
     fontWeight: '600',
   },
@@ -181,7 +181,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: '700',
-    color: COLORS.primaryGreen,
+    color: COLORS.primaryBlue,
     marginBottom: 15,
   },
   gridContainer: {
@@ -213,14 +213,14 @@ const styles = StyleSheet.create({
     color: COLORS.greyText,
   },
   tipCard: {
-    backgroundColor: COLORS.green2,
+    backgroundColor: COLORS.blue2,
     borderRadius: 18,
     padding: 15,
     flexDirection: 'row',
     alignItems: 'center',
     marginTop: 10,
     borderLeftWidth: 5,
-    borderLeftColor: COLORS.primaryGreen,
+    borderLeftColor: COLORS.primaryBlue,
   },
   tipTextContainer: {
     marginLeft: 12,
@@ -229,7 +229,7 @@ const styles = StyleSheet.create({
   tipTitle: {
     fontSize: 15,
     fontWeight: 'bold',
-    color: COLORS.primaryGreen,
+    color: COLORS.primaryBlue,
   },
   tipDescription: {
     fontSize: 13,

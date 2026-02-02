@@ -59,7 +59,7 @@ const LoginScreen = () => {
           {/* Header Section */}
           <View style={styles.header}>
             <View style={styles.logoCircle}>
-              <Ionicons name="home" size={40} color={COLORS.primaryGreen} />
+              <Ionicons name="home" size={40} color={COLORS.primaryBlue} />
             </View>
             <Text style={styles.title}>Welcome to My Vastu</Text>
             <Text style={styles.subtitle}>Enter your details to continue</Text>
@@ -108,7 +108,7 @@ const LoginScreen = () => {
                 <Ionicons
                   name={showPassword ? 'eye-outline' : 'eye-off-outline'}
                   size={20}
-                  color={COLORS.primaryGreen}
+                  color={COLORS.primaryBlue}
                 />
               </TouchableOpacity>
             </View>
@@ -156,7 +156,7 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: COLORS.secondaryGreen,
+    backgroundColor: COLORS.secondaryBlue,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 15,
@@ -164,7 +164,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 28,
     fontWeight: '700',
-    color: COLORS.primaryGreen,
+    color: COLORS.primaryBlue,
     letterSpacing: 1,
   },
   subtitle: {
@@ -176,7 +176,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.whiteColor,
     borderRadius: 20,
     padding: 20,
-    shadowColor: COLORS.primaryGreen,
+    shadowColor: COLORS.primaryBlue,
     shadowOffset: { width: 0, height: 10 },
     shadowOpacity: 0.05,
     shadowRadius: 20,
@@ -213,17 +213,17 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   forgotText: {
-    color: COLORS.primaryGreen,
+    color: COLORS.primaryBlue,
     fontSize: 13,
     fontWeight: '600',
   },
   button: {
-    backgroundColor: COLORS.primaryGreen,
+    backgroundColor: COLORS.primaryBlue,
     padding: 16,
     borderRadius: 12,
     alignItems: 'center',
     marginTop: 10,
-    shadowColor: COLORS.primaryGreen,
+    shadowColor: COLORS.primaryBlue,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 5,
@@ -243,7 +243,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   linkBold: {
-    color: COLORS.primaryGreen,
+    color: COLORS.primaryBlue,
     fontWeight: 'bold',
   },
 });
