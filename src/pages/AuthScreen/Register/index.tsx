@@ -5,9 +5,9 @@ import {
   View,
   TextInput,
   TouchableOpacity,
-  SafeAreaView,
 } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const RegisterScreen = () => {
   const [name, setName] = useState('');
