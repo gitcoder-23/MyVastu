@@ -41,7 +41,7 @@ const LoginScreen = () => {
             <View style={styles.logoCircle}>
               <Ionicons name="home" size={40} color={COLORS.primaryGreen} />
             </View>
-            <Text style={styles.title}>Welcome Back</Text>
+            <Text style={styles.title}>Welcome to My Vastu</Text>
             <Text style={styles.subtitle}>Enter your details to continue</Text>
           </View>
 
