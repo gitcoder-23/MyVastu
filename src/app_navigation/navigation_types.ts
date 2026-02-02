@@ -9,5 +9,6 @@ export type NavigationMenuStackParamList = {
 export type AppNavigationStackParamList = {
     Register: undefined;
     Login: undefined;
+    Dashboard: undefined;
     DrawerMenu: undefined;
 };

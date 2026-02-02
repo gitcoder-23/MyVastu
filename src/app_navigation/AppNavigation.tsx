@@ -8,6 +8,7 @@ import { COLORS } from '../constants/colors';
 import { AppNavigationStackParamList } from './navigation_types';
 import RegisterScreen from '../pages/AuthScreen/Register';
 import LoginScreen from '../pages/AuthScreen/Login';
+import DashboardScreen from '../pages/MainBoard/Dashboard';
 
 const Stack = createStackNavigator<AppNavigationStackParamList>();
 const myOptions: StackNavigationOptions = {
@@ -36,6 +37,11 @@ const AppNavigation = () => {
           <Stack.Screen
             name="Login"
             component={LoginScreen}
+            options={{ ...myOptions, headerShown: false }}
+          />
+          <Stack.Screen
+            name="Dashboard"
+            component={DashboardScreen}
             options={{ ...myOptions, headerShown: false }}
           />
         </Stack.Navigator>

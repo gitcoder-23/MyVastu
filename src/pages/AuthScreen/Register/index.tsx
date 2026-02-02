@@ -8,6 +8,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
+  Alert,
 } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -27,6 +28,59 @@ const RegisterScreen = () => {
 
   const onGoLogin = () => {
     navigation.navigate('Login');
+  };
+
+  const onRegister = () => {
+    // 1. Basic Empty Field Validation
+    if (
+      !name.trim() ||
+      !email.trim() ||
+      !password.trim() ||
+      !confirmPassword.trim()
+    ) {
+      Alert.alert(
+        'Missing Information',
+        'Please fill in all fields to create your account.',
+      );
+      return;
+    }
+
+    // 2. Name Length Validation
+    if (name.trim().length < 2) {
+      Alert.alert('Invalid Name', 'Please enter your full name.');
+      return;
+    }
+
+    // 3. Email Format Validation
+    const emailRegex = /\S+@\S+\.\S+/;
+    if (!emailRegex.test(email)) {
+      Alert.alert(
+        'Invalid Email',
+        'Please enter a valid email address for your Vastu updates.',
+      );
+      return;
+    }
+
+    // 4. Password Strength Validation
+    if (password.length < 6) {
+      Alert.alert(
+        'Weak Password',
+        'For security, your password must be at least 6 characters long.',
+      );
+      return;
+    }
+
+    // 5. Password Matching Validation
+    if (password !== confirmPassword) {
+      Alert.alert(
+        'Passwords Mismatch',
+        'Your password and confirm password do not match. Please check again.',
+      );
+      return;
+    }
+
+    // Success: Proceed to Dashboard
+    navigation.navigate('Dashboard');
   };
 
   return (
@@ -137,7 +191,7 @@ const RegisterScreen = () => {
               </TouchableOpacity>
             </View>
 
-            <TouchableOpacity style={styles.button}>
+            <TouchableOpacity onPress={onRegister} style={styles.button}>
               <Text style={styles.buttonText}>SIGN UP</Text>
             </TouchableOpacity>
           </View>

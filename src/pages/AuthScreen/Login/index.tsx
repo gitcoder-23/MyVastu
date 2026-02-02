@@ -8,6 +8,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
+  Alert,
 } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -23,6 +24,25 @@ const LoginScreen = () => {
 
   const onGoRegister = () => {
     navigation.navigate('Register');
+  };
+
+  const onLogin = () => {
+    if (!email.trim() || !password.trim()) {
+      Alert.alert('Required', 'Please fill in all fields to continue.');
+      return;
+    }
+
+    const emailRegex = /\S+@\S+\.\S+/;
+    if (!emailRegex.test(email)) {
+      Alert.alert('Invalid Email', 'Please enter a valid email address.');
+      return;
+    }
+
+    if (password.length < 6) {
+      Alert.alert('Weak Password', 'Password must be at least 6 characters.');
+      return;
+    }
+    navigation.navigate('Dashboard');
   };
 
   return (
@@ -98,7 +118,7 @@ const LoginScreen = () => {
               <Text style={styles.forgotText}>Forgot Password?</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.button}>
+            <TouchableOpacity onPress={onLogin} style={styles.button}>
               <Text style={styles.buttonText}>LOGIN</Text>
             </TouchableOpacity>
           </View>
