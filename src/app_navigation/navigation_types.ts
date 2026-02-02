@@ -8,5 +8,6 @@ export type NavigationMenuStackParamList = {
 
 export type AppNavigationStackParamList = {
     Register: undefined;
+    Login: undefined;
     DrawerMenu: undefined;
 };

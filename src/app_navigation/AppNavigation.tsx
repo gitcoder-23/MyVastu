@@ -7,17 +7,18 @@ import {
 import { COLORS } from '../constants/colors';
 import { AppNavigationStackParamList } from './navigation_types';
 import RegisterScreen from '../pages/AuthScreen/Register';
+import LoginScreen from '../pages/AuthScreen/Login';
 
 const Stack = createStackNavigator<AppNavigationStackParamList>();
 const myOptions: StackNavigationOptions = {
-  headerTintColor: COLORS.whiteColor,
+  headerTintColor: COLORS.white,
   headerStyle: {
     backgroundColor: COLORS.primaryBlack,
   },
   headerTitleAlign: 'left',
   headerTitleStyle: {
     fontSize: 20,
-    color: COLORS.whiteColor,
+    color: COLORS.white,
   },
   headerBackTitle: '',
 };
@@ -26,15 +27,17 @@ const AppNavigation = () => {
   return (
     <>
       <View style={styles.container}>
-        <Stack.Navigator initialRouteName="Register">
-          <>
-            {/* Authless Routes */}
-            <Stack.Screen
-              name="Register"
-              component={RegisterScreen}
-              options={{ ...myOptions, headerShown: false }}
-            />
-          </>
+        <Stack.Navigator initialRouteName="Login">
+          <Stack.Screen
+            name="Register"
+            component={RegisterScreen}
+            options={{ ...myOptions, headerShown: false }}
+          />
+          <Stack.Screen
+            name="Login"
+            component={LoginScreen}
+            options={{ ...myOptions, headerShown: false }}
+          />
         </Stack.Navigator>
       </View>
     </>
