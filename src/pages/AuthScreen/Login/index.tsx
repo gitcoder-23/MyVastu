@@ -173,7 +173,7 @@ const styles = StyleSheet.create({
     marginTop: 5,
   },
   formCard: {
-    backgroundColor: COLORS.white,
+    backgroundColor: COLORS.whiteColor,
     borderRadius: 20,
     padding: 20,
     shadowColor: COLORS.primaryGreen,
@@ -229,7 +229,7 @@ const styles = StyleSheet.create({
     shadowRadius: 5,
   },
   buttonText: {
-    color: COLORS.white,
+    color: COLORS.whiteColor,
     fontSize: 16,
     fontWeight: 'bold',
     letterSpacing: 1,

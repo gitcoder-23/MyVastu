@@ -12,14 +12,14 @@ import DashboardScreen from '../pages/MainBoard/Dashboard';
 
 const Stack = createStackNavigator<AppNavigationStackParamList>();
 const myOptions: StackNavigationOptions = {
-  headerTintColor: COLORS.white,
+  headerTintColor: COLORS.whiteColorColorColor,
   headerStyle: {
     backgroundColor: COLORS.primaryBlack,
   },
   headerTitleAlign: 'left',
   headerTitleStyle: {
     fontSize: 20,
-    color: COLORS.white,
+    color: COLORS.whiteColor,
   },
   headerBackTitle: '',
 };

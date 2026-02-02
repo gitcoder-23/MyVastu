@@ -11,33 +11,18 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AppStatusBar from '../../../app_header/AppStatusBar';
 import { COLORS } from '../../../constants/colors';
+import { dashboardMenuItems } from '../../../constants/mock_data';
 
 const { width } = Dimensions.get('window');
 
 interface MenuItem {
   id: number;
   title: string;
-  // This ensures the icon name is a valid Ionicon name
   icon: ComponentProps<typeof Ionicons>['name'];
   color: string;
 }
 
 const DashboardScreen = () => {
-  // Mock data for the demo
-  const menuItems: MenuItem[] = [
-    { id: 1, title: 'Home Audit', icon: 'search-outline', color: '#4A7C44' },
-    { id: 2, title: 'Directions', icon: 'compass-outline', color: '#5D8A58' },
-    { id: 3, title: 'Remedies', icon: 'leaf-outline', color: '#70996C' },
-    {
-      id: 4,
-      title: 'Reports',
-      icon: 'document-text-outline',
-      color: '#82A87F',
-    },
-    { id: 5, title: 'Consultant', icon: 'people-outline', color: '#95B793' },
-    { id: 6, title: 'Settings', icon: 'settings-outline', color: '#A7C6A6' },
-  ];
-
   return (
     <SafeAreaView style={styles.container}>
       <AppStatusBar
@@ -72,7 +57,7 @@ const DashboardScreen = () => {
             <Text style={styles.cardSubtitle}>Good Vastu Energy</Text>
           </View>
           <View style={styles.cardIconCircle}>
-            <Ionicons name="sunny" size={50} color={COLORS.white} />
+            <Ionicons name="sunny" size={50} color={COLORS.whiteColor} />
           </View>
         </View>
 
@@ -81,7 +66,7 @@ const DashboardScreen = () => {
 
         {/* Grid Menu */}
         <View style={styles.gridContainer}>
-          {menuItems.map(item => (
+          {dashboardMenuItems.map(item => (
             <TouchableOpacity
               key={item.id}
               style={styles.menuBox}
@@ -146,11 +131,11 @@ const styles = StyleSheet.create({
     color: COLORS.primaryGreen,
   },
   profileButton: {
-    backgroundColor: COLORS.white,
+    backgroundColor: COLORS.whiteColor,
     padding: 10,
     borderRadius: 12,
     elevation: 2,
-    shadowColor: '#000',
+    shadowColor: COLORS.primaryBlack,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
@@ -178,18 +163,18 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   cardScore: {
-    color: COLORS.white,
+    color: COLORS.whiteColor,
     fontSize: 42,
     fontWeight: 'bold',
     marginVertical: 4,
   },
   cardSubtitle: {
-    color: COLORS.white,
+    color: COLORS.whiteColor,
     fontSize: 14,
     opacity: 0.9,
   },
   cardIconCircle: {
-    backgroundColor: 'rgba(255,255,255,0.2)',
+    backgroundColor: COLORS.black2,
     padding: 15,
     borderRadius: 50,
   },
@@ -205,14 +190,14 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   menuBox: {
-    backgroundColor: COLORS.white,
+    backgroundColor: COLORS.whiteColor,
     width: (width - 60) / 2,
     padding: 20,
     borderRadius: 20,
     alignItems: 'center',
     marginBottom: 15,
     elevation: 3,
-    shadowColor: '#000',
+    shadowColor: COLORS.primaryBlack,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.05,
     shadowRadius: 6,
@@ -228,7 +213,7 @@ const styles = StyleSheet.create({
     color: COLORS.greyText,
   },
   tipCard: {
-    backgroundColor: '#EBF2EA',
+    backgroundColor: COLORS.green2,
     borderRadius: 18,
     padding: 15,
     flexDirection: 'row',
