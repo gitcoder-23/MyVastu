@@ -10,11 +10,11 @@ import {
   ScrollView,
   Alert,
 } from 'react-native';
-import Ionicons from '@expo/vector-icons/Ionicons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AppStatusBar from '../../../app_header/AppStatusBar';
 import { COLORS } from '../../../constants/colors';
 import { useNavigation } from '@react-navigation/native';
+import { MaterialCommunityIcons, Ionicons } from '@expo/vector-icons';
 
 const RegisterScreen = () => {
   const navigation: any = useNavigation();
@@ -97,9 +97,13 @@ const RegisterScreen = () => {
           {/* Header Section */}
           <View style={styles.header}>
             <View style={styles.logoCircle}>
-              <Ionicons name="home" size={40} color={COLORS.primaryBlue} />
+              <MaterialCommunityIcons
+                name="map-marker-outline"
+                size={40}
+                color={COLORS.primaryBlue}
+              />
+              <Text style={styles.title}>houzez</Text>
             </View>
-            <Text style={styles.title}>My Vastu</Text>
             <Text style={styles.subtitle}>Harmonizing your living space</Text>
           </View>
 
@@ -225,13 +229,13 @@ const styles = StyleSheet.create({
     marginBottom: 40,
   },
   logoCircle: {
-    width: 80,
-    height: 80,
+    padding: 10,
     borderRadius: 40,
     backgroundColor: COLORS.secondaryBlue,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 15,
+    flexDirection: 'row',
   },
   title: {
     fontSize: 28,
