@@ -32,6 +32,29 @@ const HouseSearch = () => {
     return `${vertical}-${horizontal} Facing`;
   };
 
+  //   export const getDirection = (angle) => {
+  //   if ((angle >= 348.75 && angle <= 360) || (angle >= 0 && angle <= 11.25)) {
+  //     return "North";
+  //   }
+  //   if (angle <= 33.75) return "North-northeast";
+  //   if (angle <= 56.25) return "Northeast";
+  //   if (angle <= 78.75) return "East-northeast";
+  //   if (angle <= 101.25) return "East";
+  //   if (angle <= 123.75) return "East-southeast";
+  //   if (angle <= 146.25) return "Southeast";
+  //   if (angle <= 168.75) return "South-southeast";
+  //   if (angle <= 191.25) return "South";
+  //   if (angle <= 213.75) return "South-southwest";
+  //   if (angle <= 236.25) return "Southwest";
+  //   if (angle <= 258.75) return "West-southwest";
+  //   if (angle <= 281.25) return "West";
+  //   if (angle <= 303.75) return "West-northwest";
+  //   if (angle <= 326.25) return "Northwest";
+  //   if (angle <= 348.75) return "North-northwest";
+
+  //   return "Unknown";
+  // };
+
   const handleClear = () => {
     ref.current?.setAddressText('');
     setPlaceDetails(null);
