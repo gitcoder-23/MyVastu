@@ -9,12 +9,13 @@ import { AppNavigationStackParamList } from './navigation_types';
 import RegisterScreen from '../pages/AuthScreen/Register';
 import LoginScreen from '../pages/AuthScreen/Login';
 import DashboardScreen from '../pages/MainBoard/Dashboard';
+import HouseSearch from '../pages/MainBoard/HouseSearch';
 
 const Stack = createStackNavigator<AppNavigationStackParamList>();
 const myOptions: StackNavigationOptions = {
-  headerTintColor: COLORS.whiteColorColorColor,
+  headerTintColor: COLORS.whiteColor,
   headerStyle: {
-    backgroundColor: COLORS.primaryBlack,
+    backgroundColor: COLORS.primaryBlue,
   },
   headerTitleAlign: 'left',
   headerTitleStyle: {
@@ -43,6 +44,11 @@ const AppNavigation = () => {
             name="Dashboard"
             component={DashboardScreen}
             options={{ ...myOptions, headerShown: false }}
+          />
+          <Stack.Screen
+            name="HouseSearch"
+            component={HouseSearch}
+            options={{ ...myOptions, headerShown: true }}
           />
         </Stack.Navigator>
       </View>

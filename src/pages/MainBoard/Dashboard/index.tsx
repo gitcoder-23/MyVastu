@@ -12,17 +12,18 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import AppStatusBar from '../../../app_header/AppStatusBar';
 import { COLORS } from '../../../constants/colors';
 import { dashboardMenuItems } from '../../../constants/mock_data';
+import { useNavigation } from '@react-navigation/native';
 
 const { width } = Dimensions.get('window');
 
-interface MenuItem {
-  id: number;
-  title: string;
-  icon: ComponentProps<typeof Ionicons>['name'];
-  color: string;
-}
-
 const DashboardScreen = () => {
+  const navigation: any = useNavigation();
+
+  const onServicePress = (id: number) => {
+    if (id === 1) {
+      navigation.navigate('HouseSearch');
+    }
+  };
   return (
     <SafeAreaView style={styles.container}>
       <AppStatusBar
@@ -71,6 +72,9 @@ const DashboardScreen = () => {
               key={item.id}
               style={styles.menuBox}
               activeOpacity={0.7}
+              onPress={() => {
+                onServicePress(item.id);
+              }}
             >
               <View
                 style={[
