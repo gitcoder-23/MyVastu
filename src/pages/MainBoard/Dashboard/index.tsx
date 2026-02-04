@@ -54,7 +54,7 @@ const DashboardScreen = () => {
         <View style={styles.mainCard}>
           <View style={styles.cardInfo}>
             <Text style={styles.cardTitle}>Your Home Harmony</Text>
-            <Text style={styles.cardScore}>85%</Text>
+            <Text style={styles.cardScore}>houzez</Text>
             <Text style={styles.cardSubtitle}>Good Vastu Energy</Text>
           </View>
           <View style={styles.cardIconCircle}>
