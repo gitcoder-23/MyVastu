@@ -11,5 +11,5 @@ export type AppNavigationStackParamList = {
     Login: undefined;
     Dashboard: undefined;
     DrawerMenu: undefined;
-    HouseSearch: undefined;
+    Location: undefined;
 };

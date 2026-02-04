@@ -46,7 +46,7 @@ const AppNavigation = () => {
             options={{ ...myOptions, headerShown: false }}
           />
           <Stack.Screen
-            name="HouseSearch"
+            name="Location"
             component={HouseSearch}
             options={{ ...myOptions, headerShown: true }}
           />
@@ -61,6 +61,6 @@ export default AppNavigation;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#e0e0e0',
+    backgroundColor: COLORS.backgroundCream1,
   },
 });

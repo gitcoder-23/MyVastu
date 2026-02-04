@@ -21,7 +21,7 @@ const DashboardScreen = () => {
 
   const onServicePress = (id: number) => {
     if (id === 1) {
-      navigation.navigate('HouseSearch');
+      navigation.navigate('Location');
     }
   };
   return (

@@ -36,6 +36,7 @@ export const COLORS = {
 
     // Backgrounds & Surfaces
     backgroundCream: '#F9F7F2',   // Kept for that Vastu feel
+    backgroundCream1: '#e0e0e0',
     whiteColor: '#FFFFFF',
     inputBackground: '#F5F5F5',
     inputBorder: '#EEEEEE',
