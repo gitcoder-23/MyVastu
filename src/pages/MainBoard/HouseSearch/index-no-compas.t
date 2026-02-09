@@ -21,28 +21,39 @@ const HouseSearch = () => {
 
   const GOOGLE_PLACES_API_KEY = 'AIzaSyBUOey4Ezc9bmlVZbvSv5QNFaUprO9Mgwg';
 
-  // Logic to determine cardinal orientation and rotation angle
-  const getPoleData = (lat: number, lng: number) => {
+  // Logic to determine cardinal orientation/pole based on coordinates
+  const getPoleFacing = (lat: number, lng: number) => {
     let vertical = lat >= 0 ? 'North' : 'South';
     let horizontal = lng >= 0 ? 'East' : 'West';
 
-    let label = '';
-    let angle = 0;
-
-    if (Math.abs(lat) > Math.abs(lng) * 2) {
-      label = `${vertical} Facing`;
-      angle = vertical === 'North' ? 0 : 180;
-    } else if (Math.abs(lng) > Math.abs(lat) * 2) {
-      label = `${horizontal} Facing`;
-      angle = horizontal === 'East' ? 90 : 270;
-    } else {
-      label = `${vertical}-${horizontal} Facing`;
-      if (vertical === 'North') angle = horizontal === 'East' ? 45 : 315;
-      else angle = horizontal === 'East' ? 135 : 225;
-    }
-
-    return { label, angle };
+    // Simple logic: If it's heavily tilted one way, return that, else combined
+    if (Math.abs(lat) > Math.abs(lng) * 2) return `${vertical} Facing`;
+    if (Math.abs(lng) > Math.abs(lat) * 2) return `${horizontal} Facing`;
+    return `${vertical}-${horizontal} Facing`;
   };
+
+  //   export const getDirection = (angle) => {
+  //   if ((angle >= 348.75 && angle <= 360) || (angle >= 0 && angle <= 11.25)) {
+  //     return "North";
+  //   }
+  //   if (angle <= 33.75) return "North-northeast";
+  //   if (angle <= 56.25) return "Northeast";
+  //   if (angle <= 78.75) return "East-northeast";
+  //   if (angle <= 101.25) return "East";
+  //   if (angle <= 123.75) return "East-southeast";
+  //   if (angle <= 146.25) return "Southeast";
+  //   if (angle <= 168.75) return "South-southeast";
+  //   if (angle <= 191.25) return "South";
+  //   if (angle <= 213.75) return "South-southwest";
+  //   if (angle <= 236.25) return "Southwest";
+  //   if (angle <= 258.75) return "West-southwest";
+  //   if (angle <= 281.25) return "West";
+  //   if (angle <= 303.75) return "West-northwest";
+  //   if (angle <= 326.25) return "Northwest";
+  //   if (angle <= 348.75) return "North-northwest";
+
+  //   return "Unknown";
+  // };
 
   const handleClear = () => {
     ref.current?.setAddressText('');
@@ -110,45 +121,19 @@ const HouseSearch = () => {
 
             {placeDetails.geometry?.location && (
               <>
-                <View style={styles.poleContainer}>
-                  <View style={{ flex: 1 }}>
-                    <Text style={styles.label}>Pole Facing:</Text>
-                    <Text
-                      style={[
-                        styles.value,
-                        { color: COLORS.primaryBlue, fontWeight: 'bold' },
-                      ]}
-                    >
-                      {
-                        getPoleData(
-                          placeDetails.geometry.location.lat,
-                          placeDetails.geometry.location.lng,
-                        ).label
-                      }
-                    </Text>
-                  </View>
-
-                  {/* COMPASS VISUAL */}
-                  <View style={styles.compassWrapper}>
-                    <Ionicons
-                      name="compass"
-                      size={50}
-                      color={COLORS.primaryBlue}
-                      style={{
-                        transform: [
-                          {
-                            rotate: `${
-                              getPoleData(
-                                placeDetails.geometry.location.lat,
-                                placeDetails.geometry.location.lng,
-                              ).angle
-                            }deg`,
-                          },
-                        ],
-                      }}
-                    />
-                    <Text style={styles.compassNorth}>N</Text>
-                  </View>
+                <View style={styles.infoRow}>
+                  <Text style={styles.label}>Pole Facing:</Text>
+                  <Text
+                    style={[
+                      styles.value,
+                      { color: COLORS.primaryBlue, fontWeight: 'bold' },
+                    ]}
+                  >
+                    {getPoleFacing(
+                      placeDetails.geometry.location.lat,
+                      placeDetails.geometry.location.lng,
+                    )}
+                  </Text>
                 </View>
 
                 <View style={styles.coordinatesContainer}>
@@ -202,7 +187,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.primaryBlue,
     zIndex: 1,
     elevation: 5,
-    shadowColor: '#000',
+    shadowColor: COLORS.primaryBlack,
     shadowOpacity: 0.2,
     shadowRadius: 10,
   },
@@ -228,6 +213,9 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginTop: 5,
     elevation: 5,
+    shadowColor: COLORS.primaryBlack,
+    shadowOpacity: 0.2,
+    shadowRadius: 10,
     position: 'absolute',
     top: 55,
     width: '100%',
@@ -243,6 +231,10 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     padding: 20,
     elevation: 4,
+    shadowColor: COLORS.primaryBlue,
+    shadowOffset: { width: 0, height: 5 },
+    shadowOpacity: 0.1,
+    shadowRadius: 10,
   },
   cardHeader: {
     flexDirection: 'row',
@@ -263,25 +255,6 @@ const styles = StyleSheet.create({
   },
   infoRow: {
     marginBottom: 15,
-  },
-  poleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 15,
-    backgroundColor: COLORS.backgroundCream,
-    padding: 10,
-    borderRadius: 10,
-  },
-  compassWrapper: {
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  compassNorth: {
-    fontSize: 10,
-    fontWeight: 'bold',
-    color: COLORS.primaryBlue,
-    position: 'absolute',
-    top: -2,
   },
   label: {
     fontSize: 14,
