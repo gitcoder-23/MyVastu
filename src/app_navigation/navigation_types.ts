@@ -12,4 +12,5 @@ export type AppNavigationStackParamList = {
     Dashboard: undefined;
     DrawerMenu: undefined;
     Location: undefined;
+    ContactUs: undefined;
 };

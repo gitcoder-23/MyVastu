@@ -22,6 +22,8 @@ const DashboardScreen = () => {
   const onServicePress = (id: number) => {
     if (id === 1) {
       navigation.navigate('Location');
+    } else if (id === 3) {
+      navigation.navigate('ContactUs');
     }
   };
   return (

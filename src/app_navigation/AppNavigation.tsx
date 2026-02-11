@@ -10,6 +10,7 @@ import RegisterScreen from '../pages/AuthScreen/Register';
 import LoginScreen from '../pages/AuthScreen/Login';
 import DashboardScreen from '../pages/MainBoard/Dashboard';
 import HouseSearch from '../pages/MainBoard/HouseSearch';
+import ContactUs from '../pages/MainBoard/ContactUs';
 
 const Stack = createStackNavigator<AppNavigationStackParamList>();
 const myOptions: StackNavigationOptions = {
@@ -48,6 +49,11 @@ const AppNavigation = () => {
           <Stack.Screen
             name="Location"
             component={HouseSearch}
+            options={{ ...myOptions, headerShown: true }}
+          />
+          <Stack.Screen
+            name="ContactUs"
+            component={ContactUs}
             options={{ ...myOptions, headerShown: true }}
           />
         </Stack.Navigator>
