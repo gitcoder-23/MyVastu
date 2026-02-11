@@ -129,7 +129,36 @@ const HouseSearch = () => {
                   </View>
 
                   {/* COMPASS VISUAL */}
-                  <View style={styles.compassWrapper}>
+                  <View style={styles.compassContainer}>
+                    <Text style={styles.compassNorthLabel}>N</Text>
+                    <View style={styles.compassCircle}>
+                      {/* This is the needle that rotates */}
+                      <View
+                        style={[
+                          styles.needleWrapper,
+                          {
+                            transform: [
+                              {
+                                rotate: `${
+                                  getPoleData(
+                                    placeDetails.geometry.location.lat,
+                                    placeDetails.geometry.location.lng,
+                                  ).angle
+                                }deg`,
+                              },
+                            ],
+                          },
+                        ]}
+                      >
+                        <Ionicons
+                          name="navigate"
+                          size={30}
+                          color={COLORS.whiteColor}
+                        />
+                      </View>
+                    </View>
+                  </View>
+                  {/* <View style={styles.compassWrapper}>
                     <Ionicons
                       name="compass"
                       size={50}
@@ -148,7 +177,7 @@ const HouseSearch = () => {
                       }}
                     />
                     <Text style={styles.compassNorth}>N</Text>
-                  </View>
+                  </View> */}
                 </View>
 
                 <View style={styles.coordinatesContainer}>
@@ -272,6 +301,37 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 10,
   },
+
+  compassContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 70,
+  },
+  compassNorthLabel: {
+    fontSize: 12,
+    fontWeight: 'bold',
+    color: COLORS.primaryRed,
+    marginBottom: 2,
+  },
+  compassCircle: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: COLORS.primaryRed, // Red circle from your image
+    alignItems: 'center',
+    justifyContent: 'center',
+    elevation: 3,
+    shadowColor: COLORS.primaryBlack,
+    shadowOpacity: 0.2,
+    shadowRadius: 3,
+  },
+  needleWrapper: {
+    width: 40,
+    height: 40,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+
   compassWrapper: {
     alignItems: 'center',
     justifyContent: 'center',
