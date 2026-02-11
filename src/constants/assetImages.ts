@@ -1,5 +1,6 @@
 export const AssetImages = {
     sunilPaingolImg: require('../assets/images/sunil-paingol-img.jpg'),
+    appLogo: require('../assets/images/app_logo.png'),
 
 };
 

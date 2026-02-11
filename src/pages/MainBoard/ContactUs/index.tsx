@@ -118,6 +118,11 @@ const ContactUs = () => {
 
           {/* Social / Footer Tagline */}
           <View style={styles.footer}>
+            <Image
+              source={AssetImages.appLogo}
+              style={styles.footerLogo}
+              resizeMode="contain"
+            />
             <Text style={styles.footerText}>The Paingol Group Realtors</Text>
             <Text style={styles.tagline}>Excellence in every move.</Text>
           </View>
@@ -233,7 +238,7 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
   footer: {
-    marginTop: 30,
+    marginTop: 20,
     alignItems: 'center',
   },
   footerText: {
@@ -246,5 +251,11 @@ const styles = StyleSheet.create({
     color: COLORS.primaryRed,
     fontStyle: 'italic',
     marginTop: 5,
+  },
+  footerLogo: {
+    width: 100,
+    height: 40,
+    marginBottom: 10,
+    alignSelf: 'center',
   },
 });
