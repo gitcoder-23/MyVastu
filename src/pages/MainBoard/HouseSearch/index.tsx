@@ -195,7 +195,7 @@ export default HouseSearch;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.backgroundCream,
+    backgroundColor: COLORS.backgroundLight,
   },
   searchSection: {
     padding: 15,
@@ -268,7 +268,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 15,
-    backgroundColor: COLORS.backgroundCream,
+    backgroundColor: COLORS.backgroundLight,
     padding: 10,
     borderRadius: 10,
   },
@@ -281,7 +281,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: COLORS.primaryRed,
     position: 'absolute',
-    top: -2,
+    top: -7,
   },
   label: {
     fontSize: 14,
