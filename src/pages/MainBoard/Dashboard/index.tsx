@@ -95,9 +95,9 @@ const DashboardScreen = () => {
 
         {/* Daily Tip Section */}
         <View style={styles.tipCard}>
-          <Ionicons name="bulb-outline" size={24} color={COLORS.primaryBlue} />
+          <Ionicons name="home-outline" size={24} color={COLORS.primaryBlue} />
           <View style={styles.tipTextContainer}>
-            <Text style={styles.tipTitle}>Daily Vastu Tip</Text>
+            <Text style={styles.tipTitle}>Daily Vastu Ads</Text>
             <Text style={styles.tipDescription}>
               Keep the North-East corner of your living room clean and
               clutter-free to attract positive energy.
