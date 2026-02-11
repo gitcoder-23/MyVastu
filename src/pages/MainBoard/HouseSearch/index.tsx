@@ -53,7 +53,7 @@ const HouseSearch = () => {
   return (
     <View style={styles.container}>
       <AppStatusBar
-        backgroundColor={COLORS.primaryBlue}
+        backgroundColor={COLORS.primaryRed}
         barStyle="light-content"
       />
 
@@ -95,7 +95,7 @@ const HouseSearch = () => {
         {placeDetails ? (
           <View style={styles.detailsCard}>
             <View style={styles.cardHeader}>
-              <Ionicons name="location" size={24} color={COLORS.primaryBlue} />
+              <Ionicons name="location" size={24} color={COLORS.primaryRed} />
               <Text style={styles.locationName}>
                 {placeDetails.name || 'Location Found'}
               </Text>
@@ -116,7 +116,7 @@ const HouseSearch = () => {
                     <Text
                       style={[
                         styles.value,
-                        { color: COLORS.primaryBlue, fontWeight: 'bold' },
+                        { color: COLORS.primaryRed, fontWeight: 'bold' },
                       ]}
                     >
                       {
@@ -133,7 +133,7 @@ const HouseSearch = () => {
                     <Ionicons
                       name="compass"
                       size={50}
-                      color={COLORS.primaryBlue}
+                      color={COLORS.primaryRed}
                       style={{
                         transform: [
                           {
@@ -178,7 +178,7 @@ const HouseSearch = () => {
             <Ionicons
               name="search-outline"
               size={80}
-              color={COLORS.secondaryBlue}
+              color={COLORS.secondaryRed}
             />
             <Text style={styles.emptyText}>
               Start typing to find a house or location
@@ -199,7 +199,7 @@ const styles = StyleSheet.create({
   },
   searchSection: {
     padding: 15,
-    backgroundColor: COLORS.primaryBlue,
+    backgroundColor: COLORS.primaryRed,
     zIndex: 1,
     elevation: 5,
     shadowColor: '#000',
@@ -252,7 +252,7 @@ const styles = StyleSheet.create({
   locationName: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: COLORS.primaryBlue,
+    color: COLORS.primaryRed,
     marginLeft: 10,
     flex: 1,
   },
@@ -279,7 +279,7 @@ const styles = StyleSheet.create({
   compassNorth: {
     fontSize: 10,
     fontWeight: 'bold',
-    color: COLORS.primaryBlue,
+    color: COLORS.primaryRed,
     position: 'absolute',
     top: -2,
   },
@@ -295,7 +295,7 @@ const styles = StyleSheet.create({
   },
   coordinatesContainer: {
     flexDirection: 'row',
-    backgroundColor: COLORS.secondaryBlue,
+    backgroundColor: COLORS.secondaryRed,
     borderRadius: 12,
     padding: 15,
     marginTop: 10,
@@ -306,7 +306,7 @@ const styles = StyleSheet.create({
   },
   coordLabel: {
     fontSize: 12,
-    color: COLORS.primaryBlue,
+    color: COLORS.primaryRed,
     fontWeight: '600',
     marginBottom: 4,
   },

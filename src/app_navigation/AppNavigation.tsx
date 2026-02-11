@@ -15,7 +15,7 @@ const Stack = createStackNavigator<AppNavigationStackParamList>();
 const myOptions: StackNavigationOptions = {
   headerTintColor: COLORS.whiteColor,
   headerStyle: {
-    backgroundColor: COLORS.primaryBlue,
+    backgroundColor: COLORS.primaryRed,
   },
   headerTitleAlign: 'left',
   headerTitleStyle: {
@@ -61,6 +61,6 @@ export default AppNavigation;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.backgroundCream1,
+    backgroundColor: COLORS.backgroundLight,
   },
 });

@@ -27,7 +27,7 @@ const DashboardScreen = () => {
   return (
     <SafeAreaView style={styles.container}>
       <AppStatusBar
-        backgroundColor={COLORS.backgroundCream}
+        backgroundColor={COLORS.backgroundLight}
         barStyle="dark-content"
       />
 
@@ -45,7 +45,7 @@ const DashboardScreen = () => {
             <Ionicons
               name="notifications-outline"
               size={24}
-              color={COLORS.primaryBlue}
+              color={COLORS.primaryRed}
             />
           </TouchableOpacity>
         </View>
@@ -79,13 +79,13 @@ const DashboardScreen = () => {
               <View
                 style={[
                   styles.iconBg,
-                  { backgroundColor: COLORS.secondaryBlue },
+                  { backgroundColor: COLORS.transparentColor },
                 ]}
               >
                 <Ionicons
                   name={item.icon}
                   size={28}
-                  color={COLORS.primaryBlue}
+                  color={COLORS.primaryRed}
                 />
               </View>
               <Text style={styles.menuLabel}>{item.title}</Text>
@@ -95,7 +95,7 @@ const DashboardScreen = () => {
 
         {/* Daily Tip Section */}
         <View style={styles.tipCard}>
-          <Ionicons name="home-outline" size={24} color={COLORS.primaryBlue} />
+          <Ionicons name="home-outline" size={24} color={COLORS.primaryRed} />
           <View style={styles.tipTextContainer}>
             <Text style={styles.tipTitle}>Daily Vastu Ads</Text>
             <Text style={styles.tipDescription}>
@@ -114,7 +114,7 @@ export default DashboardScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.backgroundCream,
+    backgroundColor: COLORS.backgroundLight,
   },
   scrollContent: {
     padding: 20,
@@ -132,7 +132,7 @@ const styles = StyleSheet.create({
   userName: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: COLORS.primaryBlue,
+    color: COLORS.primaryRed,
   },
   profileButton: {
     backgroundColor: COLORS.whiteColor,
@@ -145,7 +145,7 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
   },
   mainCard: {
-    backgroundColor: COLORS.primaryBlue,
+    backgroundColor: COLORS.primaryRed,
     borderRadius: 24,
     padding: 25,
     flexDirection: 'row',
@@ -153,7 +153,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 30,
     elevation: 8,
-    shadowColor: COLORS.primaryBlue,
+    shadowColor: COLORS.primaryRed,
     shadowOffset: { width: 0, height: 10 },
     shadowOpacity: 0.3,
     shadowRadius: 10,
@@ -162,7 +162,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   cardTitle: {
-    color: COLORS.secondaryBlue,
+    color: COLORS.whiteColor,
     fontSize: 16,
     fontWeight: '600',
   },
@@ -178,14 +178,14 @@ const styles = StyleSheet.create({
     opacity: 0.9,
   },
   cardIconCircle: {
-    backgroundColor: COLORS.black2,
+    backgroundColor: COLORS.transparentColor,
     padding: 15,
     borderRadius: 50,
   },
   sectionTitle: {
     fontSize: 18,
     fontWeight: '700',
-    color: COLORS.primaryBlue,
+    color: COLORS.primaryRed,
     marginBottom: 15,
   },
   gridContainer: {
@@ -217,14 +217,14 @@ const styles = StyleSheet.create({
     color: COLORS.greyText,
   },
   tipCard: {
-    backgroundColor: COLORS.blue2,
+    backgroundColor: COLORS.whiteColor,
     borderRadius: 18,
     padding: 15,
     flexDirection: 'row',
     alignItems: 'center',
     marginTop: 10,
     borderLeftWidth: 5,
-    borderLeftColor: COLORS.primaryBlue,
+    borderLeftColor: COLORS.primaryRed,
   },
   tipTextContainer: {
     marginLeft: 12,
@@ -233,7 +233,7 @@ const styles = StyleSheet.create({
   tipTitle: {
     fontSize: 15,
     fontWeight: 'bold',
-    color: COLORS.primaryBlue,
+    color: COLORS.primaryRed,
   },
   tipDescription: {
     fontSize: 13,

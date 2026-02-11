@@ -49,7 +49,7 @@ const LoginScreen = () => {
   return (
     <SafeAreaView style={styles.container}>
       <AppStatusBar
-        backgroundColor={COLORS.backgroundCream}
+        backgroundColor={COLORS.backgroundLight}
         barStyle="dark-content"
       />
       <KeyboardAvoidingView
@@ -63,7 +63,7 @@ const LoginScreen = () => {
               <MaterialCommunityIcons
                 name="map-marker-outline"
                 size={40}
-                color={COLORS.primaryBlue}
+                color={COLORS.primaryRed}
               />
               <Text style={styles.title}>houzez</Text>
             </View>
@@ -114,7 +114,7 @@ const LoginScreen = () => {
                 <Ionicons
                   name={showPassword ? 'eye-outline' : 'eye-off-outline'}
                   size={20}
-                  color={COLORS.primaryBlue}
+                  color={COLORS.primaryRed}
                 />
               </TouchableOpacity>
             </View>
@@ -147,7 +147,7 @@ export default LoginScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.backgroundCream,
+    backgroundColor: COLORS.backgroundLight,
   },
   scrollContent: {
     padding: 24,
@@ -170,7 +170,7 @@ const styles = StyleSheet.create({
   logoCircle: {
     padding: 10,
     borderRadius: 40,
-    backgroundColor: COLORS.secondaryBlue,
+    backgroundColor: COLORS.secondaryRed,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 15,
@@ -179,7 +179,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 28,
     fontWeight: '700',
-    color: COLORS.primaryBlue,
+    color: COLORS.primaryRed,
     letterSpacing: 1,
   },
   subtitle: {
@@ -191,7 +191,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.whiteColor,
     borderRadius: 20,
     padding: 20,
-    shadowColor: COLORS.primaryBlue,
+    shadowColor: COLORS.primaryRed,
     shadowOffset: { width: 0, height: 10 },
     shadowOpacity: 0.05,
     shadowRadius: 20,
@@ -228,17 +228,17 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   forgotText: {
-    color: COLORS.primaryBlue,
+    color: COLORS.primaryRed,
     fontSize: 13,
     fontWeight: '600',
   },
   button: {
-    backgroundColor: COLORS.primaryBlue,
+    backgroundColor: COLORS.primaryRed,
     padding: 16,
     borderRadius: 12,
     alignItems: 'center',
     marginTop: 10,
-    shadowColor: COLORS.primaryBlue,
+    shadowColor: COLORS.primaryRed,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 5,
@@ -258,7 +258,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   linkBold: {
-    color: COLORS.primaryBlue,
+    color: COLORS.primaryRed,
     fontWeight: 'bold',
   },
 });

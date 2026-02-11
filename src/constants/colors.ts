@@ -22,37 +22,61 @@
 // };
 
 
-export const COLORS = {
-    // Core brand colors
-    primaryBlue: '#004274',       // The deep blue from your image
-    secondaryBlue: '#E6ECF1',     // Very light blue for backgrounds/icon circles
-    blue2: '#D9E3EB',            // Soft blue for tip cards
-    accentBlue: '#005BA1',       // Slightly brighter blue for interactive elements
+// export const COLORS = {
+//     // Core brand colors
+//     primaryBlue: '#004274',
+//     secondaryBlue: '#E6ECF1',
+//     blue2: '#D9E3EB',
+//     accentBlue: '#005BA1',
 
-    // Transparent variations
-    transparentColor: 'transparent',
-    blueTransparent: '#00427433', // 20% opacity for soft shadows
-    black2: '#ffffff33',         // Your existing white transparency
+//     // Transparent variations
+//     transparentColor: 'transparent',
+//     blueTransparent: '#00427433',
+//     black2: '#ffffff33',
+
+//     // Backgrounds & Surfaces
+//     backgroundCream: '#F9F7F2',
+//     backgroundCream1: '#e0e0e0',
+//     whiteColor: '#FFFFFF',
+//     inputBackground: '#F5F5F5',
+//     inputBorder: '#EEEEEE',
+
+//     // Text & Grays
+//     primaryBlack: '#000000',
+//     black1: '#333333',
+//     greyText: '#666666',
+//     lightGreyText: '#A0A0A0',
+//     iconGrey: '#888888',
+
+//     // Grid Item Shades (Transitioned from Green to Blue)
+//     grid1: '#004274',
+//     grid2: '#00518D',
+//     grid3: '#0061A6',
+//     grid4: '#0070BF',
+//     grid5: '#1A7ECA',
+//     grid6: '#338CD5',
+// };
+
+export const COLORS = {
+    // Core brand colors (Based on The Paingol Group logo)
+    primaryRed: '#ec2123',       // The main Search button and logo heart
+    secondaryRed: '#FDE8E8',     // Light wash for backgrounds
+    darkCharcoal: '#222222',     // For headers and primary text
 
     // Backgrounds & Surfaces
-    backgroundCream: '#F9F7F2',   // Kept for that Vastu feel
-    backgroundCream1: '#e0e0e0',
+    backgroundLight: '#F8F9FA',  // Clean light grey background
     whiteColor: '#FFFFFF',
-    inputBackground: '#F5F5F5',
-    inputBorder: '#EEEEEE',
+    inputBorder: '#DDDDDD',
 
-    // Text & Grays
+    // Text & Status
     primaryBlack: '#000000',
+    greyText: '#444444',
+    lightGreyText: '#999999',
+    iconGrey: '#666666',
     black1: '#333333',
-    greyText: '#666666',
-    lightGreyText: '#A0A0A0',
-    iconGrey: '#888888',
+    inputBackground: '#F5F5F5',
 
-    // Grid Item Shades (Transitioned from Green to Blue)
-    grid1: '#004274',
-    grid2: '#00518D',
-    grid3: '#0061A6',
-    grid4: '#0070BF',
-    grid5: '#1A7ECA',
-    grid6: '#338CD5',
+    // Transparent variations
+    redTransparent: 'rgba(227, 29, 26, 0.1)',
+    transparentColor: 'transparent',
 };

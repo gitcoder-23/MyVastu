@@ -100,7 +100,7 @@ const RegisterScreen = () => {
               <MaterialCommunityIcons
                 name="map-marker-outline"
                 size={40}
-                color={COLORS.primaryBlue}
+                color={COLORS.primaryRed}
               />
               <Text style={styles.title}>houzez</Text>
             </View>
@@ -164,7 +164,7 @@ const RegisterScreen = () => {
                 <Ionicons
                   name={showPassword ? 'eye-outline' : 'eye-off-outline'}
                   size={20}
-                  color={COLORS.primaryBlue}
+                  color={COLORS.primaryRed}
                 />
               </TouchableOpacity>
             </View>
@@ -190,7 +190,7 @@ const RegisterScreen = () => {
                 <Ionicons
                   name={showConfirmPassword ? 'eye-outline' : 'eye-off-outline'}
                   size={20}
-                  color={COLORS.primaryBlue}
+                  color={COLORS.primaryRed}
                 />
               </TouchableOpacity>
             </View>
@@ -240,7 +240,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 28,
     fontWeight: '700',
-    color: COLORS.primaryBlue,
+    color: COLORS.primaryRed,
     letterSpacing: 1,
   },
   subtitle: {
@@ -252,7 +252,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.whiteColor,
     borderRadius: 20,
     padding: 20,
-    shadowColor: COLORS.primaryBlue,
+    shadowColor: COLORS.primaryRed,
     shadowOffset: { width: 0, height: 10 },
     shadowOpacity: 0.05,
     shadowRadius: 20,
@@ -285,12 +285,12 @@ const styles = StyleSheet.create({
     color: COLORS.primaryBlack,
   },
   button: {
-    backgroundColor: COLORS.primaryBlue,
+    backgroundColor: COLORS.primaryRed,
     padding: 16,
     borderRadius: 12,
     alignItems: 'center',
     marginTop: 10,
-    shadowColor: COLORS.primaryBlue,
+    shadowColor: COLORS.primaryRed,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 5,
@@ -310,7 +310,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   linkBold: {
-    color: COLORS.primaryBlue,
+    color: COLORS.primaryRed,
     fontWeight: 'bold',
   },
 });
