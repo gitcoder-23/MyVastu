@@ -9,6 +9,7 @@ import {
   Platform,
   ScrollView,
   Alert,
+  Image,
 } from 'react-native';
 import { MaterialCommunityIcons, Ionicons } from '@expo/vector-icons';
 
@@ -16,6 +17,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import AppStatusBar from '../../../app_header/AppStatusBar';
 import { COLORS } from '../../../constants/colors';
 import { useNavigation } from '@react-navigation/native';
+import { AssetImages } from '../../../constants/assetImages';
 
 const LoginScreen = () => {
   const navigation: any = useNavigation();
@@ -59,14 +61,19 @@ const LoginScreen = () => {
         <ScrollView contentContainerStyle={styles.scrollContent}>
           {/* Header Section */}
           <View style={styles.header}>
-            <View style={styles.logoCircle}>
+            <Image
+              source={AssetImages.appLogo}
+              style={styles.appLogo}
+              resizeMode="contain"
+            />
+            {/* <View style={styles.logoCircle}>
               <MaterialCommunityIcons
                 name="map-marker-outline"
                 size={40}
                 color={COLORS.primaryRed}
               />
               <Text style={styles.title}>houzez</Text>
-            </View>
+            </View> */}
             <Text style={styles.title}>Welcome to home</Text>
             <Text style={styles.subtitle}>Enter your details to continue</Text>
           </View>
@@ -260,5 +267,11 @@ const styles = StyleSheet.create({
   linkBold: {
     color: COLORS.primaryRed,
     fontWeight: 'bold',
+  },
+
+  appLogo: {
+    width: 180,
+    marginBottom: 10,
+    alignSelf: 'center',
   },
 });

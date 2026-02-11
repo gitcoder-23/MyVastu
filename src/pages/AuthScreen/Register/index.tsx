@@ -9,12 +9,14 @@ import {
   Platform,
   ScrollView,
   Alert,
+  Image,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AppStatusBar from '../../../app_header/AppStatusBar';
 import { COLORS } from '../../../constants/colors';
 import { useNavigation } from '@react-navigation/native';
 import { MaterialCommunityIcons, Ionicons } from '@expo/vector-icons';
+import { AssetImages } from '../../../constants/assetImages';
 
 const RegisterScreen = () => {
   const navigation: any = useNavigation();
@@ -86,7 +88,7 @@ const RegisterScreen = () => {
   return (
     <SafeAreaView style={styles.container}>
       <AppStatusBar
-        backgroundColor={COLORS.backgroundCream}
+        backgroundColor={COLORS.backgroundLight}
         barStyle="dark-content"
       />
       <KeyboardAvoidingView
@@ -96,14 +98,19 @@ const RegisterScreen = () => {
         <ScrollView contentContainerStyle={styles.scrollContent}>
           {/* Header Section */}
           <View style={styles.header}>
-            <View style={styles.logoCircle}>
+            <Image
+              source={AssetImages.appLogo}
+              style={styles.appLogo}
+              resizeMode="contain"
+            />
+            {/* <View style={styles.logoCircle}>
               <MaterialCommunityIcons
                 name="map-marker-outline"
                 size={40}
                 color={COLORS.primaryRed}
               />
               <Text style={styles.title}>houzez</Text>
-            </View>
+            </View> */}
             <Text style={styles.subtitle}>Harmonizing your living space</Text>
           </View>
 
@@ -217,7 +224,7 @@ export default RegisterScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.backgroundCream,
+    backgroundColor: COLORS.backgroundLight,
   },
   scrollContent: {
     padding: 24,
@@ -231,7 +238,7 @@ const styles = StyleSheet.create({
   logoCircle: {
     padding: 10,
     borderRadius: 40,
-    backgroundColor: COLORS.secondaryBlue,
+    backgroundColor: COLORS.secondaryRed,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 15,
@@ -312,5 +319,10 @@ const styles = StyleSheet.create({
   linkBold: {
     color: COLORS.primaryRed,
     fontWeight: 'bold',
+  },
+  appLogo: {
+    width: 180,
+    marginBottom: 10,
+    alignSelf: 'center',
   },
 });
