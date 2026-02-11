@@ -65,7 +65,7 @@ const DashboardScreen = () => {
         </View>
 
         {/* Section Title */}
-        <Text style={styles.sectionTitle}>Explore Services</Text>
+        <Text style={styles.sectionTitle}>Explore</Text>
 
         {/* Grid Menu */}
         <View style={styles.gridContainer}>
