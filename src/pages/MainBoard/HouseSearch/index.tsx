@@ -112,7 +112,7 @@ const HouseSearch = () => {
               <>
                 <View style={styles.poleContainer}>
                   <View style={{ flex: 1 }}>
-                    <Text style={styles.label}>Pole Facing:</Text>
+                    <Text style={styles.label}>Facing:</Text>
                     <Text
                       style={[
                         styles.value,
