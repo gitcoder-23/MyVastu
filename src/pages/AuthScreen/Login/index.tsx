@@ -45,7 +45,10 @@ const LoginScreen = () => {
       Alert.alert('Weak Password', 'Password must be at least 6 characters.');
       return;
     }
-    navigation.navigate('Dashboard');
+    setEmail('');
+    setPassword('');
+    setShowPassword(false);
+    navigation.replace('Dashboard');
   };
 
   return (

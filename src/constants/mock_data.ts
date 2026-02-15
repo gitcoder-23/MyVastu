@@ -38,8 +38,8 @@ export const dashboardMenuItems: MenuItem[] = [
     },
     {
         id: 6,
-        title: 'FAQs',
-        icon: 'help-circle-outline',
+        title: 'Logout',
+        icon: 'log-out-outline',
         color: COLORS.primaryRed,
     },
 ];

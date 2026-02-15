@@ -24,6 +24,11 @@ const DashboardScreen = () => {
       navigation.navigate('Location');
     } else if (id === 3) {
       navigation.navigate('ContactUs');
+    } else if (id === 6) {
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'Login' }],
+      });
     }
   };
   return (
