@@ -125,6 +125,9 @@ const ContactUs = () => {
             />
             <Text style={styles.footerText}>The Paingol Group Realtors</Text>
             <Text style={styles.tagline}>Excellence in every move.</Text>
+            <Text style={styles.poweredBy}>
+              Powered by: Zenith Partners Inc.
+            </Text>
           </View>
         </ScrollView>
       </View>
@@ -250,6 +253,12 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: COLORS.primaryRed,
     fontStyle: 'italic',
+    marginTop: 5,
+  },
+  poweredBy: {
+    fontSize: 12,
+    color: COLORS.black1,
+    fontStyle: 'normal',
     marginTop: 5,
   },
   footerLogo: {

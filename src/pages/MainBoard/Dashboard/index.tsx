@@ -40,7 +40,7 @@ const DashboardScreen = () => {
         {/* Top Header Row */}
         <View style={styles.headerRow}>
           <View>
-            <Text style={styles.welcomeText}>Namaste,</Text>
+            <Text style={styles.welcomeText}>Hello,</Text>
             <Text style={styles.userName}>John Doe</Text>
           </View>
           <TouchableOpacity style={styles.profileButton}>
