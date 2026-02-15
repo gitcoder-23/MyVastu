@@ -81,8 +81,10 @@ const RegisterScreen = () => {
       return;
     }
 
-    // Success: Proceed to Dashboard
-    navigation.navigate('Dashboard');
+    setEmail('');
+    setPassword('');
+    setShowPassword(false);
+    navigation.replace('Dashboard');
   };
 
   return (
@@ -178,25 +180,28 @@ const RegisterScreen = () => {
 
             <View style={styles.inputWrapper}>
               <Ionicons
-                name="shield-checkmark-outline"
+                name="lock-closed-outline"
                 size={20}
                 color={COLORS.iconGrey}
                 style={styles.inputIcon}
               />
               <TextInput
                 style={styles.input}
-                placeholder="Confirm Password"
+                placeholder="Password"
                 placeholderTextColor={COLORS.lightGreyText}
-                secureTextEntry={!showConfirmPassword}
-                value={confirmPassword}
-                onChangeText={setConfirmPassword}
+                secureTextEntry={!showPassword}
+                value={password}
+                onChangeText={setPassword}
+                autoCapitalize="none"
               />
               <TouchableOpacity
-                onPress={() => setShowConfirmPassword(!showConfirmPassword)}
+                onPress={() => setShowPassword(!showPassword)}
+                style={styles.eyeButton}
+                hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
               >
                 <Ionicons
-                  name={showConfirmPassword ? 'eye-outline' : 'eye-off-outline'}
-                  size={20}
+                  name={showPassword ? 'eye-outline' : 'eye-off-outline'}
+                  size={22}
                   color={COLORS.primaryRed}
                 />
               </TouchableOpacity>
@@ -285,11 +290,23 @@ const styles = StyleSheet.create({
   inputIcon: {
     marginRight: 10,
   },
+  // input: {
+  //   flex: 1,
+  //   paddingVertical: 14,
+  //   fontSize: 15,
+  //   color: COLORS.primaryBlack,
+  // },
   input: {
     flex: 1,
     paddingVertical: 14,
     fontSize: 15,
     color: COLORS.primaryBlack,
+    paddingRight: 10,
+  },
+  eyeButton: {
+    padding: 5,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   button: {
     backgroundColor: COLORS.primaryRed,
