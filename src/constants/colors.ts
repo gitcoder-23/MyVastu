@@ -58,13 +58,10 @@
 // };
 
 export const COLORS = {
-    // Core brand colors (Based on The Paingol Group logo)
-    primaryRed: '#ec2123',       // The main Search button and logo heart
-    secondaryRed: '#FDE8E8',     // Light wash for backgrounds
-    darkCharcoal: '#222222',     // For headers and primary text
-
-    // Backgrounds & Surfaces
-    backgroundLight: '#F8F9FA',  // Clean light grey background
+    primaryRed: '#ec2123',
+    secondaryRed: '#FDE8E8',
+    darkCharcoal: '#222222',
+    backgroundLight: '#F8F9FA',
     whiteColor: '#FFFFFF',
     inputBorder: '#DDDDDD',
 

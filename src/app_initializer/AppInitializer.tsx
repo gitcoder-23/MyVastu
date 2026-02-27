@@ -8,7 +8,10 @@ export const AppInitializer = () => {
   return (
     <>
       <View style={styles.container}>
-        <AppStatusBar backgroundColor={COLORS.black4} barStyle="dark-content" />
+        <AppStatusBar
+          backgroundColor={COLORS.darkCharcoal}
+          barStyle="dark-content"
+        />
         <NavigationContainer>
           <AppNavigation />
         </NavigationContainer>
