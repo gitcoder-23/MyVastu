@@ -13,5 +13,4 @@ export const isValidEmail = (email: string) => {
     return emailRegex.test(email);
 };
 
-export const validEmailPatternRx =
-    /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+export const validEmailPatternRx = /\S+@\S+\.\S+/;;

@@ -1,16 +1,16 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { registerApi } from '../../api/config';
 import rootApi from '../../api/rootApi';
-import { AuthResponseModel } from '../models/authModel';
+import { AuthRegisterResponseModel } from '../models/authModel';
 
 type registerActionType = {
     name: string;
     email: string;
-    mobile: string;
+    mobile: string | undefined;
     password: string;
 };
 export const RegisterAction = createAsyncThunk<
-    any,
+    AuthRegisterResponseModel,
     registerActionType,
     {}
 >('register/post', async postRegister => {

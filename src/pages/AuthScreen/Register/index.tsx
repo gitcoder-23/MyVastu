@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   StyleSheet,
   Text,
@@ -17,75 +17,87 @@ import { COLORS } from '../../../constants/colors';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { AssetImages } from '../../../constants/assetImages';
+import { useAppDispatch, useAppSelector } from '../../../app/redux/hooks';
+import { RegisterAction } from '../../../app/redux/actions/authAction';
+import PhoneInput, {
+  ICountry,
+  IPhoneInputRef,
+} from 'react-native-international-phone-number';
+import { registerValidator } from './registerValidator';
+import { AuthRegisterResponseModel } from '../../../app/redux/models/authModel';
 
 const RegisterScreen = () => {
+  const phoneInputRef = useRef<IPhoneInputRef>(null);
   const navigation: any = useNavigation();
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const dispatch = useAppDispatch();
+  const [selectedCountry, setSelectedCountry] = useState<null | ICountry>(null);
+  const { isRegisterLoading } = useAppSelector(state => state.authApp);
+  const [registerInputState, setRegisterInputState] = useState({
+    name: '',
+    email: '',
+    mobile: '',
+    password: '',
+    confirmPassword: '',
+  });
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  const handlePhoneChange = (value: string) => {
+    setRegisterInputState({ ...registerInputState, mobile: value });
+  };
+  const handleSelectedCountry = (country: ICountry) => {
+    setSelectedCountry(country);
+  };
 
   const onGoLogin = () => {
     navigation.navigate('Login');
   };
 
   const onRegister = () => {
-    // 1. Basic Empty Field Validation
-    if (
-      !name.trim() ||
-      !email.trim() ||
-      !password.trim() ||
-      !confirmPassword.trim()
-    ) {
-      Alert.alert(
-        'Missing Information',
-        'Please fill in all fields to create your account.',
-      );
+    const isValid = registerValidator(
+      registerInputState,
+      selectedCountry,
+      phoneInputRef.current,
+    );
+    if (!isValid) {
       return;
     }
-
-    // 2. Name Length Validation
-    if (name.trim().length < 2) {
-      Alert.alert('Invalid Name', 'Please enter your full name.');
-      return;
-    }
-
-    // 3. Email Format Validation
-    const emailRegex = /\S+@\S+\.\S+/;
-    if (!emailRegex.test(email)) {
-      Alert.alert(
-        'Invalid Email',
-        'Please enter a valid email address for your Vastu updates.',
-      );
-      return;
-    }
-
-    // 4. Password Strength Validation
-    if (password.length < 6) {
-      Alert.alert(
-        'Weak Password',
-        'For security, your password must be at least 6 characters long.',
-      );
-      return;
-    }
-
-    // 5. Password Matching Validation
-    if (password !== confirmPassword) {
-      Alert.alert(
-        'Passwords Mismatch',
-        'Your password and confirm password do not match. Please check again.',
-      );
-      return;
-    }
-
-    setEmail('');
-    setPassword('');
-    setShowPassword(false);
-    setShowConfirmPassword(false);
-    navigation.replace('Dashboard');
+    const postRegister = {
+      name: registerInputState.name.trim(),
+      email: registerInputState.email.trim(),
+      mobile: phoneInputRef.current?.fullPhoneNumber.trim(),
+      password: registerInputState.password.trim(),
+    };
+    dispatch(RegisterAction(postRegister) as any)
+      .unwrap()
+      .then((res: AuthRegisterResponseModel | any) => {
+        Alert.alert(
+          `Hi ${res.user?.name}`,
+          res.message,
+          [
+            {
+              text: 'OK',
+              onPress: () => {
+                setRegisterInputState({
+                  name: '',
+                  email: '',
+                  mobile: '',
+                  password: '',
+                  confirmPassword: '',
+                });
+                setShowPassword(false);
+                setShowConfirmPassword(false);
+                navigation.replace('Login');
+              },
+            },
+          ],
+          { cancelable: false },
+        );
+      })
+      .catch((err: AuthRegisterResponseModel | any) => {
+        Alert.alert('Failed', err.message);
+      });
   };
 
   return (
@@ -108,7 +120,6 @@ const RegisterScreen = () => {
             />
             <Text style={styles.subtitle}>Harmonizing your living space</Text>
           </View>
-
           {/* Form Card */}
           <View style={styles.formCard}>
             <Text style={styles.formTitle}>Create Account</Text>
@@ -124,8 +135,10 @@ const RegisterScreen = () => {
                 style={styles.input}
                 placeholder="Full Name"
                 placeholderTextColor={COLORS.lightGreyText}
-                value={name}
-                onChangeText={setName}
+                value={registerInputState.name}
+                onChangeText={text =>
+                  setRegisterInputState({ ...registerInputState, name: text })
+                }
               />
             </View>
 
@@ -142,8 +155,29 @@ const RegisterScreen = () => {
                 placeholderTextColor={COLORS.lightGreyText}
                 keyboardType="email-address"
                 autoCapitalize="none"
-                value={email}
-                onChangeText={setEmail}
+                value={registerInputState.email}
+                onChangeText={text =>
+                  setRegisterInputState({ ...registerInputState, email: text })
+                }
+              />
+            </View>
+            <View style={styles.phoneInputWrapper}>
+              <PhoneInput
+                ref={phoneInputRef}
+                value={registerInputState.mobile}
+                onChangeText={handlePhoneChange}
+                selectedCountry={selectedCountry}
+                onChangeSelectedCountry={handleSelectedCountry}
+                placeholder="Mobile Number"
+                defaultCountry="IN"
+                phoneInputStyles={{
+                  container: styles.phoneContainer,
+                  flagContainer: styles.flagContainer,
+                  flag: styles.flag,
+                  caret: styles.caret,
+                  callingCode: styles.callingCode,
+                  input: styles.phoneInput,
+                }}
               />
             </View>
 
@@ -159,8 +193,13 @@ const RegisterScreen = () => {
                 placeholder="Password"
                 placeholderTextColor={COLORS.lightGreyText}
                 secureTextEntry={!showPassword}
-                value={password}
-                onChangeText={setPassword}
+                value={registerInputState.password}
+                onChangeText={text =>
+                  setRegisterInputState({
+                    ...registerInputState,
+                    password: text,
+                  })
+                }
               />
               <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
                 <Ionicons
@@ -183,8 +222,13 @@ const RegisterScreen = () => {
                 placeholder="Confirm Password"
                 placeholderTextColor={COLORS.lightGreyText}
                 secureTextEntry={!showConfirmPassword}
-                value={confirmPassword}
-                onChangeText={setConfirmPassword}
+                value={registerInputState.confirmPassword}
+                onChangeText={text =>
+                  setRegisterInputState({
+                    ...registerInputState,
+                    confirmPassword: text,
+                  })
+                }
                 autoCapitalize="none"
               />
               <TouchableOpacity
@@ -200,8 +244,17 @@ const RegisterScreen = () => {
               </TouchableOpacity>
             </View>
 
-            <TouchableOpacity onPress={onRegister} style={styles.button}>
-              <Text style={styles.buttonText}>SIGN UP</Text>
+            <TouchableOpacity
+              onPress={() => !isRegisterLoading && onRegister()}
+              style={[
+                styles.button,
+                isRegisterLoading ? { opacity: 0.5 } : null,
+              ]}
+              disabled={isRegisterLoading}
+            >
+              <Text style={styles.buttonText}>
+                {isRegisterLoading ? 'Loading...' : 'SIGN UP'}
+              </Text>
             </TouchableOpacity>
           </View>
 
@@ -283,12 +336,6 @@ const styles = StyleSheet.create({
   inputIcon: {
     marginRight: 10,
   },
-  // input: {
-  //   flex: 1,
-  //   paddingVertical: 14,
-  //   fontSize: 15,
-  //   color: COLORS.primaryBlack,
-  // },
   input: {
     flex: 1,
     paddingVertical: 14,
@@ -334,5 +381,40 @@ const styles = StyleSheet.create({
     width: 180,
     marginBottom: 10,
     alignSelf: 'center',
+  },
+
+  // Phone
+  phoneInputWrapper: {
+    marginBottom: 16,
+  },
+  phoneContainer: {
+    backgroundColor: COLORS.inputBackground,
+    borderWidth: 1,
+    borderColor: COLORS.inputBorder,
+    borderRadius: 12,
+    height: 52,
+  },
+  flagContainer: {
+    backgroundColor: 'transparent',
+    borderTopLeftRadius: 12,
+    borderBottomLeftRadius: 12,
+    justifyContent: 'center',
+  },
+  flag: {
+    fontSize: 20,
+  },
+  caret: {
+    display: 'none',
+  },
+  callingCode: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: COLORS.primaryBlack,
+  },
+  phoneInput: {
+    fontSize: 15,
+    color: COLORS.primaryBlack,
+    fontWeight: '400',
+    paddingLeft: 0,
   },
 });
