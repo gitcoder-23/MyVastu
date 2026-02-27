@@ -76,6 +76,6 @@ const authAppSlice = createSlice({
     },
 });
 
-export const { } = authAppSlice.actions;
+export const { setRegisterResponse, setRegisterUser, setToken, setIsRegisterLoading, setIsError, setErrorMessage } = authAppSlice.actions;
 
 export default authAppSlice.reducer;

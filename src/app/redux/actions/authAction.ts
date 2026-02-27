@@ -14,8 +14,6 @@ export const RegisterAction = createAsyncThunk<
     registerActionType,
     {}
 >('register/post', async postRegister => {
-    console.log('postRegister@-->', postRegister);
     const response = await rootApi.post(registerApi, postRegister);
-    console.log('responseSE1->', response.data);
     return response.data;
 });
