@@ -4,12 +4,13 @@ import rootApi from '../../api/rootApi';
 import { AuthResponseModel } from '../models/authModel';
 
 type registerActionType = {
+    name: string;
     email: string;
+    mobile: string;
     password: string;
-    password_confirmation: string;
 };
 export const RegisterAction = createAsyncThunk<
-    AuthResponseModel,
+    any,
     registerActionType,
     {}
 >('register/post', async postRegister => {

@@ -15,7 +15,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import AppStatusBar from '../../../app_header/AppStatusBar';
 import { COLORS } from '../../../constants/colors';
 import { useNavigation } from '@react-navigation/native';
-import { MaterialCommunityIcons, Ionicons } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 import { AssetImages } from '../../../constants/assetImages';
 
 const RegisterScreen = () => {
@@ -84,6 +84,7 @@ const RegisterScreen = () => {
     setEmail('');
     setPassword('');
     setShowPassword(false);
+    setShowConfirmPassword(false);
     navigation.replace('Dashboard');
   };
 
@@ -105,14 +106,6 @@ const RegisterScreen = () => {
               style={styles.appLogo}
               resizeMode="contain"
             />
-            {/* <View style={styles.logoCircle}>
-              <MaterialCommunityIcons
-                name="map-marker-outline"
-                size={40}
-                color={COLORS.primaryRed}
-              />
-              <Text style={styles.title}>houzez</Text>
-            </View> */}
             <Text style={styles.subtitle}>Harmonizing your living space</Text>
           </View>
 
@@ -187,20 +180,20 @@ const RegisterScreen = () => {
               />
               <TextInput
                 style={styles.input}
-                placeholder="Password"
+                placeholder="Confirm Password"
                 placeholderTextColor={COLORS.lightGreyText}
-                secureTextEntry={!showPassword}
-                value={password}
-                onChangeText={setPassword}
+                secureTextEntry={!showConfirmPassword}
+                value={confirmPassword}
+                onChangeText={setConfirmPassword}
                 autoCapitalize="none"
               />
               <TouchableOpacity
-                onPress={() => setShowPassword(!showPassword)}
+                onPress={() => setShowConfirmPassword(!showConfirmPassword)}
                 style={styles.eyeButton}
                 hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
               >
                 <Ionicons
-                  name={showPassword ? 'eye-outline' : 'eye-off-outline'}
+                  name={showConfirmPassword ? 'eye-outline' : 'eye-off-outline'}
                   size={22}
                   color={COLORS.primaryRed}
                 />
