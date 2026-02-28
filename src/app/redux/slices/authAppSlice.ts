@@ -1,15 +1,20 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { RegisterAction } from '../actions/authAction';
-import { AuthRegisterResponseModel, AuthRegisterUserModel } from '../models/authModel';
+import { LoginAction, RegisterAction } from '../actions/authAction';
+import { AuthResponseModel, AuthRegisterUserModel } from '../models/authModel';
 
 export interface AuthAppState {
-    registerResponse: AuthRegisterResponseModel | null;
+    registerResponse: AuthResponseModel | null;
     registerUser: AuthRegisterUserModel | null;
     accessToken: string;
     refreshToken: string;
     isRegisterLoading: boolean;
     isError: boolean;
     errorMessage: string | undefined;
+
+    // Login
+    loginResponse: AuthResponseModel | null;
+    loginUser: AuthRegisterUserModel | null;
+    isLoginLoading: boolean;
 }
 
 const initialState: AuthAppState = {
@@ -20,32 +25,21 @@ const initialState: AuthAppState = {
     isRegisterLoading: false,
     isError: false,
     errorMessage: '',
+    // Login
+    loginResponse: null,
+    loginUser: null,
+    isLoginLoading: false,
 };
 
 const authAppSlice = createSlice({
     name: 'authApp',
     initialState,
     reducers: {
-        setRegisterResponse: (state, action: PayloadAction<AuthRegisterResponseModel | null>) => {
-            state.registerResponse = action.payload;
-        },
-        setRegisterUser: (state, action: PayloadAction<AuthRegisterUserModel | null>) => {
-            state.registerUser = action.payload;
-        },
         setAccessToken: (state, action: PayloadAction<string>) => {
             state.accessToken = action.payload;
         },
         setRefreshToken: (state, action: PayloadAction<string>) => {
             state.refreshToken = action.payload;
-        },
-        setIsRegisterLoading: (state, action: PayloadAction<boolean>) => {
-            state.isRegisterLoading = action.payload;
-        },
-        setIsError: (state, action: PayloadAction<boolean>) => {
-            state.isError = action.payload;
-        },
-        setErrorMessage: (state, action: PayloadAction<string>) => {
-            state.errorMessage = action.payload;
         },
     },
     extraReducers: function (builder) {
@@ -59,7 +53,7 @@ const authAppSlice = createSlice({
         // Register - fulfilled (success)
         builder.addCase(
             RegisterAction.fulfilled,
-            (state, action: PayloadAction<AuthRegisterResponseModel>) => {
+            (state, action: PayloadAction<AuthResponseModel>) => {
                 state.isRegisterLoading = false;
                 state.isError = false;
                 const responseData = action.payload;
@@ -75,16 +69,50 @@ const authAppSlice = createSlice({
         builder.addCase(RegisterAction.rejected, (state, action) => {
             state.isRegisterLoading = false;
             state.isError = true;
-            const responseData = action.payload as AuthRegisterResponseModel;
+            const responseData = action.payload as AuthResponseModel;
             state.errorMessage = responseData?.message || 'Registration Failed';
             state.registerResponse = responseData || null;
             state.registerUser = null;
             state.accessToken = '';
             state.refreshToken = '';
         });
+
+        // Login - pending
+        builder.addCase(LoginAction.pending, state => {
+            state.isLoginLoading = true;
+            state.isError = false;
+            state.errorMessage = '';
+        });
+
+        // Login - fulfilled (success)
+        builder.addCase(
+            LoginAction.fulfilled,
+            (state, action: PayloadAction<AuthResponseModel>) => {
+                state.isLoginLoading = false;
+                state.isError = false;
+                const responseData = action.payload;
+                state.loginResponse = responseData;
+                state.loginUser = responseData.data?.user || null;
+                state.accessToken = responseData.data?.tokens?.accessToken || '';
+                state.refreshToken = responseData.data?.tokens?.refreshToken || '';
+                state.errorMessage = responseData?.message || '';
+            },
+        );
+
+        // Login - rejected (failure)
+        builder.addCase(LoginAction.rejected, (state, action) => {
+            state.isLoginLoading = false;
+            state.isError = true;
+            const responseData = action.payload as AuthResponseModel;
+            state.errorMessage = responseData?.message || 'Login Failed';
+            state.loginResponse = responseData || null;
+            state.loginUser = null;
+            state.accessToken = '';
+            state.refreshToken = '';
+        });
     },
 });
 
-export const { setRegisterResponse, setRegisterUser, setAccessToken, setRefreshToken, setIsRegisterLoading, setIsError, setErrorMessage } = authAppSlice.actions;
+export const { setAccessToken, setRefreshToken } = authAppSlice.actions;
 
 export default authAppSlice.reducer;

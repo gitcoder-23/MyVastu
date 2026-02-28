@@ -23,7 +23,7 @@ import PhoneInput, {
   IPhoneInputRef,
 } from 'react-native-international-phone-number';
 import { registerValidator } from './registerValidator';
-import { AuthRegisterResponseModel } from '../../../app/redux/models/authModel';
+import { AuthResponseModel } from '../../../app/redux/models/authModel';
 import { styles } from './styles';
 
 const RegisterScreen = () => {
@@ -31,9 +31,7 @@ const RegisterScreen = () => {
   const navigation: any = useNavigation();
   const dispatch = useAppDispatch();
   const [selectedCountry, setSelectedCountry] = useState<null | ICountry>(null);
-  const { isRegisterLoading, errorMessage } = useAppSelector(
-    state => state.authApp,
-  );
+  const { isRegisterLoading } = useAppSelector(state => state.authApp);
   const [registerInputState, setRegisterInputState] = useState({
     name: '',
     email: '',
@@ -73,7 +71,7 @@ const RegisterScreen = () => {
     };
     dispatch(RegisterAction(postRegister) as any)
       .unwrap()
-      .then((res: AuthRegisterResponseModel) => {
+      .then((res: AuthResponseModel) => {
         console.log('RegisterResponse=>', res);
         Alert.alert(
           `Hi ${res.data?.user?.name || 'User'}`,
@@ -98,7 +96,7 @@ const RegisterScreen = () => {
           { cancelable: false },
         );
       })
-      .catch((err: AuthRegisterResponseModel) => {
+      .catch((err: AuthResponseModel) => {
         console.log('RegisterError=>', err);
         Alert.alert(
           'Registration Failed',

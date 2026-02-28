@@ -1,4 +1,4 @@
-export interface AuthRegisterResponseModel {
+export interface AuthResponseModel {
     success?: boolean;
     message?: string;
     data?: {

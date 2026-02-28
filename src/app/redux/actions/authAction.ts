@@ -1,7 +1,7 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { registerApi } from '../../api/config';
+import { loginApi, registerApi } from '../../api/config';
 import rootApi from '../../api/rootApi';
-import { AuthRegisterResponseModel } from '../models/authModel';
+import { AuthResponseModel } from '../models/authModel';
 
 type registerActionType = {
     name: string;
@@ -10,13 +10,33 @@ type registerActionType = {
     password: string;
 };
 
+type loginActionType = {
+    email: string;
+    mobile: string | undefined;
+    password: string;
+};
+
 export const RegisterAction = createAsyncThunk<
-    AuthRegisterResponseModel,
+    AuthResponseModel,
     registerActionType,
-    { rejectValue: AuthRegisterResponseModel } // Define the rejected value type
+    { rejectValue: AuthResponseModel } // Define the rejected value type
 >('register/post', async (postRegister, { rejectWithValue }) => {
     try {
         const response = await rootApi.post(registerApi, postRegister);
+        return response.data;
+    } catch (err: any) {
+        // Return the API error response body (e.g., {success: false, message: "..."})
+        return rejectWithValue(err.response?.data);
+    }
+});
+
+export const LoginAction = createAsyncThunk<
+    AuthResponseModel,
+    loginActionType,
+    { rejectValue: AuthResponseModel } // Define the rejected value type
+>('login/post', async (postLogin, { rejectWithValue }) => {
+    try {
+        const response = await rootApi.post(loginApi, postLogin);
         return response.data;
     } catch (err: any) {
         // Return the API error response body (e.g., {success: false, message: "..."})
