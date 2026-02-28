@@ -35,11 +35,19 @@ const authAppSlice = createSlice({
     name: 'authApp',
     initialState,
     reducers: {
-        setAccessToken: (state, action: PayloadAction<string>) => {
-            state.accessToken = action.payload;
+        // Reducer action
+        setLogin: (state, action: PayloadAction<{ token: string }>) => {
+            state.accessToken = action.payload.token;
+            state.errorMessage = 'Login success';
+            state.isLoginLoading = false;
         },
-        setRefreshToken: (state, action: PayloadAction<string>) => {
-            state.refreshToken = action.payload;
+        setLogout: state => {
+            state.accessToken = '';
+            state.refreshToken = '';
+            state.loginResponse = null;
+            state.loginUser = null;
+            state.errorMessage = 'Logout success';
+            state.isLoginLoading = false;
         },
     },
     extraReducers: function (builder) {
@@ -113,6 +121,6 @@ const authAppSlice = createSlice({
     },
 });
 
-export const { setAccessToken, setRefreshToken } = authAppSlice.actions;
+export const { setLogin, setLogout } = authAppSlice.actions;
 
 export default authAppSlice.reducer;

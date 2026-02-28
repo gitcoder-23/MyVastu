@@ -19,13 +19,12 @@ type loginActionType = {
 export const RegisterAction = createAsyncThunk<
     AuthResponseModel,
     registerActionType,
-    { rejectValue: AuthResponseModel } // Define the rejected value type
+    { rejectValue: AuthResponseModel }
 >('register/post', async (postRegister, { rejectWithValue }) => {
     try {
         const response = await rootApi.post(registerApi, postRegister);
         return response.data;
     } catch (err: any) {
-        // Return the API error response body (e.g., {success: false, message: "..."})
         return rejectWithValue(err.response?.data);
     }
 });
@@ -33,13 +32,12 @@ export const RegisterAction = createAsyncThunk<
 export const LoginAction = createAsyncThunk<
     AuthResponseModel,
     loginActionType,
-    { rejectValue: AuthResponseModel } // Define the rejected value type
+    { rejectValue: AuthResponseModel }
 >('login/post', async (postLogin, { rejectWithValue }) => {
     try {
         const response = await rootApi.post(loginApi, postLogin);
         return response.data;
     } catch (err: any) {
-        // Return the API error response body (e.g., {success: false, message: "..."})
         return rejectWithValue(err.response?.data);
     }
 });

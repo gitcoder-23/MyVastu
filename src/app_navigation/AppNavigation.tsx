@@ -1,5 +1,5 @@
 import { StyleSheet, View } from 'react-native';
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   createStackNavigator,
   StackNavigationOptions,
@@ -11,6 +11,8 @@ import LoginScreen from '../pages/AuthScreen/Login';
 import DashboardScreen from '../pages/MainBoard/Dashboard';
 import HouseSearch from '../pages/MainBoard/HouseSearch';
 import ContactUs from '../pages/MainBoard/ContactUs';
+import { useAppSelector } from '../app/redux/hooks';
+import { resetInterceptor } from '../app/api/rootApi';
 
 const Stack = createStackNavigator<AppNavigationStackParamList>();
 const myOptions: StackNavigationOptions = {
@@ -27,35 +29,51 @@ const myOptions: StackNavigationOptions = {
 };
 
 const AppNavigation = () => {
+  const { accessToken } = useAppSelector(state => state.authApp);
+  console.log('@@@accessToken-nav', accessToken);
+
+  useEffect(() => {
+    if (accessToken) {
+      resetInterceptor(accessToken);
+    }
+  }, [accessToken]);
+
   return (
     <>
       <View style={styles.container}>
-        <Stack.Navigator initialRouteName="Login">
-          <Stack.Screen
-            name="Register"
-            component={RegisterScreen}
-            options={{ ...myOptions, headerShown: false }}
-          />
-          <Stack.Screen
-            name="Login"
-            component={LoginScreen}
-            options={{ ...myOptions, headerShown: false }}
-          />
-          <Stack.Screen
-            name="Dashboard"
-            component={DashboardScreen}
-            options={{ ...myOptions, headerShown: false }}
-          />
-          <Stack.Screen
-            name="Location"
-            component={HouseSearch}
-            options={{ ...myOptions, headerShown: true }}
-          />
-          <Stack.Screen
-            name="ContactUs"
-            component={ContactUs}
-            options={{ ...myOptions, headerShown: true }}
-          />
+        <Stack.Navigator initialRouteName={accessToken ? 'Dashboard' : 'Login'}>
+          {accessToken ? (
+            <>
+              <Stack.Screen
+                name="Dashboard"
+                component={DashboardScreen}
+                options={{ ...myOptions, headerShown: false }}
+              />
+              <Stack.Screen
+                name="Location"
+                component={HouseSearch}
+                options={{ ...myOptions, headerShown: true }}
+              />
+              <Stack.Screen
+                name="ContactUs"
+                component={ContactUs}
+                options={{ ...myOptions, headerShown: true }}
+              />
+            </>
+          ) : (
+            <>
+              <Stack.Screen
+                name="Register"
+                component={RegisterScreen}
+                options={{ ...myOptions, headerShown: false }}
+              />
+              <Stack.Screen
+                name="Login"
+                component={LoginScreen}
+                options={{ ...myOptions, headerShown: false }}
+              />
+            </>
+          )}
         </Stack.Navigator>
       </View>
     </>
