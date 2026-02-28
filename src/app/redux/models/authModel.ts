@@ -1,7 +1,15 @@
 export interface AuthRegisterResponseModel {
+    success?: boolean;
     message?: string;
-    user?: AuthRegisterUserModel | null;
-    error?: string;
+    data?: {
+        user?: AuthRegisterUserModel | null,
+        tokens?: {
+            accessToken?: string,
+            refreshToken?: string,
+            expiresIn?: number
+        }
+    } | null;
+    error?: null;
     statusCode?: number;
 }
 

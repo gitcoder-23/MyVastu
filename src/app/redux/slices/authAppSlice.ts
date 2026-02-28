@@ -5,7 +5,8 @@ import { AuthRegisterResponseModel, AuthRegisterUserModel } from '../models/auth
 export interface AuthAppState {
     registerResponse: AuthRegisterResponseModel | null;
     registerUser: AuthRegisterUserModel | null;
-    token: string;
+    accessToken: string;
+    refreshToken: string;
     isRegisterLoading: boolean;
     isError: boolean;
     errorMessage: string | undefined;
@@ -14,7 +15,8 @@ export interface AuthAppState {
 const initialState: AuthAppState = {
     registerResponse: null,
     registerUser: null,
-    token: '',
+    accessToken: '',
+    refreshToken: '',
     isRegisterLoading: false,
     isError: false,
     errorMessage: '',
@@ -30,8 +32,11 @@ const authAppSlice = createSlice({
         setRegisterUser: (state, action: PayloadAction<AuthRegisterUserModel | null>) => {
             state.registerUser = action.payload;
         },
-        setToken: (state, action: PayloadAction<string>) => {
-            state.token = action.payload;
+        setAccessToken: (state, action: PayloadAction<string>) => {
+            state.accessToken = action.payload;
+        },
+        setRefreshToken: (state, action: PayloadAction<string>) => {
+            state.refreshToken = action.payload;
         },
         setIsRegisterLoading: (state, action: PayloadAction<boolean>) => {
             state.isRegisterLoading = action.payload;
@@ -56,26 +61,30 @@ const authAppSlice = createSlice({
             RegisterAction.fulfilled,
             (state, action: PayloadAction<AuthRegisterResponseModel>) => {
                 state.isRegisterLoading = false;
-                const responseData = action.payload;
                 state.isError = false;
+                const responseData = action.payload;
                 state.registerResponse = responseData;
-                state.registerUser = responseData.user || null;
+                state.registerUser = responseData.data?.user || null;
+                state.accessToken = responseData.data?.tokens?.accessToken || '';
+                state.refreshToken = responseData.data?.tokens?.refreshToken || '';
                 state.errorMessage = responseData?.message || '';
             },
         );
 
         // Register - rejected (failure)
-        builder.addCase(RegisterAction.rejected, (state, action: PayloadAction<AuthRegisterResponseModel | any>) => {
+        builder.addCase(RegisterAction.rejected, (state, action) => {
             state.isRegisterLoading = false;
             state.isError = true;
-            const responseData = action.payload;
+            const responseData = action.payload as AuthRegisterResponseModel;
             state.errorMessage = responseData?.message || 'Registration Failed';
-            state.registerResponse = responseData;
+            state.registerResponse = responseData || null;
             state.registerUser = null;
+            state.accessToken = '';
+            state.refreshToken = '';
         });
     },
 });
 
-export const { setRegisterResponse, setRegisterUser, setToken, setIsRegisterLoading, setIsError, setErrorMessage } = authAppSlice.actions;
+export const { setRegisterResponse, setRegisterUser, setAccessToken, setRefreshToken, setIsRegisterLoading, setIsError, setErrorMessage } = authAppSlice.actions;
 
 export default authAppSlice.reducer;

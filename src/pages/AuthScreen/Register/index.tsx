@@ -31,7 +31,9 @@ const RegisterScreen = () => {
   const navigation: any = useNavigation();
   const dispatch = useAppDispatch();
   const [selectedCountry, setSelectedCountry] = useState<null | ICountry>(null);
-  const { isRegisterLoading } = useAppSelector(state => state.authApp);
+  const { isRegisterLoading, errorMessage } = useAppSelector(
+    state => state.authApp,
+  );
   const [registerInputState, setRegisterInputState] = useState({
     name: '',
     email: '',
@@ -71,10 +73,11 @@ const RegisterScreen = () => {
     };
     dispatch(RegisterAction(postRegister) as any)
       .unwrap()
-      .then((res: AuthRegisterResponseModel | any) => {
+      .then((res: AuthRegisterResponseModel) => {
+        console.log('RegisterResponse=>', res);
         Alert.alert(
-          `Hi ${res.user?.name}`,
-          res.message,
+          `Hi ${res.data?.user?.name || 'User'}`,
+          res.message || 'Registration Successful',
           [
             {
               text: 'OK',
@@ -95,8 +98,12 @@ const RegisterScreen = () => {
           { cancelable: false },
         );
       })
-      .catch((err: AuthRegisterResponseModel | any) => {
-        Alert.alert('Failed', err.message);
+      .catch((err: AuthRegisterResponseModel) => {
+        console.log('RegisterError=>', err);
+        Alert.alert(
+          'Registration Failed',
+          err?.message || 'Something went wrong. Please try again.',
+        );
       });
   };
 
