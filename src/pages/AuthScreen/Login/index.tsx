@@ -187,9 +187,9 @@ const LoginScreen = () => {
             </View>
 
             {/* Forgot Password Link */}
-            <TouchableOpacity style={styles.forgotPassword}>
+            {/* <TouchableOpacity style={styles.forgotPassword}>
               <Text style={styles.forgotText}>Forgot Password?</Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
 
             <TouchableOpacity
               onPress={isLoginLoading ? () => {} : onLogin}

@@ -57,7 +57,7 @@ const AppNavigation = () => {
               <Stack.Screen
                 name="ContactUs"
                 component={ContactUs}
-                options={{ ...myOptions, headerShown: true }}
+                options={{ ...myOptions, headerShown: true, title: 'Profile' }}
               />
             </Stack.Group>
           ) : (

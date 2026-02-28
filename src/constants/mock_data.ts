@@ -25,8 +25,8 @@ export const dashboardMenuItems: MenuItem[] = [
     },
     {
         id: 3,
-        title: 'Contact Us',
-        icon: 'call-outline',
+        title: 'Profile',
+        icon: 'person-outline',
         color: COLORS.primaryRed,
     },
     { id: 4, title: 'Privacy Policy', icon: 'lock-closed-outline', color: COLORS.primaryRed },
