@@ -43,7 +43,7 @@ const AppNavigation = () => {
       <View style={styles.container}>
         <Stack.Navigator initialRouteName={accessToken ? 'Dashboard' : 'Login'}>
           {accessToken ? (
-            <>
+            <Stack.Group>
               <Stack.Screen
                 name="Dashboard"
                 component={DashboardScreen}
@@ -59,20 +59,20 @@ const AppNavigation = () => {
                 component={ContactUs}
                 options={{ ...myOptions, headerShown: true }}
               />
-            </>
+            </Stack.Group>
           ) : (
-            <>
-              <Stack.Screen
-                name="Register"
-                component={RegisterScreen}
-                options={{ ...myOptions, headerShown: false }}
-              />
+            <Stack.Group screenOptions={{ headerShown: false }}>
               <Stack.Screen
                 name="Login"
                 component={LoginScreen}
-                options={{ ...myOptions, headerShown: false }}
+                options={{ ...myOptions }}
               />
-            </>
+              <Stack.Screen
+                name="Register"
+                component={RegisterScreen}
+                options={{ ...myOptions }}
+              />
+            </Stack.Group>
           )}
         </Stack.Navigator>
       </View>

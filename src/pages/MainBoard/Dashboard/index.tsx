@@ -13,10 +13,13 @@ import AppStatusBar from '../../../app_header/AppStatusBar';
 import { COLORS } from '../../../constants/colors';
 import { dashboardMenuItems } from '../../../constants/mock_data';
 import { useNavigation } from '@react-navigation/native';
+import { useAppDispatch } from '../../../app/redux/hooks';
+import { setLogout } from '../../../app/redux/slices/authAppSlice';
 
 const { width } = Dimensions.get('window');
 
 const DashboardScreen = () => {
+  const dispatch = useAppDispatch();
   const navigation: any = useNavigation();
 
   const onServicePress = (id: number) => {
@@ -25,10 +28,13 @@ const DashboardScreen = () => {
     } else if (id === 3) {
       navigation.navigate('ContactUs');
     } else if (id === 6) {
-      navigation.reset({
-        index: 0,
-        routes: [{ name: 'Login' }],
-      });
+      dispatch(setLogout());
+      // setTimeout(() => {
+      //   navigation.reset({
+      //     index: 0,
+      //     routes: [{ name: 'Login' }],
+      //   });
+      // }, 0);
     }
   };
   return (
