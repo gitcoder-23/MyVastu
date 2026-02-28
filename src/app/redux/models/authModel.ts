@@ -23,3 +23,15 @@ export interface AuthRegisterUserModel {
     createdAt?: string;
     updatedAt?: string;
 }
+
+export interface AuthRefreshTokenModel {
+    success?: boolean;
+    message?: string;
+    data?: {
+        accessToken?: string;
+        refreshToken?: string;
+        expiresIn?: number;
+    } | null;
+    error?: null;
+    statusCode?: number;
+}

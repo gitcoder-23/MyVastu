@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { LoginAction, RegisterAction } from '../actions/authAction';
-import { AuthResponseModel, AuthRegisterUserModel } from '../models/authModel';
+import { LoginAction, RefreshTokenAction, RegisterAction } from '../actions/authAction';
+import { AuthResponseModel, AuthRegisterUserModel, AuthRefreshTokenModel } from '../models/authModel';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export interface AuthAppState {
     registerResponse: AuthResponseModel | null;
@@ -41,6 +42,18 @@ const authAppSlice = createSlice({
             state.errorMessage = 'Login success';
             state.isLoginLoading = false;
         },
+        setRefreshToken: (state, action: PayloadAction<{ refreshToken: string }>) => {
+            state.refreshToken = action.payload.refreshToken;
+            state.errorMessage = 'Refresh token success';
+            state.isLoginLoading = false;
+        },
+        setTokens: (state, action: PayloadAction<{ accessToken: string; refreshToken: string }>) => {
+            state.accessToken = action.payload.accessToken;
+            state.refreshToken = action.payload.refreshToken;
+
+            // Save to AsyncStorage
+            saveTokensToStorage(action.payload);
+        },
         setLogout: state => {
             state.accessToken = '';
             state.refreshToken = '';
@@ -48,6 +61,13 @@ const authAppSlice = createSlice({
             state.loginUser = null;
             state.errorMessage = 'Logout success';
             state.isLoginLoading = false;
+
+            // Clear from AsyncStorage
+            clearTokensFromStorage();
+        },
+        restoreTokens: (state, action: PayloadAction<{ accessToken: string; refreshToken: string }>) => {
+            state.accessToken = action.payload.accessToken;
+            state.refreshToken = action.payload.refreshToken;
         },
     },
     extraReducers: function (builder) {
@@ -70,6 +90,14 @@ const authAppSlice = createSlice({
                 state.accessToken = responseData.data?.tokens?.accessToken || '';
                 state.refreshToken = responseData.data?.tokens?.refreshToken || '';
                 state.errorMessage = responseData?.message || '';
+
+                // Save tokens to storage
+                // if (state.accessToken && state.refreshToken) {
+                //     saveTokensToStorage({
+                //         accessToken: state.accessToken,
+                //         refreshToken: state.refreshToken
+                //     });
+                // }
             },
         );
 
@@ -104,6 +132,15 @@ const authAppSlice = createSlice({
                 state.accessToken = responseData.data?.tokens?.accessToken || '';
                 state.refreshToken = responseData.data?.tokens?.refreshToken || '';
                 state.errorMessage = responseData?.message || '';
+
+
+                // Save tokens to storage
+                if (state.accessToken && state.refreshToken) {
+                    saveTokensToStorage({
+                        accessToken: state.accessToken,
+                        refreshToken: state.refreshToken
+                    });
+                }
             },
         );
 
@@ -118,9 +155,92 @@ const authAppSlice = createSlice({
             state.accessToken = '';
             state.refreshToken = '';
         });
+
+        // Refresh Token - pending
+        builder.addCase(RefreshTokenAction.pending, state => {
+            state.isLoginLoading = true;
+            state.isError = false;
+            state.errorMessage = '';
+        });
+
+        // Refresh Token - fulfilled (success)
+        builder.addCase(
+            RefreshTokenAction.fulfilled,
+            (state, action: PayloadAction<AuthRefreshTokenModel>) => {
+                state.isLoginLoading = false;
+                state.isError = false;
+                const responseData = action.payload;
+                // Only update if new tokens are provided
+                if (responseData.data?.accessToken) {
+                    state.accessToken = responseData.data.accessToken || '';
+                }
+                if (responseData.data?.refreshToken) {
+                    state.refreshToken = responseData.data.refreshToken || '';
+                }
+                // state.refreshToken = responseData.data?.refreshToken || '';
+                // state.accessToken = responseData.data?.accessToken || '';
+                state.errorMessage = responseData?.message || '';
+
+                // Save updated tokens to storage
+                if (state.accessToken && state.refreshToken) {
+                    saveTokensToStorage({
+                        accessToken: state.accessToken,
+                        refreshToken: state.refreshToken
+                    });
+                }
+            },
+        );
+
+        // Refresh Token - rejected (failure)
+        builder.addCase(RefreshTokenAction.rejected, (state, action) => {
+            state.isLoginLoading = false;
+            state.isError = true;
+            const responseData = action.payload as AuthRefreshTokenModel;
+            state.errorMessage = responseData?.message || 'Refresh Token Failed';
+            state.refreshToken = '';
+            state.accessToken = '';
+
+            // Only clear tokens if refresh fails permanently
+            if (responseData?.statusCode === 401) {
+                state.refreshToken = '';
+                state.accessToken = '';
+                clearTokensFromStorage();
+            }
+        });
     },
 });
 
-export const { setLogin, setLogout } = authAppSlice.actions;
 
+// AsyncStorage helper functions
+const TOKEN_STORAGE_KEY = '@auth_tokens';
+
+const saveTokensToStorage = async (tokens: { accessToken: string; refreshToken: string }) => {
+    try {
+        await AsyncStorage.setItem(TOKEN_STORAGE_KEY, JSON.stringify(tokens));
+    } catch (error) {
+        console.error('Error saving tokens:', error);
+    }
+};
+
+const clearTokensFromStorage = async () => {
+    try {
+        await AsyncStorage.removeItem(TOKEN_STORAGE_KEY);
+    } catch (error) {
+        console.error('Error clearing tokens:', error);
+    }
+};
+
+export const loadTokensFromStorage = async (): Promise<{ accessToken: string; refreshToken: string } | null> => {
+    try {
+        const tokens = await AsyncStorage.getItem(TOKEN_STORAGE_KEY);
+        return tokens ? JSON.parse(tokens) : null;
+    } catch (error) {
+        console.error('Error loading tokens:', error);
+        return null;
+    }
+};
+
+
+
+export const { setLogin, setLogout, setRefreshToken, setTokens, restoreTokens } = authAppSlice.actions;
 export default authAppSlice.reducer;
