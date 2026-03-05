@@ -3,14 +3,14 @@ import { uploadFloorSidePlanAction } from '../actions/sidePlanAction';
 
 export interface FloorSidePlanState {
     sidePlanResponse: any | null;
-    isSidePlanLoading: boolean;
+    isSidePlanUploadLoading: boolean;
     isError: boolean;
     errorMessage: string | undefined;
 }
 
 const initialState: FloorSidePlanState = {
     sidePlanResponse: null,
-    isSidePlanLoading: false,
+    isSidePlanUploadLoading: false,
     isError: false,
     errorMessage: '',
 };
@@ -23,11 +23,11 @@ const floorSidePlanSlice = createSlice({
         setSidePlanResponseData: (state, action: PayloadAction<{ responseData: any }>) => {
             state.sidePlanResponse = action.payload.responseData;
             state.errorMessage = 'Login success';
-            state.isSidePlanLoading = false;
+            state.isSidePlanUploadLoading = false;
         },
         setClearSidePlanResponseData: state => {
             state.sidePlanResponse = null;
-            state.isSidePlanLoading = false;
+            state.isSidePlanUploadLoading = false;
             state.isError = false;
             state.errorMessage = 'Logout success';
         },
@@ -35,7 +35,7 @@ const floorSidePlanSlice = createSlice({
     extraReducers: function (builder) {
         // uploadFloorSidePlanAction - pending
         builder.addCase(uploadFloorSidePlanAction.pending, state => {
-            state.isSidePlanLoading = true;
+            state.isSidePlanUploadLoading = true;
             state.isError = false;
             state.errorMessage = '';
         });
@@ -44,7 +44,7 @@ const floorSidePlanSlice = createSlice({
         builder.addCase(
             uploadFloorSidePlanAction.fulfilled,
             (state, action: PayloadAction<any>) => {
-                state.isSidePlanLoading = false;
+                state.isSidePlanUploadLoading = false;
                 state.isError = false;
                 const responseData = action.payload;
                 state.sidePlanResponse = responseData;
@@ -53,7 +53,7 @@ const floorSidePlanSlice = createSlice({
 
         // uploadFloorSidePlanAction - rejected (failure)
         builder.addCase(uploadFloorSidePlanAction.rejected, (state, action) => {
-            state.isSidePlanLoading = false;
+            state.isSidePlanUploadLoading = false;
             state.isError = true;
             const responseData = action.payload as any;
             state.errorMessage = responseData?.message || 'Response Failed';

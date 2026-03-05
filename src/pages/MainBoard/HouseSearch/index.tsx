@@ -16,18 +16,20 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { COLORS } from '../../../constants/colors';
 import AppStatusBar from '../../../app_header/AppStatusBar';
 import { Entypo } from '@expo/vector-icons';
-import { useAppDispatch } from '../../../app/redux/hooks';
+import { useAppDispatch, useAppSelector } from '../../../app/redux/hooks';
 import { uploadFloorSidePlanAction } from '../../../app/redux/actions/sidePlanAction';
 import { styles } from './styles';
 import { launchImageLibrary } from 'react-native-image-picker';
+import { GOOGLE_PLACES_API_KEY } from '../../../app/api/config';
 
 const HouseSearch = () => {
   const dispatch = useAppDispatch();
+  const { isSidePlanUploadLoading } = useAppSelector(
+    state => state.floorSidePlan,
+  );
 
   const [placeDetails, setPlaceDetails] = useState<any>(null);
   const ref = useRef<GooglePlacesAutocompleteRef>(null);
-
-  const GOOGLE_PLACES_API_KEY = 'AIzaSyBUOey4Ezc9bmlVZbvSv5QNFaUprO9Mgwg';
 
   // Logic to determine cardinal orientation and rotation angle
   const getPoleData = (lat: number, lng: number) => {
@@ -61,9 +63,9 @@ const HouseSearch = () => {
   const onUploadImage = () => {
     const options: any = {
       mediaType: 'photo' as const,
-      maxWidth: 1024, // Optional: Resize for faster uploads
+      maxWidth: 1024,
       maxHeight: 1024,
-      quality: 1, // Keep original quality
+      quality: 1,
     };
 
     launchImageLibrary(options, response => {
@@ -74,17 +76,15 @@ const HouseSearch = () => {
       } else if (response.assets && response.assets.length > 0) {
         const asset = response.assets[0];
 
-        // Constructing file data for multipart/form-data
         const fileData = {
           uri:
             Platform.OS === 'ios'
               ? asset.uri?.replace('file://', '')
               : asset.uri,
-          name: asset.fileName || `upload_${Date.now()}.jpg`,
+          name: asset.fileName || `floorplan_upload_${Date.now()}.jpg`,
           type: asset.type || 'image/jpeg',
         };
 
-        // Proceed to your existing handleUpload logic
         handleUpload(fileData);
       }
     });
@@ -239,13 +239,21 @@ const HouseSearch = () => {
                   </View>
                 </View>
                 <TouchableOpacity
-                  onPress={onUploadImage}
+                  onPress={isSidePlanUploadLoading ? () => {} : onUploadImage}
                   style={styles.uploadButtonContainer}
+                  disabled={isSidePlanUploadLoading}
                 >
-                  <View style={styles.uploadButton}>
+                  <View
+                    style={[
+                      styles.uploadButton,
+                      isSidePlanUploadLoading ? { opacity: 0.5 } : null,
+                    ]}
+                  >
                     <Entypo name="upload" size={24} color={COLORS.whiteColor} />
                     <Text style={styles.uploadButtonText}>
-                      Upload Floor Plan
+                      {isSidePlanUploadLoading
+                        ? 'Uploading...'
+                        : 'Upload Floor Plan'}
                     </Text>
                   </View>
                 </TouchableOpacity>
