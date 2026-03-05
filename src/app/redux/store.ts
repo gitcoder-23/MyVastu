@@ -11,6 +11,7 @@ import {
     REGISTER,
 } from 'redux-persist';
 import authAppSlice from './slices/authAppSlice';
+import floorSidePlanSlice from './slices/floorSidePlanSlice';
 
 const authPersistConfig = {
     key: 'authApp',
@@ -20,6 +21,7 @@ const authPersistConfig = {
 
 const combinedReducer = combineReducers({
     authApp: persistReducer(authPersistConfig, authAppSlice),
+    floorSidePlan: floorSidePlanSlice,
 });
 
 const rootReducer = (state: any, action: any) => {

@@ -1,7 +1,12 @@
 import axios from 'axios';
-import { baseUrl } from './config';
+import { baseUrl, baseUrlNew } from './config';
 const rootApi = axios.create({
     baseURL: baseUrl,
+});
+
+
+export const rootApiNew = axios.create({
+    baseURL: baseUrlNew,
 });
 
 

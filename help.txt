@@ -3,3 +3,14 @@ https://thepaingolgroup.zenithprods.com/
 
 // API Doc
 https://api.bastu.dtftsolutions.com/api/docs#/
+
+
+// another API Doc
+https://api.vastu.dtftsolutions.com/docs#/
+
+
+{
+  "email": "john@example.com",
+  "mobile": "+91-9876543210",
+  "password": "StrongPass@123"
+}

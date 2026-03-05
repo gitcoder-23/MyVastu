@@ -1,0 +1,187 @@
+import { StyleSheet } from "react-native";
+import { COLORS } from "../../../constants/colors";
+
+export const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: COLORS.backgroundLight,
+    },
+    searchSection: {
+        padding: 15,
+        backgroundColor: COLORS.primaryRed,
+        zIndex: 1,
+        elevation: 5,
+        shadowColor: '#000',
+        shadowOpacity: 0.2,
+        shadowRadius: 10,
+    },
+    autocompleteContainer: {
+        backgroundColor: 'transparent',
+    },
+    autocompleteInput: {
+        height: 50,
+        color: COLORS.black1,
+        fontSize: 16,
+        borderRadius: 8,
+        paddingHorizontal: 15,
+        backgroundColor: COLORS.whiteColor,
+    },
+    clearIcon: {
+        position: 'absolute',
+        right: 25,
+        top: 15,
+        zIndex: 10,
+    },
+    resultList: {
+        backgroundColor: COLORS.whiteColor,
+        borderRadius: 8,
+        marginTop: 5,
+        elevation: 5,
+        position: 'absolute',
+        top: 55,
+        width: '100%',
+    },
+    content: {
+        padding: 15,
+        paddingTop: 10,
+        flexGrow: 1,
+    },
+    detailsCard: {
+        backgroundColor: COLORS.whiteColor,
+        marginTop: 40,
+        borderRadius: 15,
+        padding: 20,
+        elevation: 4,
+    },
+    cardHeader: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 15,
+    },
+    locationName: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        color: COLORS.primaryRed,
+        marginLeft: 10,
+        flex: 1,
+    },
+    divider: {
+        height: 1,
+        backgroundColor: COLORS.inputBorder,
+        marginBottom: 15,
+    },
+    infoRow: {
+        marginBottom: 15,
+    },
+    poleContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 15,
+        backgroundColor: COLORS.backgroundLight,
+        padding: 10,
+        borderRadius: 10,
+    },
+
+    compassContainer: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: 70,
+    },
+    compassNorthLabel: {
+        fontSize: 12,
+        fontWeight: 'bold',
+        color: COLORS.primaryRed,
+        marginBottom: 2,
+    },
+    compassCircle: {
+        width: 60,
+        height: 60,
+        borderRadius: 30,
+        backgroundColor: COLORS.primaryRed,
+        alignItems: 'center',
+        justifyContent: 'center',
+        elevation: 3,
+        shadowColor: COLORS.primaryBlack,
+        shadowOpacity: 0.2,
+        shadowRadius: 3,
+    },
+    needleWrapper: {
+        width: 40,
+        height: 40,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+
+    compassWrapper: {
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    compassNorth: {
+        fontSize: 10,
+        fontWeight: 'bold',
+        color: COLORS.primaryRed,
+        position: 'absolute',
+        top: -7,
+    },
+    label: {
+        fontSize: 14,
+        color: COLORS.greyText,
+        marginBottom: 5,
+    },
+    value: {
+        fontSize: 16,
+        color: COLORS.black1,
+        lineHeight: 22,
+    },
+    coordinatesContainer: {
+        flexDirection: 'row',
+        backgroundColor: COLORS.secondaryRed,
+        borderRadius: 12,
+        padding: 15,
+        marginTop: 10,
+    },
+    coordBox: {
+        flex: 1,
+        alignItems: 'center',
+    },
+    coordLabel: {
+        fontSize: 12,
+        color: COLORS.primaryRed,
+        fontWeight: '600',
+        marginBottom: 4,
+    },
+    coordValue: {
+        fontSize: 15,
+        color: COLORS.black1,
+        fontWeight: 'bold',
+    },
+    emptyState: {
+        alignItems: 'center',
+        marginTop: 100,
+    },
+    emptyText: {
+        color: COLORS.lightGreyText,
+        fontSize: 16,
+        marginTop: 20,
+        textAlign: 'center',
+    },
+    // Upload button style
+    uploadButtonContainer: {
+        marginTop: 20,
+    },
+    uploadButton: {
+        backgroundColor: COLORS.primaryRed,
+        padding: 15,
+        borderRadius: 10,
+        alignItems: 'center',
+        marginTop: 10,
+        justifyContent: 'center',
+        flexDirection: 'row',
+        gap: 10,
+    },
+    uploadButtonText: {
+        color: COLORS.whiteColor,
+        fontSize: 16,
+        fontWeight: 'bold',
+    },
+});

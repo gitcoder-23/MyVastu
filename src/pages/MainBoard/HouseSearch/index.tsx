@@ -1,11 +1,12 @@
 import React, { useState, useRef } from 'react';
 import {
-  StyleSheet,
   Text,
   View,
   ScrollView,
   TouchableOpacity,
   Keyboard,
+  Platform,
+  Alert,
 } from 'react-native';
 import {
   GooglePlacesAutocomplete,
@@ -14,8 +15,15 @@ import {
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { COLORS } from '../../../constants/colors';
 import AppStatusBar from '../../../app_header/AppStatusBar';
+import { Entypo } from '@expo/vector-icons';
+import { useAppDispatch } from '../../../app/redux/hooks';
+import { uploadFloorSidePlanAction } from '../../../app/redux/actions/sidePlanAction';
+import { styles } from './styles';
+import { launchImageLibrary } from 'react-native-image-picker';
 
 const HouseSearch = () => {
+  const dispatch = useAppDispatch();
+
   const [placeDetails, setPlaceDetails] = useState<any>(null);
   const ref = useRef<GooglePlacesAutocompleteRef>(null);
 
@@ -48,6 +56,57 @@ const HouseSearch = () => {
     ref.current?.setAddressText('');
     setPlaceDetails(null);
     Keyboard.dismiss();
+  };
+
+  const onUploadImage = () => {
+    const options: any = {
+      mediaType: 'photo' as const,
+      maxWidth: 1024, // Optional: Resize for faster uploads
+      maxHeight: 1024,
+      quality: 1, // Keep original quality
+    };
+
+    launchImageLibrary(options, response => {
+      if (response.didCancel) {
+        console.log('User cancelled');
+      } else if (response.errorCode) {
+        Alert.alert('Picker Error', response.errorMessage);
+      } else if (response.assets && response.assets.length > 0) {
+        const asset = response.assets[0];
+
+        // Constructing file data for multipart/form-data
+        const fileData = {
+          uri:
+            Platform.OS === 'ios'
+              ? asset.uri?.replace('file://', '')
+              : asset.uri,
+          name: asset.fileName || `upload_${Date.now()}.jpg`,
+          type: asset.type || 'image/jpeg',
+        };
+
+        // Proceed to your existing handleUpload logic
+        handleUpload(fileData);
+      }
+    });
+  };
+
+  const handleUpload = (imageAsset: any) => {
+    const fileData = {
+      uri:
+        Platform.OS === 'ios'
+          ? imageAsset.uri.replace('file://', '')
+          : imageAsset.uri,
+      name: imageAsset.fileName || 'upload.jpg',
+      type: imageAsset.mimeType || 'image/jpeg',
+    };
+    dispatch(uploadFloorSidePlanAction({ file: fileData }))
+      .unwrap()
+      .then((res: any) => {
+        Alert.alert('Success', 'Floor plan extracted successfully!');
+      })
+      .catch((err: any) => {
+        Alert.alert('Error', err?.message || 'Failed to upload image');
+      });
   };
 
   return (
@@ -158,26 +217,6 @@ const HouseSearch = () => {
                       </View>
                     </View>
                   </View>
-                  {/* <View style={styles.compassWrapper}>
-                    <Ionicons
-                      name="compass"
-                      size={50}
-                      color={COLORS.primaryRed}
-                      style={{
-                        transform: [
-                          {
-                            rotate: `${
-                              getPoleData(
-                                placeDetails.geometry.location.lat,
-                                placeDetails.geometry.location.lng,
-                              ).angle
-                            }deg`,
-                          },
-                        ],
-                      }}
-                    />
-                    <Text style={styles.compassNorth}>N</Text>
-                  </View> */}
                 </View>
 
                 <View style={styles.coordinatesContainer}>
@@ -199,6 +238,17 @@ const HouseSearch = () => {
                     </Text>
                   </View>
                 </View>
+                <TouchableOpacity
+                  onPress={onUploadImage}
+                  style={styles.uploadButtonContainer}
+                >
+                  <View style={styles.uploadButton}>
+                    <Entypo name="upload" size={24} color={COLORS.whiteColor} />
+                    <Text style={styles.uploadButtonText}>
+                      Upload Floor Plan
+                    </Text>
+                  </View>
+                </TouchableOpacity>
               </>
             )}
           </View>
@@ -220,169 +270,3 @@ const HouseSearch = () => {
 };
 
 export default HouseSearch;
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: COLORS.backgroundLight,
-  },
-  searchSection: {
-    padding: 15,
-    backgroundColor: COLORS.primaryRed,
-    zIndex: 1,
-    elevation: 5,
-    shadowColor: '#000',
-    shadowOpacity: 0.2,
-    shadowRadius: 10,
-  },
-  autocompleteContainer: {
-    backgroundColor: 'transparent',
-  },
-  autocompleteInput: {
-    height: 50,
-    color: COLORS.black1,
-    fontSize: 16,
-    borderRadius: 8,
-    paddingHorizontal: 15,
-    backgroundColor: COLORS.whiteColor,
-  },
-  clearIcon: {
-    position: 'absolute',
-    right: 25,
-    top: 15,
-    zIndex: 10,
-  },
-  resultList: {
-    backgroundColor: COLORS.whiteColor,
-    borderRadius: 8,
-    marginTop: 5,
-    elevation: 5,
-    position: 'absolute',
-    top: 55,
-    width: '100%',
-  },
-  content: {
-    padding: 15,
-    paddingTop: 10,
-    flexGrow: 1,
-  },
-  detailsCard: {
-    backgroundColor: COLORS.whiteColor,
-    marginTop: 40,
-    borderRadius: 15,
-    padding: 20,
-    elevation: 4,
-  },
-  cardHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 15,
-  },
-  locationName: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: COLORS.primaryRed,
-    marginLeft: 10,
-    flex: 1,
-  },
-  divider: {
-    height: 1,
-    backgroundColor: COLORS.inputBorder,
-    marginBottom: 15,
-  },
-  infoRow: {
-    marginBottom: 15,
-  },
-  poleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 15,
-    backgroundColor: COLORS.backgroundLight,
-    padding: 10,
-    borderRadius: 10,
-  },
-
-  compassContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: 70,
-  },
-  compassNorthLabel: {
-    fontSize: 12,
-    fontWeight: 'bold',
-    color: COLORS.primaryRed,
-    marginBottom: 2,
-  },
-  compassCircle: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    backgroundColor: COLORS.primaryRed, // Red circle from your image
-    alignItems: 'center',
-    justifyContent: 'center',
-    elevation: 3,
-    shadowColor: COLORS.primaryBlack,
-    shadowOpacity: 0.2,
-    shadowRadius: 3,
-  },
-  needleWrapper: {
-    width: 40,
-    height: 40,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-
-  compassWrapper: {
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  compassNorth: {
-    fontSize: 10,
-    fontWeight: 'bold',
-    color: COLORS.primaryRed,
-    position: 'absolute',
-    top: -7,
-  },
-  label: {
-    fontSize: 14,
-    color: COLORS.greyText,
-    marginBottom: 5,
-  },
-  value: {
-    fontSize: 16,
-    color: COLORS.black1,
-    lineHeight: 22,
-  },
-  coordinatesContainer: {
-    flexDirection: 'row',
-    backgroundColor: COLORS.secondaryRed,
-    borderRadius: 12,
-    padding: 15,
-    marginTop: 10,
-  },
-  coordBox: {
-    flex: 1,
-    alignItems: 'center',
-  },
-  coordLabel: {
-    fontSize: 12,
-    color: COLORS.primaryRed,
-    fontWeight: '600',
-    marginBottom: 4,
-  },
-  coordValue: {
-    fontSize: 15,
-    color: COLORS.black1,
-    fontWeight: 'bold',
-  },
-  emptyState: {
-    alignItems: 'center',
-    marginTop: 100,
-  },
-  emptyText: {
-    color: COLORS.lightGreyText,
-    fontSize: 16,
-    marginTop: 20,
-    textAlign: 'center',
-  },
-});
