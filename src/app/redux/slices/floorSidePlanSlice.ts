@@ -1,11 +1,17 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { uploadFloorSidePlanAction } from '../actions/sidePlanAction';
+import { FloorPlanAnalysisAction, UploadFloorSidePlanAction } from '../actions/sidePlanAction';
 
 export interface FloorSidePlanState {
     sidePlanResponse: any | null;
     isSidePlanUploadLoading: boolean;
     isError: boolean;
     errorMessage: string | undefined;
+
+    // floor plan analysis
+    floorPlanAnalysisResponse: any | null;
+    isFloorPlanAnalysisLoading: boolean;
+    isErrorFloorPlanAnalysis: boolean;
+    errorMessageFloorPlanAnalysis: string | undefined;
 }
 
 const initialState: FloorSidePlanState = {
@@ -13,6 +19,12 @@ const initialState: FloorSidePlanState = {
     isSidePlanUploadLoading: false,
     isError: false,
     errorMessage: '',
+
+    // floor plan analysis
+    floorPlanAnalysisResponse: null,
+    isFloorPlanAnalysisLoading: false,
+    isErrorFloorPlanAnalysis: false,
+    errorMessageFloorPlanAnalysis: '',
 };
 
 const floorSidePlanSlice = createSlice({
@@ -22,27 +34,40 @@ const floorSidePlanSlice = createSlice({
         // Reducer action
         setSidePlanResponseData: (state, action: PayloadAction<{ responseData: any }>) => {
             state.sidePlanResponse = action.payload.responseData;
-            state.errorMessage = 'Login success';
+            state.errorMessage = '';
             state.isSidePlanUploadLoading = false;
         },
         setClearSidePlanResponseData: state => {
             state.sidePlanResponse = null;
             state.isSidePlanUploadLoading = false;
             state.isError = false;
-            state.errorMessage = 'Logout success';
+            state.errorMessage = '';
+        },
+
+        // floor plan analysis
+        setFloorPlanAnalysisResponseData: (state, action: PayloadAction<{ responseData: any }>) => {
+            state.floorPlanAnalysisResponse = action.payload.responseData;
+            state.errorMessageFloorPlanAnalysis = '';
+            state.isFloorPlanAnalysisLoading = false;
+        },
+        setClearFloorPlanAnalysisResponseData: state => {
+            state.floorPlanAnalysisResponse = null;
+            state.isFloorPlanAnalysisLoading = false;
+            state.isErrorFloorPlanAnalysis = false;
+            state.errorMessageFloorPlanAnalysis = '';
         },
     },
     extraReducers: function (builder) {
-        // uploadFloorSidePlanAction - pending
-        builder.addCase(uploadFloorSidePlanAction.pending, state => {
+        // UploadFloorSidePlanAction - pending
+        builder.addCase(UploadFloorSidePlanAction.pending, state => {
             state.isSidePlanUploadLoading = true;
             state.isError = false;
             state.errorMessage = '';
         });
 
-        // uploadFloorSidePlanAction - fulfilled (success)
+        // UploadFloorSidePlanAction - fulfilled (success)
         builder.addCase(
-            uploadFloorSidePlanAction.fulfilled,
+            UploadFloorSidePlanAction.fulfilled,
             (state, action: PayloadAction<any>) => {
                 state.isSidePlanUploadLoading = false;
                 state.isError = false;
@@ -51,8 +76,8 @@ const floorSidePlanSlice = createSlice({
             },
         );
 
-        // uploadFloorSidePlanAction - rejected (failure)
-        builder.addCase(uploadFloorSidePlanAction.rejected, (state, action) => {
+        // UploadFloorSidePlanAction - rejected (failure)
+        builder.addCase(UploadFloorSidePlanAction.rejected, (state, action) => {
             state.isSidePlanUploadLoading = false;
             state.isError = true;
             const responseData = action.payload as any;
@@ -60,9 +85,36 @@ const floorSidePlanSlice = createSlice({
             state.sidePlanResponse = responseData || null;
         });
 
+        // Floor plan analysis - pending
+        builder.addCase(FloorPlanAnalysisAction.pending, state => {
+            state.isFloorPlanAnalysisLoading = true;
+            state.isErrorFloorPlanAnalysis = false;
+            state.errorMessageFloorPlanAnalysis = '';
+        });
+
+        // Floor plan analysis - fulfilled (success)
+        builder.addCase(
+            FloorPlanAnalysisAction.fulfilled,
+            (state, action: PayloadAction<any>) => {
+                state.isFloorPlanAnalysisLoading = false;
+                state.isErrorFloorPlanAnalysis = false;
+                const responseData = action.payload;
+                state.floorPlanAnalysisResponse = responseData;
+            },
+        );
+
+        // Floor plan analysis - rejected (failure)
+        builder.addCase(FloorPlanAnalysisAction.rejected, (state, action) => {
+            state.isFloorPlanAnalysisLoading = false;
+            state.isErrorFloorPlanAnalysis = true;
+            const responseData = action.payload as any;
+            state.errorMessageFloorPlanAnalysis = responseData?.message || 'Response Failed';
+            state.floorPlanAnalysisResponse = responseData || null;
+        });
+
     },
 });
 
-export const { setSidePlanResponseData, setClearSidePlanResponseData } = floorSidePlanSlice.actions;
+export const { setSidePlanResponseData, setClearSidePlanResponseData, setFloorPlanAnalysisResponseData, setClearFloorPlanAnalysisResponseData } = floorSidePlanSlice.actions;
 
 export default floorSidePlanSlice.reducer;

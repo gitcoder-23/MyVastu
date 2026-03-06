@@ -17,10 +17,14 @@ import { COLORS } from '../../../constants/colors';
 import AppStatusBar from '../../../app_header/AppStatusBar';
 import { Entypo } from '@expo/vector-icons';
 import { useAppDispatch, useAppSelector } from '../../../app/redux/hooks';
-import { uploadFloorSidePlanAction } from '../../../app/redux/actions/sidePlanAction';
+import {
+  FloorPlanAnalysisAction,
+  UploadFloorSidePlanAction,
+} from '../../../app/redux/actions/sidePlanAction';
 import { styles } from './styles';
 import { launchImageLibrary } from 'react-native-image-picker';
 import { GOOGLE_PLACES_API_KEY } from '../../../app/api/config';
+import { setFloorPlanAnalysisResponseData } from '../../../app/redux/slices/floorSidePlanSlice';
 
 const HouseSearch = () => {
   const dispatch = useAppDispatch();
@@ -40,13 +44,13 @@ const HouseSearch = () => {
     let angle = 0;
 
     if (Math.abs(lat) > Math.abs(lng) * 2) {
-      label = `${vertical} Facing`;
+      label = `${vertical}`;
       angle = vertical === 'North' ? 0 : 180;
     } else if (Math.abs(lng) > Math.abs(lat) * 2) {
-      label = `${horizontal} Facing`;
+      label = `${horizontal}`;
       angle = horizontal === 'East' ? 90 : 270;
     } else {
-      label = `${vertical}-${horizontal} Facing`;
+      label = `${vertical}-${horizontal}`;
       if (vertical === 'North') angle = horizontal === 'East' ? 45 : 315;
       else angle = horizontal === 'East' ? 135 : 225;
     }
@@ -96,13 +100,43 @@ const HouseSearch = () => {
         Platform.OS === 'ios'
           ? imageAsset.uri.replace('file://', '')
           : imageAsset.uri,
-      name: imageAsset.fileName || 'upload.jpg',
+      name: imageAsset.fileName || `floorplan_upload_${Date.now()}.jpg`,
       type: imageAsset.mimeType || 'image/jpeg',
     };
-    dispatch(uploadFloorSidePlanAction({ file: fileData }))
+    dispatch(UploadFloorSidePlanAction({ file: fileData }))
       .unwrap()
       .then((res: any) => {
-        Alert.alert('Success', 'Floor plan extracted successfully!');
+        console.log('then.response===>', res);
+        Alert.alert(
+          `Success`,
+          'Floor plan uploaded successfully',
+          [
+            {
+              text: 'OK',
+              onPress: () => {
+                const postFloorPlanAnalysis = {
+                  direction: getPoleData(
+                    placeDetails.geometry?.location?.lat,
+                    placeDetails.geometry?.location?.lng,
+                  ).label,
+                  rooms: res.rooms,
+                };
+                dispatch(FloorPlanAnalysisAction(postFloorPlanAnalysis))
+                  .unwrap()
+                  .then((res: any) => {
+                    console.log('analysis.response===>', res);
+                    // dispatch(setFloorPlanAnalysisResponseData({ responseData: res }));
+                  })
+                  .catch((err: any) => {
+                    console.log('analysis.error===>', err);
+                  });
+              },
+            },
+          ],
+          { cancelable: false },
+        );
+
+        Alert.alert('Success', 'Floor plan uploaded successfully!');
       })
       .catch((err: any) => {
         Alert.alert('Error', err?.message || 'Failed to upload image');

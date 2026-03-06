@@ -15,4 +15,5 @@ export const getProfileApi = '/auth/profile';
 
 // Upload side-plan & Analysis
 export const uploadFloorSidePlanApi = '/floor-plans/extract';
+export const floorPlanAnalysisApi = '/floor-plans/analyze';
 

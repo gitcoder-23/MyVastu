@@ -1,5 +1,5 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { uploadFloorSidePlanApi } from '../../api/config';
+import { floorPlanAnalysisApi, uploadFloorSidePlanApi } from '../../api/config';
 import { rootApiNew } from '../../api/rootApi';
 
 // Updated type to reflect React Native file structure
@@ -11,7 +11,7 @@ type uploadFloorSidePlanActionType = {
     };
 };
 
-export const uploadFloorSidePlanAction = createAsyncThunk<
+export const UploadFloorSidePlanAction = createAsyncThunk<
     any,
     uploadFloorSidePlanActionType,
     { rejectValue: any }
@@ -41,6 +41,21 @@ export const uploadFloorSidePlanAction = createAsyncThunk<
         return response.data;
     } catch (err: any) {
         return rejectWithValue(err.response?.data || 'Upload failed');
+    }
+});
+
+export const FloorPlanAnalysisAction = createAsyncThunk<
+    any,
+    any,
+    { rejectValue: any }
+>('floorPlanAnalysis/post', async (postFloorPlanAnalysis, { rejectWithValue }) => {
+    console.log('postFloorPlanAnalysis===>', postFloorPlanAnalysis);
+    try {
+        const response = await rootApiNew.post(floorPlanAnalysisApi, postFloorPlanAnalysis);
+        console.log('response.data===>', response.data);
+        return response.data;
+    } catch (err: any) {
+        return rejectWithValue(err.response?.data);
     }
 });
 
