@@ -13,4 +13,5 @@ export type AppNavigationStackParamList = {
     DrawerMenu: undefined;
     Location: undefined;
     ContactUs: undefined;
+    SidePlanView: undefined;
 };

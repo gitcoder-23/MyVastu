@@ -13,6 +13,7 @@ import HouseSearch from '../pages/MainBoard/HouseSearch';
 import ContactUs from '../pages/MainBoard/ContactUs';
 import { useAppSelector } from '../app/redux/hooks';
 import { resetInterceptor } from '../app/api/rootApi';
+import SidePlanView from '../pages/MainBoard/SidePlanView';
 
 const Stack = createStackNavigator<AppNavigationStackParamList>();
 const myOptions: StackNavigationOptions = {
@@ -58,6 +59,15 @@ const AppNavigation = () => {
                 name="ContactUs"
                 component={ContactUs}
                 options={{ ...myOptions, headerShown: true, title: 'Profile' }}
+              />
+              <Stack.Screen
+                name="SidePlanView"
+                component={SidePlanView}
+                options={{
+                  ...myOptions,
+                  headerShown: true,
+                  title: 'View Plan',
+                }}
               />
             </Stack.Group>
           ) : (

@@ -25,8 +25,10 @@ import { styles } from './styles';
 import { launchImageLibrary } from 'react-native-image-picker';
 import { GOOGLE_PLACES_API_KEY } from '../../../app/api/config';
 import { setFloorPlanAnalysisResponseData } from '../../../app/redux/slices/floorSidePlanSlice';
+import { useNavigation } from '@react-navigation/native';
 
 const HouseSearch = () => {
+  const navigation: any = useNavigation();
   const dispatch = useAppDispatch();
   const { isSidePlanUploadLoading } = useAppSelector(
     state => state.floorSidePlan,
@@ -114,22 +116,29 @@ const HouseSearch = () => {
             {
               text: 'OK',
               onPress: () => {
-                const postFloorPlanAnalysis = {
+                navigation.navigate('SidePlanView', {
                   direction: getPoleData(
                     placeDetails.geometry?.location?.lat,
                     placeDetails.geometry?.location?.lng,
                   ).label,
-                  rooms: res.rooms,
-                };
-                dispatch(FloorPlanAnalysisAction(postFloorPlanAnalysis))
-                  .unwrap()
-                  .then((res: any) => {
-                    console.log('analysis.response===>', res);
-                    // dispatch(setFloorPlanAnalysisResponseData({ responseData: res }));
-                  })
-                  .catch((err: any) => {
-                    console.log('analysis.error===>', err);
-                  });
+                  imageUri: imageAsset.uri, // Pass the local or remote URI
+                  extractedData: res, // Pass the API response (rooms, etc.)
+                });
+                // const postFloorPlanAnalysis = {
+                //   direction: getPoleData(
+                //     placeDetails.geometry?.location?.lat,
+                //     placeDetails.geometry?.location?.lng,
+                //   ).label,
+                //   rooms: res.rooms,
+                // };
+                // dispatch(FloorPlanAnalysisAction(postFloorPlanAnalysis))
+                //   .unwrap()
+                //   .then((res: any) => {
+                //     console.log('analysis.response===>', res);
+                //   })
+                //   .catch((err: any) => {
+                //     console.log('analysis.error===>', err);
+                //   });
               },
             },
           ],
