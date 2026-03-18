@@ -14,3 +14,93 @@ https://api.vastu.dtftsolutions.com/docs#/
   "mobile": "+91-9876543210",
   "password": "StrongPass@123"
 }
+
+
+
+{
+"entrance": "north",
+"imageWidth": 500,
+"imageHeight": 1500,
+"rooms": [
+{
+"id": "30a0eda9-2235-4a02-8203-146e0b8f9802",
+"name": "BATH",
+"center": {
+"x": 610,
+"y": 56
+}
+},
+{
+"id": "839ed0d7-175a-4756-b129-c674d4775de8",
+"name": "3466",
+"center": {
+"x": 606,
+"y": 69
+}
+},
+{
+"id": "2ff99438-a0f5-4b9e-9e08-3b607d0b85e5",
+"name": "FAMILY ROOM",
+"center": {
+"x": 190.5,
+"y": 99
+}
+},
+{
+"id": "f055db4b-5b47-4c7c-a4fb-cf4c988060ee",
+"name": "PRIMARY BATH",
+"center": {
+"x": 543.5,
+"y": 101.5
+}
+},
+{
+"id": "ed8c8bc6-da55-43f8-bff2-f62f9b091055",
+"name": "PRIMARY BEDROOM",
+"center": {
+"x": 390.5,
+"y": 115
+}
+},
+{
+"id": "fa671906-97b2-4d1a-84ae-27dca35fbd8b",
+"name": "W.I.C.",
+"center": {
+"x": 553,
+"y": 173.5
+}
+},
+{
+"id": "3c6e916b-ebfc-42fd-88b2-5a9e557bd639",
+"name": "HALL",
+"center": {
+"x": 473.5,
+"y": 229.5
+}
+},
+{
+"id": "7e7125be-6bea-4862-9a79-75da51bb3cf2",
+"name": "BILLIARD ROOM",
+"center": {
+"x": 489.5,
+"y": 336
+}
+},
+{
+"id": "038a1d03-7ca9-4818-8981-4ff3826d3190",
+"name": "BEDROOM",
+"center": {
+"x": 134,
+"y": 349.5
+}
+},
+{
+"id": "8f1e49cb-b9ca-4567-b20c-5f53552b7ac8",
+"name": "BEDROOM",
+"center": {
+"x": 264.5,
+"y": 389
+}
+}
+]
+}
