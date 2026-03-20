@@ -35,7 +35,6 @@ import Animated, {
   useSharedValue,
   useAnimatedStyle,
   runOnJS,
-  useAnimatedProps,
 } from 'react-native-reanimated';
 
 const HouseSearch = () => {
@@ -49,31 +48,23 @@ const HouseSearch = () => {
   const ref = useRef<GooglePlacesAutocompleteRef>(null);
 
   const rotation = useSharedValue(0);
+  // const [manualFacing, setManualFacing] = useState('North');
   const [displayFacing, setDisplayFacing] = useState('North');
-  const lastDirection = useSharedValue('North');
-  const CENTER = 75;
-  const facing = useSharedValue('North');
-
-  const gesture = Gesture.Pan().onUpdate(event => {
-    const x = event.x - CENTER;
-    const y = event.y - CENTER;
-
-    const rad = Math.atan2(y, x);
-    let deg = (rad * 180) / Math.PI + 90;
-
-    if (deg < 0) deg += 360;
-
-    rotation.value = deg;
-
-    const label = getDirectionLabel(deg);
-
-    if (label !== lastDirection.value) {
-      lastDirection.value = label;
-      runOnJS(setDisplayFacing)(label);
-    }
-  });
-
+  // 2. Logic to convert Degrees to Vastu Directions
+  // const getDirectionLabel = (deg: number) => {
+  //   'worklet';
+  //   const angle = ((deg % 360) + 360) % 360; // Normalize to 0-359
+  //   if (angle >= 337.5 || angle < 22.5) return 'North';
+  //   if (angle >= 22.5 && angle < 67.5) return 'North-East';
+  //   if (angle >= 67.5 && angle < 112.5) return 'East';
+  //   if (angle >= 112.5 && angle < 157.5) return 'South-East';
+  //   if (angle >= 157.5 && angle < 202.5) return 'South';
+  //   if (angle >= 202.5 && angle < 247.5) return 'South-West';
+  //   if (angle >= 247.5 && angle < 292.5) return 'West';
+  //   return 'North-West';
+  // };
   const getDirectionLabel = (angle: number) => {
+    // Normalize angle to be between 0 and 360
     const normalizedAngle = ((angle % 360) + 360) % 360;
 
     if (normalizedAngle >= 337.5 || normalizedAngle < 22.5) return 'North';
@@ -91,9 +82,60 @@ const HouseSearch = () => {
     return 'North';
   };
 
+  const gesture = Gesture.Pan().onUpdate(event => {
+    // Calculate the angle based on the center of the compass circle
+    const rad = Math.atan2(event.y, event.x);
+    const deg = (rad * 180) / Math.PI + 90; // Adjusting offset so 0 is North
+
+    rotation.value = deg;
+
+    // Update state to show the correct text label
+    const label = getDirectionLabel(deg);
+    runOnJS(setDisplayFacing)(label);
+  });
+
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [{ rotate: `${rotation.value}deg` }],
   }));
+
+  // 3. Gesture Handler for rotating the needle
+  // const gesture = Gesture.Pan().onUpdate(event => {
+  //   // Calculate angle based on touch coordinates relative to center
+  //   const rad = Math.atan2(event.y, event.x);
+  //   const deg = (rad * 180) / Math.PI + 90;
+  //   rotation.value = deg;
+
+  //   // Update the UI label
+  //   const label = getDirectionLabel(deg);
+  //   runOnJS(setManualFacing)(label);
+  // });
+
+  // const animatedNeedleStyle = useAnimatedStyle(() => ({
+  //   transform: [{ rotate: `${rotation.value}deg` }],
+  // }));
+
+  // Logic to determine cardinal orientation and rotation angle
+  // const getPoleData = (lat: number, lng: number) => {
+  //   let vertical = lat >= 0 ? 'North' : 'South';
+  //   let horizontal = lng >= 0 ? 'East' : 'West';
+
+  //   let label = '';
+  //   let angle = 0;
+
+  //   if (Math.abs(lat) > Math.abs(lng) * 2) {
+  //     label = `${vertical}`;
+  //     angle = vertical === 'North' ? 0 : 180;
+  //   } else if (Math.abs(lng) > Math.abs(lat) * 2) {
+  //     label = `${horizontal}`;
+  //     angle = horizontal === 'East' ? 90 : 270;
+  //   } else {
+  //     label = `${vertical}-${horizontal}`;
+  //     if (vertical === 'North') angle = horizontal === 'East' ? 45 : 315;
+  //     else angle = horizontal === 'East' ? 135 : 225;
+  //   }
+
+  //   return { label, angle };
+  // };
 
   const handleClear = () => {
     ref.current?.setAddressText('');
@@ -130,13 +172,6 @@ const HouseSearch = () => {
       }
     });
   };
-  const animatedText = useAnimatedProps(() => {
-    return {
-      text: facing.value,
-    };
-  });
-
-  console.log('ANGLE:', rotation.value, 'LABEL:', facing.value);
 
   const handleUpload = (imageAsset: any) => {
     const fileData = {
@@ -157,7 +192,31 @@ const HouseSearch = () => {
           [
             {
               text: 'OK',
-              onPress: () => {},
+              onPress: () => {
+                // navigation.navigate('SidePlanView', {
+                //   direction: getPoleData(
+                //     placeDetails.geometry?.location?.lat,
+                //     placeDetails.geometry?.location?.lng,
+                //   ).label,
+                //   imageUri: imageAsset.uri, // Pass the local or remote URI
+                //   extractedData: res, // Pass the API response (rooms, etc.)
+                // });
+                // const postFloorPlanAnalysis = {
+                //   direction: getPoleData(
+                //     placeDetails.geometry?.location?.lat,
+                //     placeDetails.geometry?.location?.lng,
+                //   ).label,
+                //   rooms: res.rooms,
+                // };
+                // dispatch(FloorPlanAnalysisAction(postFloorPlanAnalysis))
+                //   .unwrap()
+                //   .then((res: any) => {
+                //     console.log('analysis.response===>', res);
+                //   })
+                //   .catch((err: any) => {
+                //     console.log('analysis.error===>', err);
+                //   });
+              },
             },
           ],
           { cancelable: false },
@@ -260,6 +319,53 @@ const HouseSearch = () => {
                     </GestureDetector>
                   </View>
                 </View>
+                {/* <View style={styles.poleContainer}>
+                  <View style={{ flex: 1 }}>
+                    <Text style={styles.label}>Facing:</Text>
+                    <Text
+                      style={[
+                        styles.value,
+                        { color: COLORS.primaryRed, fontWeight: 'bold' },
+                      ]}
+                    >
+                      {
+                        getPoleData(
+                          placeDetails.geometry.location.lat,
+                          placeDetails.geometry.location.lng,
+                        ).label
+                      }
+                    </Text>
+                  </View>
+
+                  <View style={styles.compassContainer}>
+                    <Text style={styles.compassNorthLabel}>N</Text>
+                    <View style={styles.compassCircle}>
+                      <View
+                        style={[
+                          styles.needleWrapper,
+                          {
+                            transform: [
+                              {
+                                rotate: `${
+                                  getPoleData(
+                                    placeDetails.geometry.location.lat,
+                                    placeDetails.geometry.location.lng,
+                                  ).angle
+                                }deg`,
+                              },
+                            ],
+                          },
+                        ]}
+                      >
+                        <Ionicons
+                          name="navigate"
+                          size={30}
+                          color={COLORS.whiteColor}
+                        />
+                      </View>
+                    </View>
+                  </View>
+                </View> */}
 
                 <View style={styles.coordinatesContainer}>
                   <View style={styles.coordBox}>
@@ -280,6 +386,25 @@ const HouseSearch = () => {
                     </Text>
                   </View>
                 </View>
+                {/* <TouchableOpacity
+                  onPress={isSidePlanUploadLoading ? () => {} : onUploadImage}
+                  style={styles.uploadButtonContainer}
+                  disabled={isSidePlanUploadLoading}
+                >
+                  <View
+                    style={[
+                      styles.uploadButton,
+                      isSidePlanUploadLoading ? { opacity: 0.5 } : null,
+                    ]}
+                  >
+                    <Entypo name="upload" size={24} color={COLORS.whiteColor} />
+                    <Text style={styles.uploadButtonText}>
+                      {isSidePlanUploadLoading
+                        ? 'Uploading...'
+                        : 'Upload Floor Plan'}
+                    </Text>
+                  </View>
+                </TouchableOpacity> */}
               </>
             )}
           </View>
