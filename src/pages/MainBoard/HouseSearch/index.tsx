@@ -5,8 +5,6 @@ import {
   ScrollView,
   TouchableOpacity,
   Keyboard,
-  Platform,
-  Alert,
 } from 'react-native';
 import {
   GooglePlacesAutocomplete,
@@ -15,36 +13,16 @@ import {
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { COLORS } from '../../../constants/colors';
 import AppStatusBar from '../../../app_header/AppStatusBar';
-import { Entypo } from '@expo/vector-icons';
-import { useAppDispatch, useAppSelector } from '../../../app/redux/hooks';
-import {
-  FloorPlanAnalysisAction,
-  UploadFloorSidePlanAction,
-} from '../../../app/redux/actions/sidePlanAction';
 import { styles } from './styles';
-import { launchImageLibrary } from 'react-native-image-picker';
 import { GOOGLE_PLACES_API_KEY } from '../../../app/api/config';
-import { setFloorPlanAnalysisResponseData } from '../../../app/redux/slices/floorSidePlanSlice';
-import { useNavigation } from '@react-navigation/native';
-import {
-  Gesture,
-  GestureDetector,
-  GestureHandlerRootView,
-} from 'react-native-gesture-handler';
+import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
   runOnJS,
-  useAnimatedProps,
 } from 'react-native-reanimated';
 
 const HouseSearch = () => {
-  const navigation: any = useNavigation();
-  const dispatch = useAppDispatch();
-  const { isSidePlanUploadLoading } = useAppSelector(
-    state => state.floorSidePlan,
-  );
-
   const [placeDetails, setPlaceDetails] = useState<any>(null);
   const ref = useRef<GooglePlacesAutocompleteRef>(null);
 
@@ -52,28 +30,8 @@ const HouseSearch = () => {
   const [displayFacing, setDisplayFacing] = useState('North');
   const lastDirection = useSharedValue('North');
   const CENTER = 75;
-  const facing = useSharedValue('North');
-
-  const gesture = Gesture.Pan().onUpdate(event => {
-    const x = event.x - CENTER;
-    const y = event.y - CENTER;
-
-    const rad = Math.atan2(y, x);
-    let deg = (rad * 180) / Math.PI + 90;
-
-    if (deg < 0) deg += 360;
-
-    rotation.value = deg;
-
-    const label = getDirectionLabel(deg);
-
-    if (label !== lastDirection.value) {
-      lastDirection.value = label;
-      runOnJS(setDisplayFacing)(label);
-    }
-  });
-
   const getDirectionLabel = (angle: number) => {
+    'worklet';
     const normalizedAngle = ((angle % 360) + 360) % 360;
 
     if (normalizedAngle >= 337.5 || normalizedAngle < 22.5) return 'North';
@@ -91,6 +49,38 @@ const HouseSearch = () => {
     return 'North';
   };
 
+  const gesture = Gesture.Pan()
+    .onBegin(event => {
+      // Calculate initial touch angle
+      const x = event.x - CENTER;
+      const y = event.y - CENTER;
+      let deg = Math.atan2(y, x) * (180 / Math.PI) + 90;
+      if (deg < 0) deg += 360;
+
+      rotation.value = deg;
+      const label = getDirectionLabel(deg);
+
+      if (label !== lastDirection.value) {
+        lastDirection.value = label;
+        runOnJS(setDisplayFacing)(label);
+      }
+    })
+    .onUpdate(event => {
+      const x = event.x - CENTER;
+      const y = event.y - CENTER;
+
+      let deg = Math.atan2(y, x) * (180 / Math.PI) + 90;
+      if (deg < 0) deg += 360;
+
+      rotation.value = deg;
+      const label = getDirectionLabel(deg);
+
+      if (label !== lastDirection.value) {
+        lastDirection.value = label;
+        runOnJS(setDisplayFacing)(label);
+      }
+    });
+
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [{ rotate: `${rotation.value}deg` }],
   }));
@@ -99,75 +89,6 @@ const HouseSearch = () => {
     ref.current?.setAddressText('');
     setPlaceDetails(null);
     Keyboard.dismiss();
-  };
-
-  const onUploadImage = () => {
-    const options: any = {
-      mediaType: 'photo' as const,
-      maxWidth: 1024,
-      maxHeight: 1024,
-      quality: 1,
-    };
-
-    launchImageLibrary(options, response => {
-      if (response.didCancel) {
-        console.log('User cancelled');
-      } else if (response.errorCode) {
-        Alert.alert('Picker Error', response.errorMessage);
-      } else if (response.assets && response.assets.length > 0) {
-        const asset = response.assets[0];
-
-        const fileData = {
-          uri:
-            Platform.OS === 'ios'
-              ? asset.uri?.replace('file://', '')
-              : asset.uri,
-          name: asset.fileName || `floorplan_upload_${Date.now()}.jpg`,
-          type: asset.type || 'image/jpeg',
-        };
-
-        handleUpload(fileData);
-      }
-    });
-  };
-  const animatedText = useAnimatedProps(() => {
-    return {
-      text: facing.value,
-    };
-  });
-
-  console.log('ANGLE:', rotation.value, 'LABEL:', facing.value);
-
-  const handleUpload = (imageAsset: any) => {
-    const fileData = {
-      uri:
-        Platform.OS === 'ios'
-          ? imageAsset.uri.replace('file://', '')
-          : imageAsset.uri,
-      name: imageAsset.fileName || `floorplan_upload_${Date.now()}.jpg`,
-      type: imageAsset.mimeType || 'image/jpeg',
-    };
-    dispatch(UploadFloorSidePlanAction({ file: fileData }))
-      .unwrap()
-      .then((res: any) => {
-        console.log('then.response===>', res);
-        Alert.alert(
-          `Success`,
-          'Floor plan uploaded successfully',
-          [
-            {
-              text: 'OK',
-              onPress: () => {},
-            },
-          ],
-          { cancelable: false },
-        );
-
-        Alert.alert('Success', 'Floor plan uploaded successfully!');
-      })
-      .catch((err: any) => {
-        Alert.alert('Error', err?.message || 'Failed to upload image');
-      });
   };
 
   return (
