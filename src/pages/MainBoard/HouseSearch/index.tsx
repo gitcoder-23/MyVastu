@@ -281,7 +281,7 @@ const HouseSearch = () => {
                     </Text>
                   </View>
                 </View>
-                <TouchableOpacity
+                {/* <TouchableOpacity
                   onPress={isSidePlanUploadLoading ? () => {} : onUploadImage}
                   style={styles.uploadButtonContainer}
                   disabled={isSidePlanUploadLoading}
@@ -299,7 +299,7 @@ const HouseSearch = () => {
                         : 'Upload Floor Plan'}
                     </Text>
                   </View>
-                </TouchableOpacity>
+                </TouchableOpacity> */}
               </>
             )}
           </View>
