@@ -63,12 +63,17 @@ const RegisterScreen = () => {
     if (!isValid) {
       return;
     }
+
+    const callingCode = selectedCountry?.idd?.root;
+    const phoneNumber = registerInputState.mobile.replace(/\s+/g, '');
     const postRegister = {
       name: registerInputState.name.trim(),
       email: registerInputState.email.trim(),
-      mobile: phoneInputRef.current?.fullPhoneNumber.trim(),
+      mobile: callingCode + phoneNumber,
       password: registerInputState.password.trim(),
     };
+    console.log('postRegister=>', postRegister);
+
     dispatch(RegisterAction(postRegister) as any)
       .unwrap()
       .then((res: AuthResponseModel) => {
@@ -89,14 +94,14 @@ const RegisterScreen = () => {
                 });
                 setShowPassword(false);
                 setShowConfirmPassword(false);
-                navigation.replace('Login');
+                navigation.navigate('Login');
               },
             },
           ],
           { cancelable: false },
         );
       })
-      .catch((err: AuthResponseModel) => {
+      .catch((err: any) => {
         console.log('RegisterError=>', err);
         Alert.alert(
           'Registration Failed',
@@ -104,6 +109,8 @@ const RegisterScreen = () => {
         );
       });
   };
+
+  console.log('isRegisterLoading==>', isRegisterLoading);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -251,6 +258,7 @@ const RegisterScreen = () => {
 
             <TouchableOpacity
               onPress={() => !isRegisterLoading && onRegister()}
+              // onPress={() => onRegister()}
               style={[
                 styles.button,
                 isRegisterLoading ? { opacity: 0.5 } : null,
@@ -259,6 +267,7 @@ const RegisterScreen = () => {
             >
               <Text style={styles.buttonText}>
                 {isRegisterLoading ? 'Loading...' : 'SIGN UP'}
+                {/* SIGN UP */}
               </Text>
             </TouchableOpacity>
           </View>

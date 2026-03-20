@@ -17,6 +17,7 @@ const authPersistConfig = {
     key: 'authApp',
     storage: AsyncStorage,
     // whitelist: ['authApp'],
+    blacklist: ['isRegisterLoading', 'isLoginLoading', 'isError']
 };
 
 const combinedReducer = combineReducers({

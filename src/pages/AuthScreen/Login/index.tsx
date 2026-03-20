@@ -62,9 +62,11 @@ const LoginScreen = () => {
       return;
     }
 
+    const callingCode = selectedCountry?.idd?.root;
+    const phoneNumber = loginInputState.mobile.replace(/\s+/g, '');
     const postLogin = {
       email: loginInputState.email.trim(),
-      mobile: phoneInputRef.current?.fullPhoneNumber.trim(),
+      mobile: callingCode + phoneNumber,
       password: loginInputState.password.trim(),
     };
     dispatch(LoginAction(postLogin) as any)

@@ -40,6 +40,14 @@ export const registerValidator = (registerInputState: any, selectedCountry: null
         return false;
     }
 
+    if (registerInputState.confirmPassword.trim().length < 6) {
+        Alert.alert(
+            'Invalid Confirm Password',
+            'Confirm Password must be at least 8 characters long.',
+        );
+        return false;
+    }
+
     if (registerInputState.password !== registerInputState.confirmPassword) {
         Alert.alert(
             'Passwords Do Not Match',
