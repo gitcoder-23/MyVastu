@@ -4,6 +4,10 @@ export const baseUrl = 'https://api.bastu.dtftsolutions.com/api/v1';
 
 export const baseUrlNew = 'https://api.vastu.dtftsolutions.com/api/v1';
 
+export const baseWebUrlDev = 'https://admin.bastu.dtftsolutions.com';
+
+export const baseWebUrl = (angle: number) => `${baseWebUrlDev}/vastu?angle=${angle}`;
+
 // Endpoint list
 export const registerApi = '/auth/register';
 export const loginApi = '/auth/login';
