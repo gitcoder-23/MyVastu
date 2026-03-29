@@ -60,7 +60,7 @@ const HouseSearch = () => {
     if (angle <= 326.25) return 'Northwest';
     if (angle <= 348.75) return 'North-northwest';
 
-    return 'Unknown';
+    return '';
   };
 
   const fetchFacingDirection = async (lat: number, lng: number) => {
