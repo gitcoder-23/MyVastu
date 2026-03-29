@@ -30,15 +30,64 @@ const HouseSearch = () => {
   const ref = useRef<GooglePlacesAutocompleteRef>(null);
 
   const rotation = useSharedValue(0);
-  const [displayFacing, setDisplayFacing] = useState('');
+  const [displayFacing, setDisplayFacing] = useState('North');
+  const lastDirection = useSharedValue('North');
+  const CENTER = 75;
+  const getDirectionLabel = (angle: number) => {
+    'worklet';
+    const normalizedAngle = ((angle % 360) + 360) % 360;
 
-  const handleClear = () => {
-    ref.current?.setAddressText('');
-    setPlaceDetails(null);
-    setDisplayFacing('');
-    rotation.value = 0;
-    Keyboard.dismiss();
+    if (normalizedAngle >= 337.5 || normalizedAngle < 22.5) return 'North';
+    if (normalizedAngle >= 22.5 && normalizedAngle < 67.5) return 'North-East';
+    if (normalizedAngle >= 67.5 && normalizedAngle < 112.5) return 'East';
+    if (normalizedAngle >= 112.5 && normalizedAngle < 157.5)
+      return 'South-East';
+    if (normalizedAngle >= 157.5 && normalizedAngle < 202.5) return 'South';
+    if (normalizedAngle >= 202.5 && normalizedAngle < 247.5)
+      return 'South-West';
+    if (normalizedAngle >= 247.5 && normalizedAngle < 292.5) return 'West';
+    if (normalizedAngle >= 292.5 && normalizedAngle < 337.5)
+      return 'North-West';
+
+    return 'North';
   };
+
+  const gesture = Gesture.Pan()
+    .onBegin(event => {
+      // Calculate initial touch angle
+      const x = event.x - CENTER;
+      const y = event.y - CENTER;
+      let deg = Math.atan2(y, x) * (180 / Math.PI) + 90;
+      if (deg < 0) deg += 360;
+
+      rotation.value = deg;
+      const label = getDirectionLabel(deg);
+      console.log('label==>', label);
+
+      if (label !== lastDirection.value) {
+        lastDirection.value = label;
+        runOnJS(setDisplayFacing)(label);
+      }
+    })
+    .onUpdate(event => {
+      const x = event.x - CENTER;
+      const y = event.y - CENTER;
+
+      let deg = Math.atan2(y, x) * (180 / Math.PI) + 90;
+      if (deg < 0) deg += 360;
+
+      rotation.value = deg;
+      const label = getDirectionLabel(deg);
+
+      if (label !== lastDirection.value) {
+        lastDirection.value = label;
+        runOnJS(setDisplayFacing)(label);
+      }
+    });
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ rotate: `${rotation.value}deg` }],
+  }));
 
   const getDirection = (angle: number) => {
     if ((angle >= 348.75 && angle <= 360) || (angle >= 0 && angle <= 11.25)) {
@@ -76,7 +125,7 @@ const HouseSearch = () => {
 
         // Update UI
         setDisplayFacing(direction);
-        rotation.value = pseudoAngle;
+        rotation.value = pseudoAngle; // Update the compass needle
       }
     } catch (error) {
       console.error('Error fetching direction:', error);
@@ -92,9 +141,13 @@ const HouseSearch = () => {
     }
     setPlaceDetails(details);
   };
-  const animatedStyle = useAnimatedStyle(() => ({
-    transform: [{ rotate: `${rotation.value}deg` }],
-  }));
+
+  const handleClear = () => {
+    ref.current?.setAddressText('');
+    setPlaceDetails(null);
+    Keyboard.dismiss();
+  };
+
   return (
     <View style={styles.container}>
       <AppStatusBar
@@ -170,17 +223,19 @@ const HouseSearch = () => {
 
                   <View style={styles.compassContainer}>
                     <Text style={styles.compassNorthLabel}>N</Text>
-                    <View style={styles.compassCircle}>
-                      <Animated.View
-                        style={[styles.needleWrapper, animatedStyle]}
-                      >
-                        <Ionicons
-                          name="navigate"
-                          size={30}
-                          color={COLORS.whiteColor}
-                        />
-                      </Animated.View>
-                    </View>
+                    <GestureDetector gesture={gesture}>
+                      <View style={styles.compassCircle}>
+                        <Animated.View
+                          style={[styles.needleWrapper, animatedStyle]}
+                        >
+                          <Ionicons
+                            name="navigate"
+                            size={30}
+                            color={COLORS.whiteColor}
+                          />
+                        </Animated.View>
+                      </View>
+                    </GestureDetector>
                   </View>
                 </View>
 

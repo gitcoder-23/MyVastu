@@ -1,5 +1,7 @@
 export const GOOGLE_PLACES_API_KEY = 'AIzaSyBUOey4Ezc9bmlVZbvSv5QNFaUprO9Mgwg';
 
+export const googleMapStreetViewApi = (lat: number, lng: number) => `https://maps.googleapis.com/maps/api/streetview/metadata?location=${lat},${lng}&key=${GOOGLE_PLACES_API_KEY}`
+
 export const baseUrl = 'https://api.bastu.dtftsolutions.com/api/v1';
 
 export const baseUrlNew = 'https://api.vastu.dtftsolutions.com/api/v1';
