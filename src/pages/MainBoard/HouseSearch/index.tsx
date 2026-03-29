@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 import {
   Text,
   View,
@@ -16,17 +16,14 @@ import AppStatusBar from '../../../app_header/AppStatusBar';
 import { styles } from './styles';
 import {
   GOOGLE_PLACES_API_KEY,
-  googleMapStreetViewApi,
   updatePlaceWebUrl,
 } from '../../../app/api/config';
-import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
-  runOnJS,
 } from 'react-native-reanimated';
 import { fetchFacingGoogleDirection } from '../../../app/services/googleServices';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 
 const HouseSearch = () => {
   const navigation: any = useNavigation();
@@ -35,15 +32,34 @@ const HouseSearch = () => {
 
   const rotation = useSharedValue(0);
   const [displayFacing, setDisplayFacing] = useState('');
+  const [angleValue, setAngleValue] = useState(0);
   // NEW STATE: For WebView visibility and URL
   const [webUrl, setWebUrl] = useState('');
 
-  const handleClear = () => {
+  // Define the cleanup logic in a separate function
+  const resetAllStates = useCallback(() => {
     ref.current?.setAddressText('');
     setPlaceDetails(null);
     setDisplayFacing('');
     rotation.value = 0;
+    setWebUrl('');
     Keyboard.dismiss();
+  }, [rotation]);
+
+  useFocusEffect(
+    useCallback(() => {
+      // Logic when screen is focused:
+      // If you want to clear the screen as soon as they return:
+      resetAllStates();
+
+      return () => {
+        // Optional: Logic when screen is blurred (leaving the screen)
+      };
+    }, [resetAllStates]),
+  );
+
+  const handleClear = () => {
+    resetAllStates();
   };
 
   const getDirection = (angle: number) => {
@@ -79,6 +95,7 @@ const HouseSearch = () => {
       // Update UI
       setDisplayFacing(direction);
       rotation.value = pseudoAngle;
+      setAngleValue(pseudoAngle);
     } catch (error) {
       console.error('Error fetching direction:', error);
     }
@@ -97,20 +114,15 @@ const HouseSearch = () => {
     transform: [{ rotate: `${rotation.value}deg` }],
   }));
 
-  // const handleUpdate = async (angle: number) => {
-  //   try {
-  //     const response = await updatePlaceWebUrl(angle);
-  //     console.log('handleUpdate-data==>', response);
-  //   } catch (error) {
-  //     console.error('Error fetching direction:', error);
-  //   }
-  // };
   const handleUpdate = (angle: number) => {
     const url = updatePlaceWebUrl(angle);
     console.log('Opening WebView with URL:', url);
     setWebUrl(url);
     navigation.navigate('AppWebView', { webUrl: url });
   };
+
+  console.log('angleValue==>', angleValue);
+
   return (
     <View style={styles.container}>
       <AppStatusBar
@@ -221,9 +233,9 @@ const HouseSearch = () => {
                 </View>
               </>
             )}
-            {rotation.value > 0 && (
+            {angleValue > 0 && (
               <TouchableOpacity
-                onPress={() => handleUpdate(rotation.value)}
+                onPress={() => handleUpdate(angleValue)}
                 style={styles.uploadButtonContainer}
               >
                 <View style={styles.uploadButton}>

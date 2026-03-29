@@ -12,6 +12,11 @@ export interface FloorSidePlanState {
     isFloorPlanAnalysisLoading: boolean;
     isErrorFloorPlanAnalysis: boolean;
     errorMessageFloorPlanAnalysis: string | undefined;
+    // Place details all
+    placeDetails: any | null;
+    isPlaceDetailsLoading: boolean;
+    isErrorPlaceDetails: boolean;
+    errorMessagePlaceDetails: string | undefined;
 }
 
 const initialState: FloorSidePlanState = {
@@ -25,6 +30,11 @@ const initialState: FloorSidePlanState = {
     isFloorPlanAnalysisLoading: false,
     isErrorFloorPlanAnalysis: false,
     errorMessageFloorPlanAnalysis: '',
+    // Place details all
+    placeDetails: null,
+    isPlaceDetailsLoading: false,
+    isErrorPlaceDetails: false,
+    errorMessagePlaceDetails: '',
 };
 
 const floorSidePlanSlice = createSlice({
