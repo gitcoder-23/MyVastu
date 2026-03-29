@@ -14,6 +14,7 @@ import ContactUs from '../pages/MainBoard/ContactUs';
 import { useAppSelector } from '../app/redux/hooks';
 import { resetInterceptor } from '../app/api/rootApi';
 import SidePlanView from '../pages/MainBoard/SidePlanView';
+import AppWebView from '../pages/AppWebView';
 
 const Stack = createStackNavigator<AppNavigationStackParamList>();
 const myOptions: StackNavigationOptions = {
@@ -67,6 +68,16 @@ const AppNavigation = () => {
                   ...myOptions,
                   headerShown: true,
                   title: 'View Plan',
+                }}
+              />
+              <Stack.Screen
+                name="AppWebView"
+                component={AppWebView}
+                // component={(webUrl: string) => <AppWebView webUrl={webUrl} />}
+                options={{
+                  ...myOptions,
+                  headerShown: true,
+                  title: 'Vastu Analysis',
                 }}
               />
             </Stack.Group>

@@ -14,4 +14,6 @@ export type AppNavigationStackParamList = {
     Location: undefined;
     ContactUs: undefined;
     SidePlanView: undefined;
+    AppWebView: undefined;
+    // AppWebView: { webUrl: string };
 };

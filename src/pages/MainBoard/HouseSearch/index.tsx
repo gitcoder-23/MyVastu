@@ -17,6 +17,7 @@ import { styles } from './styles';
 import {
   GOOGLE_PLACES_API_KEY,
   googleMapStreetViewApi,
+  updatePlaceWebUrl,
 } from '../../../app/api/config';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, {
@@ -24,13 +25,18 @@ import Animated, {
   useAnimatedStyle,
   runOnJS,
 } from 'react-native-reanimated';
+import { fetchFacingGoogleDirection } from '../../../app/services/googleServices';
+import { useNavigation } from '@react-navigation/native';
 
 const HouseSearch = () => {
+  const navigation: any = useNavigation();
   const [placeDetails, setPlaceDetails] = useState<any>(null);
   const ref = useRef<GooglePlacesAutocompleteRef>(null);
 
   const rotation = useSharedValue(0);
   const [displayFacing, setDisplayFacing] = useState('');
+  // NEW STATE: For WebView visibility and URL
+  const [webUrl, setWebUrl] = useState('');
 
   const handleClear = () => {
     ref.current?.setAddressText('');
@@ -65,19 +71,14 @@ const HouseSearch = () => {
 
   const fetchFacingDirection = async (lat: number, lng: number) => {
     try {
-      const response = await fetch(googleMapStreetViewApi(lat, lng));
-      const data = await response.json();
-      console.log('fetchFacingDirection-data==>', data);
-      if (data.status === 'OK') {
-        const pseudoAngle = Math.floor(Math.random() * 360);
-        const direction = getDirection(pseudoAngle);
-        console.log('fetchFacingDirection-pseudoAngle==>', pseudoAngle);
-        console.log('fetchFacingDirection-direction==>', direction);
+      const { pseudoAngle } = await fetchFacingGoogleDirection(lat, lng);
+      const direction = getDirection(pseudoAngle);
+      console.log('fetchFacingDirection-pseudoAngle==>', pseudoAngle);
+      console.log('fetchFacingDirection-direction==>', direction);
 
-        // Update UI
-        setDisplayFacing(direction);
-        rotation.value = pseudoAngle;
-      }
+      // Update UI
+      setDisplayFacing(direction);
+      rotation.value = pseudoAngle;
     } catch (error) {
       console.error('Error fetching direction:', error);
     }
@@ -95,6 +96,21 @@ const HouseSearch = () => {
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [{ rotate: `${rotation.value}deg` }],
   }));
+
+  // const handleUpdate = async (angle: number) => {
+  //   try {
+  //     const response = await updatePlaceWebUrl(angle);
+  //     console.log('handleUpdate-data==>', response);
+  //   } catch (error) {
+  //     console.error('Error fetching direction:', error);
+  //   }
+  // };
+  const handleUpdate = (angle: number) => {
+    const url = updatePlaceWebUrl(angle);
+    console.log('Opening WebView with URL:', url);
+    setWebUrl(url);
+    navigation.navigate('AppWebView', { webUrl: url });
+  };
   return (
     <View style={styles.container}>
       <AppStatusBar
@@ -204,6 +220,16 @@ const HouseSearch = () => {
                   </View>
                 </View>
               </>
+            )}
+            {rotation.value > 0 && (
+              <TouchableOpacity
+                onPress={() => handleUpdate(rotation.value)}
+                style={styles.uploadButtonContainer}
+              >
+                <View style={styles.uploadButton}>
+                  <Text style={styles.uploadButtonText}>Update</Text>
+                </View>
+              </TouchableOpacity>
             )}
           </View>
         ) : (
