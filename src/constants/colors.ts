@@ -17,6 +17,6 @@ export const COLORS = {
     inputBackground: '#F5F5F5',
 
     // Transparent variations
-    redTransparent: 'rgba(227, 29, 26, 0.1)',
+    redTransparent: '#e31d1a1a',
     transparentColor: 'transparent',
 };
