@@ -48,13 +48,9 @@ const HouseSearch = () => {
 
   useFocusEffect(
     useCallback(() => {
-      // Logic when screen is focused:
-      // If you want to clear the screen as soon as they return:
       resetAllStates();
 
-      return () => {
-        // Optional: Logic when screen is blurred (leaving the screen)
-      };
+      return () => {};
     }, [resetAllStates]),
   );
 
