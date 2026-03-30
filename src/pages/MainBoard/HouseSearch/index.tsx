@@ -43,6 +43,7 @@ const HouseSearch = () => {
     setDisplayFacing('');
     rotation.value = 0;
     setWebUrl('');
+    setAngleValue(0);
     Keyboard.dismiss();
   }, [rotation]);
 
@@ -91,15 +92,22 @@ const HouseSearch = () => {
       // Update UI
       setDisplayFacing(direction);
       rotation.value = pseudoAngle;
+      console.log('pseudoAngle==>', pseudoAngle);
+
       setAngleValue(pseudoAngle);
     } catch (error) {
       console.error('Error fetching direction:', error);
+      const direction = getDirection(0);
+      setDisplayFacing(direction);
+      rotation.value = 0;
+      setAngleValue(0);
+      throw error;
     }
   };
 
   const onPressLocationDetails = (details: any, data: any) => {
-    console.log('details==>', details);
-    console.log('data==>', data);
+    console.log('onPressLocationDetails-details==>', details);
+    console.log('onPressLocationDetails-data==>', data);
     if (details?.geometry?.location) {
       const { lat, lng } = details.geometry.location;
       fetchFacingDirection(lat, lng);

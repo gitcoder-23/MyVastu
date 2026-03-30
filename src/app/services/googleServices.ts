@@ -4,6 +4,7 @@ export const fetchFacingGoogleDirection = async (lat: number, lng: number): Prom
     try {
         const response = await fetch(googleMapStreetViewApi(lat, lng));
         const data = await response.json();
+        console.log('data==>', data);
         if (data.status === 'OK') {
             const pseudoAngle = Math.floor(Math.random() * 360);
             return { pseudoAngle, data }
