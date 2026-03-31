@@ -79,7 +79,7 @@ const HouseSearch = () => {
     if (angle <= 326.25) return 'Northwest';
     if (angle <= 348.75) return 'North-northwest';
 
-    return '';
+    return 'No direction found';
   };
 
   const fetchFacingDirection = async (lat: number, lng: number) => {
@@ -243,7 +243,7 @@ const HouseSearch = () => {
                 style={styles.uploadButtonContainer}
               >
                 <View style={styles.uploadButton}>
-                  <Text style={styles.uploadButtonText}>Update</Text>
+                  <Text style={styles.uploadButtonText}>Upload House Plan</Text>
                 </View>
               </TouchableOpacity>
             )}
