@@ -3,6 +3,12 @@ export const GOOGLE_PLACES_API_KEY = 'AIzaSyBUOey4Ezc9bmlVZbvSv5QNFaUprO9Mgwg';
 export const googleMapStreetViewApi = (lat: number, lng: number, radius: number = 100) =>
     `https://maps.googleapis.com/maps/api/streetview/metadata?location=${lat},${lng}&radius=${radius}&key=${GOOGLE_PLACES_API_KEY}`;
 
+
+export const googleMapPlacePhotoApi = (photoReference: string) =>
+    `https://maps.googleapis.com/maps/api/place/photo?maxwidth=800&photoreference=${photoReference}&key=${GOOGLE_PLACES_API_KEY}`;
+
+
+
 export const baseUrl = 'https://api.bastu.dtftsolutions.com/api/v1';
 
 export const baseUrlNew = 'https://api.vastu.dtftsolutions.com/api/v1';

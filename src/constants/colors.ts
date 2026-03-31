@@ -16,6 +16,8 @@ export const COLORS = {
     black1: '#333333',
     inputBackground: '#F5F5F5',
 
+    whiteColor1: '#F9F9F9',
+
     // Transparent variations
     redTransparent: '#e31d1a1a',
     transparentColor: 'transparent',

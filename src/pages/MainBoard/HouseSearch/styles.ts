@@ -167,7 +167,7 @@ export const styles = StyleSheet.create({
     },
     // Upload button style
     uploadButtonContainer: {
-        marginTop: 20,
+        marginTop: 8,
     },
     uploadButton: {
         backgroundColor: COLORS.primaryRed,
@@ -183,5 +183,31 @@ export const styles = StyleSheet.create({
         color: COLORS.whiteColor,
         fontSize: 16,
         fontWeight: 'bold',
+    },
+    placeImage: {
+        width: '100%',
+        height: 200,
+        borderRadius: 12,
+        marginTop: 10,
+        backgroundColor: COLORS.inputBorder,
+    },
+    imageCard: {
+        marginTop: 20,
+        padding: 10,
+        backgroundColor: COLORS.whiteColor1,
+        borderRadius: 12,
+        borderWidth: 1,
+        borderColor: COLORS.inputBorder,
+    },
+    noImageContainer: {
+        marginTop: 20,
+        height: 150,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: COLORS.inputBackground,
+        borderRadius: 12,
+        borderStyle: 'dashed',
+        borderWidth: 1,
+        borderColor: COLORS.iconGrey,
     },
 });

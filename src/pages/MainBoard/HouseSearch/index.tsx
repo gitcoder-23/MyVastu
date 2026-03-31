@@ -5,6 +5,8 @@ import {
   ScrollView,
   TouchableOpacity,
   Keyboard,
+  Image,
+  ActivityIndicator,
 } from 'react-native';
 import {
   GooglePlacesAutocomplete,
@@ -16,6 +18,7 @@ import AppStatusBar from '../../../app_header/AppStatusBar';
 import { styles } from './styles';
 import {
   GOOGLE_PLACES_API_KEY,
+  googleMapPlacePhotoApi,
   updatePlaceWebUrl,
 } from '../../../app/api/config';
 import Animated, {
@@ -126,6 +129,31 @@ const HouseSearch = () => {
   };
 
   console.log('angleValue==>', angleValue);
+  const renderPlacePhoto = () => {
+    if (!placeDetails?.photos || placeDetails.photos.length === 0) {
+      return (
+        <View style={styles.noImageContainer}>
+          <Ionicons name="image-outline" size={40} color={COLORS.iconGrey} />
+          <Text style={styles.emptyText}>No image found</Text>
+        </View>
+      );
+    }
+
+    // Use the first available photo reference
+    const photoReference = placeDetails.photos[0].photo_reference;
+    const photoUrl = googleMapPlacePhotoApi(photoReference);
+
+    return (
+      <View style={styles.imageCard}>
+        <Text style={styles.label}>Location Preview:</Text>
+        <Image
+          source={{ uri: photoUrl }}
+          style={styles.placeImage}
+          resizeMode="cover"
+        />
+      </View>
+    );
+  };
 
   return (
     <View style={styles.container}>
@@ -235,6 +263,7 @@ const HouseSearch = () => {
                     </Text>
                   </View>
                 </View>
+                {renderPlacePhoto()}
               </>
             )}
             {angleValue > 0 && (
