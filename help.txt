@@ -17,6 +17,10 @@ Hounslow TW3 1BA, UK
   "password": "StrongPass@123"
 }
 
+email: rana@yopmail.com
+mobile: 9898989897
+password: Rana@123456
+
 
 
 {
