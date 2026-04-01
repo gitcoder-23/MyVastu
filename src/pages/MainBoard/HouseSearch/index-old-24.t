@@ -1,10 +1,12 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 import {
   Text,
   View,
   ScrollView,
   TouchableOpacity,
   Keyboard,
+  Image,
+  ActivityIndicator,
 } from 'react-native';
 import {
   GooglePlacesAutocomplete,
@@ -16,78 +18,49 @@ import AppStatusBar from '../../../app_header/AppStatusBar';
 import { styles } from './styles';
 import {
   GOOGLE_PLACES_API_KEY,
-  googleMapStreetViewMetadataApi,
+  googleMapPlacePhotoApi,
+  updatePlaceWebUrl,
 } from '../../../app/api/config';
-import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
-  runOnJS,
 } from 'react-native-reanimated';
+import { fetchFacingGoogleDirection } from '../../../app/services/googleServices';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 
 const HouseSearch = () => {
+  const navigation: any = useNavigation();
   const [placeDetails, setPlaceDetails] = useState<any>(null);
   const ref = useRef<GooglePlacesAutocompleteRef>(null);
 
   const rotation = useSharedValue(0);
-  const [displayFacing, setDisplayFacing] = useState('North');
-  const lastDirection = useSharedValue('North');
-  const CENTER = 75;
-  const getDirectionLabel = (angle: number) => {
-    'worklet';
-    const normalizedAngle = ((angle % 360) + 360) % 360;
+  const [displayFacing, setDisplayFacing] = useState('');
+  const [angleValue, setAngleValue] = useState(0);
+  // NEW STATE: For WebView visibility and URL
+  const [webUrl, setWebUrl] = useState('');
 
-    if (normalizedAngle >= 337.5 || normalizedAngle < 22.5) return 'North';
-    if (normalizedAngle >= 22.5 && normalizedAngle < 67.5) return 'North-East';
-    if (normalizedAngle >= 67.5 && normalizedAngle < 112.5) return 'East';
-    if (normalizedAngle >= 112.5 && normalizedAngle < 157.5)
-      return 'South-East';
-    if (normalizedAngle >= 157.5 && normalizedAngle < 202.5) return 'South';
-    if (normalizedAngle >= 202.5 && normalizedAngle < 247.5)
-      return 'South-West';
-    if (normalizedAngle >= 247.5 && normalizedAngle < 292.5) return 'West';
-    if (normalizedAngle >= 292.5 && normalizedAngle < 337.5)
-      return 'North-West';
+  // Define the cleanup logic in a separate function
+  const resetAllStates = useCallback(() => {
+    ref.current?.setAddressText('');
+    setPlaceDetails(null);
+    setDisplayFacing('');
+    rotation.value = 0;
+    setWebUrl('');
+    setAngleValue(0);
+    Keyboard.dismiss();
+  }, [rotation]);
 
-    return 'North';
+  useFocusEffect(
+    useCallback(() => {
+      resetAllStates();
+
+      return () => {};
+    }, [resetAllStates]),
+  );
+
+  const handleClear = () => {
+    resetAllStates();
   };
-
-  const gesture = Gesture.Pan()
-    .onBegin(event => {
-      // Calculate initial touch angle
-      const x = event.x - CENTER;
-      const y = event.y - CENTER;
-      let deg = Math.atan2(y, x) * (180 / Math.PI) + 90;
-      if (deg < 0) deg += 360;
-
-      rotation.value = deg;
-      const label = getDirectionLabel(deg);
-      console.log('label==>', label);
-
-      if (label !== lastDirection.value) {
-        lastDirection.value = label;
-        runOnJS(setDisplayFacing)(label);
-      }
-    })
-    .onUpdate(event => {
-      const x = event.x - CENTER;
-      const y = event.y - CENTER;
-
-      let deg = Math.atan2(y, x) * (180 / Math.PI) + 90;
-      if (deg < 0) deg += 360;
-
-      rotation.value = deg;
-      const label = getDirectionLabel(deg);
-
-      if (label !== lastDirection.value) {
-        lastDirection.value = label;
-        runOnJS(setDisplayFacing)(label);
-      }
-    });
-
-  const animatedStyle = useAnimatedStyle(() => ({
-    transform: [{ rotate: `${rotation.value}deg` }],
-  }));
 
   const getDirection = (angle: number) => {
     if ((angle >= 348.75 && angle <= 360) || (angle >= 0 && angle <= 11.25)) {
@@ -109,43 +82,77 @@ const HouseSearch = () => {
     if (angle <= 326.25) return 'Northwest';
     if (angle <= 348.75) return 'North-northwest';
 
-    return 'Unknown';
+    return 'No direction found';
   };
 
   const fetchFacingDirection = async (lat: number, lng: number) => {
     try {
-      const response = await fetch(googleMapStreetViewMetadataApi(lat, lng));
-      const data = await response.json();
-      console.log('fetchFacingDirection-data==>', data);
-      if (data.status === 'OK') {
-        const pseudoAngle = Math.floor(Math.random() * 360);
-        const direction = getDirection(pseudoAngle);
-        console.log('fetchFacingDirection-pseudoAngle==>', pseudoAngle);
-        console.log('fetchFacingDirection-direction==>', direction);
+      const { pseudoAngle } = await fetchFacingGoogleDirection(lat, lng);
+      const direction = getDirection(pseudoAngle);
+      console.log('fetchFacingDirection-pseudoAngle==>', pseudoAngle);
+      console.log('fetchFacingDirection-direction==>', direction);
 
-        // Update UI
-        setDisplayFacing(direction);
-        rotation.value = pseudoAngle; // Update the compass needle
-      }
+      // Update UI
+      setDisplayFacing(direction);
+      rotation.value = pseudoAngle;
+      console.log('pseudoAngle==>', pseudoAngle);
+
+      setAngleValue(pseudoAngle);
     } catch (error) {
       console.error('Error fetching direction:', error);
+      const direction = getDirection(0);
+      setDisplayFacing(direction);
+      rotation.value = 0;
+      setAngleValue(0);
+      throw error;
     }
   };
 
   const onPressLocationDetails = (details: any, data: any) => {
-    console.log('details==>', details);
-    console.log('data==>', data);
+    console.log('onPressLocationDetails-details==>', details);
+    console.log('onPressLocationDetails-data==>', data);
     if (details?.geometry?.location) {
       const { lat, lng } = details.geometry.location;
       fetchFacingDirection(lat, lng);
     }
     setPlaceDetails(details);
   };
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ rotate: `${rotation.value}deg` }],
+  }));
 
-  const handleClear = () => {
-    ref.current?.setAddressText('');
-    setPlaceDetails(null);
-    Keyboard.dismiss();
+  const handleUpdate = (angle: number) => {
+    const url = updatePlaceWebUrl(angle);
+    console.log('Opening WebView with URL:', url);
+    setWebUrl(url);
+    navigation.navigate('AppWebView', { webUrl: url });
+  };
+
+  console.log('angleValue==>', angleValue);
+  const renderPlacePhoto = () => {
+    if (!placeDetails?.photos || placeDetails.photos.length === 0) {
+      return (
+        <View style={styles.noImageContainer}>
+          <Ionicons name="image-outline" size={40} color={COLORS.iconGrey} />
+          <Text style={styles.emptyText}>No image found</Text>
+        </View>
+      );
+    }
+
+    // Use the first available photo reference
+    const photoReference = placeDetails.photos[0].photo_reference;
+    const photoUrl = googleMapPlacePhotoApi(photoReference);
+
+    return (
+      <View style={styles.imageCard}>
+        <Text style={styles.label}>Location Preview:</Text>
+        <Image
+          source={{ uri: photoUrl }}
+          style={styles.placeImage}
+          resizeMode="cover"
+        />
+      </View>
+    );
   };
 
   return (
@@ -223,19 +230,17 @@ const HouseSearch = () => {
 
                   <View style={styles.compassContainer}>
                     <Text style={styles.compassNorthLabel}>N</Text>
-                    <GestureDetector gesture={gesture}>
-                      <View style={styles.compassCircle}>
-                        <Animated.View
-                          style={[styles.needleWrapper, animatedStyle]}
-                        >
-                          <Ionicons
-                            name="navigate"
-                            size={30}
-                            color={COLORS.whiteColor}
-                          />
-                        </Animated.View>
-                      </View>
-                    </GestureDetector>
+                    <View style={styles.compassCircle}>
+                      <Animated.View
+                        style={[styles.needleWrapper, animatedStyle]}
+                      >
+                        <Ionicons
+                          name="navigate"
+                          size={30}
+                          color={COLORS.whiteColor}
+                        />
+                      </Animated.View>
+                    </View>
                   </View>
                 </View>
 
@@ -258,7 +263,18 @@ const HouseSearch = () => {
                     </Text>
                   </View>
                 </View>
+                {renderPlacePhoto()}
               </>
+            )}
+            {angleValue > 0 && (
+              <TouchableOpacity
+                onPress={() => handleUpdate(angleValue)}
+                style={styles.uploadButtonContainer}
+              >
+                <View style={styles.uploadButton}>
+                  <Text style={styles.uploadButtonText}>Upload House Plan</Text>
+                </View>
+              </TouchableOpacity>
             )}
           </View>
         ) : (

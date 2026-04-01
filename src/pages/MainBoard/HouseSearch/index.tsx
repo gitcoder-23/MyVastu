@@ -18,7 +18,10 @@ import AppStatusBar from '../../../app_header/AppStatusBar';
 import { styles } from './styles';
 import {
   GOOGLE_PLACES_API_KEY,
-  googleMapPlacePhotoApi,
+  googleMapStaticFallbackApi,
+  googleMapStreetViewMetadataApi,
+  googleMapStreetViewUrl,
+  googleNoImageFound,
   updatePlaceWebUrl,
 } from '../../../app/api/config';
 import Animated, {
@@ -38,8 +41,12 @@ const HouseSearch = () => {
   const [angleValue, setAngleValue] = useState(0);
   // NEW STATE: For WebView visibility and URL
   const [webUrl, setWebUrl] = useState('');
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const [imageLabel, setImageLabel] = useState('Location Preview');
+  const [isImageLoading, setIsImageLoading] = useState(false);
 
   // Define the cleanup logic in a separate function
+  // Update your resetAllStates callback
   const resetAllStates = useCallback(() => {
     ref.current?.setAddressText('');
     setPlaceDetails(null);
@@ -47,6 +54,8 @@ const HouseSearch = () => {
     rotation.value = 0;
     setWebUrl('');
     setAngleValue(0);
+    setImageUrl(null); // Reset image
+    setImageLabel('Location Preview');
     Keyboard.dismiss();
   }, [rotation]);
 
@@ -114,6 +123,7 @@ const HouseSearch = () => {
     if (details?.geometry?.location) {
       const { lat, lng } = details.geometry.location;
       fetchFacingDirection(lat, lng);
+      fetchStreetView(lat, lng);
     }
     setPlaceDetails(details);
   };
@@ -129,25 +139,51 @@ const HouseSearch = () => {
   };
 
   console.log('angleValue==>', angleValue);
+
+  const fetchStreetView = async (lat: number, lng: number) => {
+    setIsImageLoading(true);
+    try {
+      const metaUrl = googleMapStreetViewMetadataApi(lat, lng);
+
+      const res = await fetch(metaUrl);
+      const data = await res.json();
+
+      if (data.status === 'OK') {
+        const isGoogle = data.copyright?.includes('Google');
+        const streetUrl = googleMapStreetViewUrl(data.pano_id);
+
+        setImageUrl(streetUrl);
+        setImageLabel(isGoogle ? 'Street View' : 'User-contributed image');
+      } else {
+        // Static Map Fallback if Street View is unavailable
+        const staticUrl = googleMapStaticFallbackApi(lat, lng);
+        setImageUrl(staticUrl);
+        setImageLabel('Map Preview');
+      }
+    } catch (error) {
+      setImageUrl(googleNoImageFound);
+      setImageLabel('No Preview Available');
+    } finally {
+      setIsImageLoading(false);
+    }
+  };
+
   const renderPlacePhoto = () => {
-    if (!placeDetails?.photos || placeDetails.photos.length === 0) {
+    if (isImageLoading) {
       return (
         <View style={styles.noImageContainer}>
-          <Ionicons name="image-outline" size={40} color={COLORS.iconGrey} />
-          <Text style={styles.emptyText}>No image found</Text>
+          <ActivityIndicator size="large" color={COLORS.primaryRed} />
         </View>
       );
     }
 
-    // Use the first available photo reference
-    const photoReference = placeDetails.photos[0].photo_reference;
-    const photoUrl = googleMapPlacePhotoApi(photoReference);
+    if (!imageUrl) return null;
 
     return (
       <View style={styles.imageCard}>
-        <Text style={styles.label}>Location Preview:</Text>
+        <Text style={styles.label}>{imageLabel}:</Text>
         <Image
-          source={{ uri: photoUrl }}
+          source={{ uri: imageUrl }}
           style={styles.placeImage}
           resizeMode="cover"
         />

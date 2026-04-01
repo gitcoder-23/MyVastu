@@ -1,8 +1,8 @@
-import { googleMapStreetViewApi } from "../api/config";
+import { googleMapStreetViewMetadataApi } from "../api/config";
 
 export const fetchFacingGoogleDirection = async (lat: number, lng: number): Promise<{ pseudoAngle: number, data: any } | any> => {
     try {
-        const response = await fetch(googleMapStreetViewApi(lat, lng));
+        const response = await fetch(googleMapStreetViewMetadataApi(lat, lng));
         const data = await response.json();
         console.log('data==>', data);
         if (data.status === 'OK') {
