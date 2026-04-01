@@ -96,31 +96,58 @@ const HouseSearch = () => {
 
   const fetchFacingDirection = async (lat: number, lng: number) => {
     try {
-      // Attempt 1: 20m
+      // Attempt 1: Tight 5m radius
       let result = await fetchFacingGoogleDirection(lat, lng, 20);
 
-      // Attempt 2: Expand to 100m if 20m fails
+      // Attempt 2: Fallback to 50m radius if first one failed
       if (!result) {
-        console.log('No result at 20m, trying 100m...');
-        result = await fetchFacingGoogleDirection(lat, lng, 100);
+        console.log('No result at 5m, trying 50m...');
+        result = await fetchFacingGoogleDirection(lat, lng, 20);
       }
 
       if (result) {
         const roundedAngle = Math.round(result.pseudoAngle);
-        setDisplayFacing(getDirection(roundedAngle));
+        const direction = getDirection(roundedAngle);
+
+        setDisplayFacing(direction);
         rotation.value = roundedAngle;
         setAngleValue(roundedAngle);
       } else {
-        // FIX: Instead of 0 (North), show "Unavailable"
-        setDisplayFacing('Direction Unavailable');
+        // Final Fallback: Default to North (0) if no Street View exists in the area
+        setDisplayFacing(getDirection(0));
         rotation.value = 0;
-        setAngleValue(-1); // Use -1 to indicate "None found"
+        setAngleValue(0);
       }
     } catch (error) {
-      setDisplayFacing('Error');
-      setAngleValue(-1);
+      console.error('Error in fetchFacingDirection:', error);
+      setDisplayFacing(getDirection(0));
+      rotation.value = 0;
+      setAngleValue(0);
     }
   };
+
+  // const fetchFacingDirection = async (lat: number, lng: number) => {
+  //   try {
+  //     const { pseudoAngle } = await fetchFacingGoogleDirection(lat, lng);
+  //     const direction = getDirection(pseudoAngle);
+  //     console.log('fetchFacingDirection-pseudoAngle==>', pseudoAngle);
+  //     console.log('fetchFacingDirection-direction==>', direction);
+
+  //     // Update UI
+  //     setDisplayFacing(direction);
+  //     rotation.value = pseudoAngle;
+  //     console.log('pseudoAngle==>', pseudoAngle);
+
+  //     setAngleValue(pseudoAngle);
+  //   } catch (error) {
+  //     console.error('Error fetching direction:', error);
+  //     const direction = getDirection(0);
+  //     setDisplayFacing(direction);
+  //     rotation.value = 0;
+  //     setAngleValue(0);
+  //     throw error;
+  //   }
+  // };
 
   const onPressLocationDetails = (details: any, data: any) => {
     console.log('onPressLocationDetails-details==>', details);

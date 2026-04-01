@@ -1,6 +1,6 @@
 export const GOOGLE_PLACES_API_KEY = 'AIzaSyBUOey4Ezc9bmlVZbvSv5QNFaUprO9Mgwg';
 
-export const googleMapStreetViewMetadataApi = (lat: number, lng: number, radius: number = 100) =>
+export const googleMapStreetViewMetadataApi = (lat: number, lng: number, radius?: number) =>
     `https://maps.googleapis.com/maps/api/streetview/metadata?location=${lat},${lng}&radius=${radius}&key=${GOOGLE_PLACES_API_KEY}`;
 
 export const googleMapStreetViewUrl = (pano_id: string) => `https://maps.googleapis.com/maps/api/streetview?size=600x300&pano=${pano_id}&key=${GOOGLE_PLACES_API_KEY}`;
