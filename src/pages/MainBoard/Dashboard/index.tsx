@@ -1,4 +1,4 @@
-import React, { ComponentProps } from 'react';
+import React, { ComponentProps, useEffect } from 'react';
 import {
   StyleSheet,
   Text,
@@ -13,13 +13,17 @@ import AppStatusBar from '../../../app_header/AppStatusBar';
 import { COLORS } from '../../../constants/colors';
 import { dashboardMenuItems } from '../../../constants/mock_data';
 import { useNavigation } from '@react-navigation/native';
-import { useAppDispatch } from '../../../app/redux/hooks';
+import { useAppDispatch, useAppSelector } from '../../../app/redux/hooks';
 import { setLogout } from '../../../app/redux/slices/authAppSlice';
+import { GetProfileAction } from '../../../app/redux/actions/authAction';
 
 const { width } = Dimensions.get('window');
 
 const DashboardScreen = () => {
   const dispatch = useAppDispatch();
+  const { profileResponse, isProfileLoading, accessToken } = useAppSelector(
+    state => state.authApp,
+  );
   const navigation: any = useNavigation();
 
   const onServicePress = (id: number) => {
@@ -29,14 +33,15 @@ const DashboardScreen = () => {
       navigation.navigate('ContactUs');
     } else if (id === 6) {
       dispatch(setLogout());
-      // setTimeout(() => {
-      //   navigation.reset({
-      //     index: 0,
-      //     routes: [{ name: 'Login' }],
-      //   });
-      // }, 0);
     }
   };
+
+  useEffect(() => {
+    if (accessToken) {
+      dispatch(GetProfileAction({}));
+    }
+  }, [accessToken]);
+
   return (
     <SafeAreaView style={styles.container}>
       <AppStatusBar
@@ -52,7 +57,11 @@ const DashboardScreen = () => {
         <View style={styles.headerRow}>
           <View>
             <Text style={styles.welcomeText}>Hello,</Text>
-            <Text style={styles.userName}>John Doe</Text>
+            <Text style={styles.userName}>
+              {isProfileLoading
+                ? 'Loading...'
+                : profileResponse?.data?.name || ''}
+            </Text>
           </View>
           <TouchableOpacity style={styles.profileButton}>
             <Ionicons
