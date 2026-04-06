@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   StyleSheet,
   Text,
@@ -15,12 +15,18 @@ import AppStatusBar from '../../../app_header/AppStatusBar';
 import { AssetImages } from '../../../constants/assetImages';
 import { useAppDispatch, useAppSelector } from '../../../app/redux/hooks';
 import { GetProfileAction } from '../../../app/redux/actions/profileAction';
+import { ProfileResponseModel } from '../../../app/redux/models/profileModel';
 
 const MyProfile = () => {
   const dispatch = useAppDispatch();
+
+  const { accessToken } = useAppSelector(state => state.authApp);
+
   const { profileResponse, isProfileLoading } = useAppSelector(
     state => state.profile,
   );
+  const [profileData, setProfileData] = useState<ProfileResponseModel>({});
+
   useEffect(() => {
     dispatch(GetProfileAction({}));
   }, []);
@@ -40,6 +46,19 @@ const MyProfile = () => {
     });
     if (url) Linking.openURL(url);
   };
+
+  useEffect(() => {
+    if (accessToken) {
+      dispatch(GetProfileAction({}))
+        .unwrap()
+        .then((res: any) => {
+          console.log('@@@res', res);
+        })
+        .catch((err: any) => {
+          console.log('profile@@@err', err);
+        });
+    }
+  }, [accessToken, dispatch]);
 
   return (
     <View style={styles.container}>
