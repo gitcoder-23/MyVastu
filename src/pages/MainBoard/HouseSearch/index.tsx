@@ -30,15 +30,19 @@ import Animated, {
 } from 'react-native-reanimated';
 import { fetchFacingGoogleDirection } from '../../../app/services/googleServices';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
+import { useAppDispatch } from '../../../app/redux/hooks';
+import { PostRoomAction } from '../../../app/redux/actions/roomAction';
 
 const HouseSearch = () => {
   const navigation: any = useNavigation();
+  const dispatch = useAppDispatch();
   const [placeDetails, setPlaceDetails] = useState<any>(null);
   const ref = useRef<GooglePlacesAutocompleteRef>(null);
 
   const rotation = useSharedValue(0);
   const [displayFacing, setDisplayFacing] = useState('');
   const [angleValue, setAngleValue] = useState(0);
+  const [noLocationFound, setNoLocationFound] = useState('');
   // NEW STATE: For WebView visibility and URL
   const [webUrl, setWebUrl] = useState('');
   const [imageUrl, setImageUrl] = useState<string | null>(null);
@@ -57,6 +61,7 @@ const HouseSearch = () => {
     setImageUrl(null); // Reset image
     setImageLabel('Location Preview');
     Keyboard.dismiss();
+    setNoLocationFound('');
   }, [rotation]);
 
   useFocusEffect(
@@ -94,7 +99,11 @@ const HouseSearch = () => {
     return 'No direction found';
   };
 
-  const fetchFacingDirection = async (lat: number, lng: number) => {
+  const fetchFacingDirection = async (
+    lat: number,
+    lng: number,
+    details: any,
+  ) => {
     try {
       // Attempt 1: 20m
       let result = await fetchFacingGoogleDirection(lat, lng, 20);
@@ -110,14 +119,24 @@ const HouseSearch = () => {
         setDisplayFacing(getDirection(roundedAngle));
         rotation.value = roundedAngle;
         setAngleValue(roundedAngle);
+        const payloadRoom = {
+          address: details?.formatted_address,
+          angle: roundedAngle,
+          direction: getDirection(roundedAngle),
+          lat: lat,
+          lng: lng,
+        };
+        console.log('payloadRoom==>', payloadRoom);
+
+        dispatch(PostRoomAction(payloadRoom));
       } else {
         // FIX: Instead of 0 (North), show "Unavailable"
-        setDisplayFacing('Direction Unavailable');
+        setDisplayFacing('No direction found');
         rotation.value = 0;
         setAngleValue(-1); // Use -1 to indicate "None found"
       }
     } catch (error) {
-      setDisplayFacing('Error');
+      setDisplayFacing('No direction found');
       setAngleValue(-1);
     }
   };
@@ -125,12 +144,15 @@ const HouseSearch = () => {
   const onPressLocationDetails = (details: any, data: any) => {
     console.log('onPressLocationDetails-details==>', details);
     console.log('onPressLocationDetails-data==>', data);
-    if (details?.geometry?.location) {
-      const { lat, lng } = details.geometry.location;
-      fetchFacingDirection(lat, lng);
-      fetchStreetView(lat, lng);
-    }
     setPlaceDetails(details);
+    if (details?.geometry?.location) {
+      setNoLocationFound('');
+      const { lat, lng } = details.geometry.location;
+      fetchFacingDirection(lat, lng, details);
+      fetchStreetView(lat, lng);
+    } else {
+      setNoLocationFound('No location found');
+    }
   };
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [{ rotate: `${rotation.value}deg` }],
@@ -158,16 +180,16 @@ const HouseSearch = () => {
         const streetUrl = googleMapStreetViewUrl(data.pano_id);
 
         setImageUrl(streetUrl);
-        setImageLabel(isGoogle ? 'Street View' : 'User-contributed image');
+        setImageLabel(isGoogle ? 'Street View' : 'Location Preview');
       } else {
         // Static Map Fallback if Street View is unavailable
         const staticUrl = googleMapStaticFallbackApi(lat, lng);
         setImageUrl(staticUrl);
-        setImageLabel('Map Preview');
+        setImageLabel('Location Preview');
       }
     } catch (error) {
       setImageUrl(googleNoImageFound);
-      setImageLabel('No Preview Available');
+      setImageLabel('Location Preview');
     } finally {
       setIsImageLoading(false);
     }
@@ -186,7 +208,7 @@ const HouseSearch = () => {
 
     return (
       <View style={styles.imageCard}>
-        <Text style={styles.label}>{imageLabel}:</Text>
+        <Text style={styles.label}>{imageLabel}</Text>
         <Image
           source={{ uri: imageUrl }}
           style={styles.placeImage}
@@ -238,7 +260,11 @@ const HouseSearch = () => {
         contentContainerStyle={styles.content}
         keyboardShouldPersistTaps="handled"
       >
-        {placeDetails ? (
+        {noLocationFound ? (
+          <View style={styles.noLocationFoundContainer}>
+            <Text style={styles.noLocationFound}>{noLocationFound}</Text>
+          </View>
+        ) : placeDetails ? (
           <View style={styles.detailsCard}>
             <View style={styles.cardHeader}>
               <Ionicons name="location" size={24} color={COLORS.primaryRed} />

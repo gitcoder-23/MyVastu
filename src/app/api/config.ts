@@ -28,6 +28,7 @@ export const logoutApi = '/auth/logout';
 export const refreshTokenApi = '/auth/refresh';
 export const forgotPasswordApi = '/auth/forgot-password';
 export const getProfileApi = '/auth/profile';
+export const postRooms = '/rooms';
 
 
 // Upload side-plan & Analysis
