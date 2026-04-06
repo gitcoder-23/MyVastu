@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { GetProfileAction, LoginAction, RegisterAction } from '../actions/authAction';
-import { AuthResponseModel, AuthRegisterUserModel, ProfileResponseModel } from '../models/authModel';
+import { LoginAction, RegisterAction } from '../actions/authAction';
+import { AuthResponseModel, AuthRegisterUserModel } from '../models/authModel';
 
 export interface AuthAppState {
     registerResponse: AuthResponseModel | null;
@@ -15,10 +15,6 @@ export interface AuthAppState {
     loginResponse: AuthResponseModel | null;
     loginUser: AuthRegisterUserModel | null;
     isLoginLoading: boolean;
-
-    // Profile
-    profileResponse: ProfileResponseModel | null;
-    isProfileLoading: boolean;
 }
 
 const initialState: AuthAppState = {
@@ -33,9 +29,6 @@ const initialState: AuthAppState = {
     loginResponse: null,
     loginUser: null,
     isLoginLoading: false,
-    // Profile
-    profileResponse: null,
-    isProfileLoading: false,
 };
 
 const authAppSlice = createSlice({
@@ -55,8 +48,6 @@ const authAppSlice = createSlice({
             state.loginUser = null;
             state.errorMessage = 'Logout success';
             state.isLoginLoading = false;
-            state.profileResponse = null;
-            state.isProfileLoading = false;
         },
     },
     extraReducers: function (builder) {
@@ -126,28 +117,6 @@ const authAppSlice = createSlice({
             state.loginUser = null;
             state.accessToken = '';
             state.refreshToken = '';
-        });
-
-        // Profile - pending
-        builder.addCase(GetProfileAction.pending, state => {
-            state.isProfileLoading = true;
-        });
-
-        // Profile - fulfilled (success)
-        builder.addCase(
-            GetProfileAction.fulfilled,
-            (state, action: PayloadAction<ProfileResponseModel>) => {
-                state.isProfileLoading = false;
-                const responseData = action.payload;
-                state.profileResponse = responseData;
-            },
-        );
-
-        // Profile - rejected (failure)
-        builder.addCase(GetProfileAction.rejected, (state, action) => {
-            state.isProfileLoading = false;
-            const responseData = action.payload as ProfileResponseModel;
-            state.profileResponse = responseData || null;
         });
     },
 });

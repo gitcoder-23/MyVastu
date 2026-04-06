@@ -15,7 +15,8 @@ import { useAppDispatch, useAppSelector } from '../app/redux/hooks';
 import { resetInterceptor } from '../app/api/rootApi';
 import SidePlanView from '../pages/MainBoard/SidePlanView';
 import AppWebView from '../pages/AppWebView';
-import { GetProfileAction } from '../app/redux/actions/authAction';
+import MyProfile from '../pages/MainBoard/MyProfile';
+import { GetProfileAction } from '../app/redux/actions/profileAction';
 
 const Stack = createStackNavigator<AppNavigationStackParamList>();
 const myOptions: StackNavigationOptions = {
@@ -62,7 +63,11 @@ const AppNavigation = () => {
               <Stack.Screen
                 name="ContactUs"
                 component={ContactUs}
-                options={{ ...myOptions, headerShown: true, title: 'Profile' }}
+                options={{
+                  ...myOptions,
+                  headerShown: true,
+                  title: 'Contact Us',
+                }}
               />
               <Stack.Screen
                 name="SidePlanView"
@@ -81,6 +86,15 @@ const AppNavigation = () => {
                   ...myOptions,
                   headerShown: true,
                   title: 'Vastu Analysis',
+                }}
+              />
+              <Stack.Screen
+                name="MyProfile"
+                component={MyProfile}
+                options={{
+                  ...myOptions,
+                  headerShown: true,
+                  title: 'My Profile',
                 }}
               />
             </Stack.Group>

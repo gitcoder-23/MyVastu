@@ -13,6 +13,7 @@ import {
 import authAppSlice from './slices/authAppSlice';
 import floorSidePlanSlice from './slices/floorSidePlanSlice';
 import roomSlice from './slices/roomSlice';
+import profileSlice from './slices/profileSlice';
 
 const authPersistConfig = {
     key: 'authApp',
@@ -25,6 +26,7 @@ const combinedReducer = combineReducers({
     authApp: persistReducer(authPersistConfig, authAppSlice),
     floorSidePlan: floorSidePlanSlice,
     rooms: roomSlice,
+    profile: profileSlice,
 });
 
 const rootReducer = (state: any, action: any) => {

@@ -15,20 +15,22 @@ import { dashboardMenuItems } from '../../../constants/mock_data';
 import { useNavigation } from '@react-navigation/native';
 import { useAppDispatch, useAppSelector } from '../../../app/redux/hooks';
 import { setLogout } from '../../../app/redux/slices/authAppSlice';
-import { GetProfileAction } from '../../../app/redux/actions/authAction';
+import { GetProfileAction } from '../../../app/redux/actions/profileAction';
 
 const { width } = Dimensions.get('window');
 
 const DashboardScreen = () => {
   const dispatch = useAppDispatch();
-  const { profileResponse, isProfileLoading, accessToken } = useAppSelector(
-    state => state.authApp,
+  const { profileResponse, isProfileLoading } = useAppSelector(
+    state => state.profile,
   );
   const navigation: any = useNavigation();
 
   const onServicePress = (id: number) => {
     if (id === 1) {
       navigation.navigate('Location');
+    } else if (id === 2) {
+      navigation.navigate('MyProfile');
     } else if (id === 3) {
       navigation.navigate('ContactUs');
     } else if (id === 6) {
@@ -37,10 +39,8 @@ const DashboardScreen = () => {
   };
 
   useEffect(() => {
-    if (accessToken) {
-      dispatch(GetProfileAction({}));
-    }
-  }, [accessToken]);
+    dispatch(GetProfileAction({}));
+  }, []);
 
   return (
     <SafeAreaView style={styles.container}>
