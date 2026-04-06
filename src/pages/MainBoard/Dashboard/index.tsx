@@ -20,11 +20,15 @@ import { GetProfileAction } from '../../../app/redux/actions/profileAction';
 const { width } = Dimensions.get('window');
 
 const DashboardScreen = () => {
+  const navigation: any = useNavigation();
   const dispatch = useAppDispatch();
+
+  const { accessToken } = useAppSelector(state => state.authApp);
   const { profileResponse, isProfileLoading } = useAppSelector(
     state => state.profile,
   );
-  const navigation: any = useNavigation();
+
+  console.log('profileResponse', profileResponse, accessToken);
 
   const onServicePress = (id: number) => {
     if (id === 1) {
@@ -39,8 +43,17 @@ const DashboardScreen = () => {
   };
 
   useEffect(() => {
-    dispatch(GetProfileAction({}));
-  }, []);
+    if (accessToken) {
+      dispatch(GetProfileAction({}))
+        .unwrap()
+        .then((res: any) => {
+          console.log('@@@res', res);
+        })
+        .catch((err: any) => {
+          console.log('@@@err', err);
+        });
+    }
+  }, [accessToken, dispatch]);
 
   return (
     <SafeAreaView style={styles.container}>

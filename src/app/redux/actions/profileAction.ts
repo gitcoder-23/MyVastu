@@ -1,7 +1,8 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { getProfileApi } from '../../api/config';
-import rootApi from '../../api/rootApi';
 import { ProfileResponseModel } from '../models/profileModel';
+import rootApi from '../../api/rootApi';
+import { getProfileApi } from '../../api/config';
+
 
 
 export const GetProfileAction = createAsyncThunk<
