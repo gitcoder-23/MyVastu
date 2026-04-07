@@ -100,6 +100,36 @@ const MyProfile = () => {
                 color={COLORS.lightGreyText}
               />
             </TouchableOpacity>
+            {/* Stats Row */}
+            <View style={styles.statsRow}>
+              <View style={styles.statsItem}>
+                <View style={styles.statsIconCircle}>
+                  <Ionicons name="search" size={20} color={COLORS.primaryRed} />
+                </View>
+                <View style={styles.statsTextContainer}>
+                  <Text style={styles.statsLabel}>Room Searches</Text>
+                  <Text style={styles.statsValue}>
+                    {profileResponse?.data?.total_room_search || 0}
+                  </Text>
+                </View>
+              </View>
+
+              <View style={[styles.statsItem, { marginLeft: 15 }]}>
+                <View style={styles.statsIconCircle}>
+                  <Ionicons
+                    name="cloud-upload"
+                    size={20}
+                    color={COLORS.primaryRed}
+                  />
+                </View>
+                <View style={styles.statsTextContainer}>
+                  <Text style={styles.statsLabel}>Total Uploads</Text>
+                  <Text style={styles.statsValue}>
+                    {profileResponse?.data?.total_uploads || 0}
+                  </Text>
+                </View>
+              </View>
+            </View>
           </View>
         </ScrollView>
       </View>
@@ -204,5 +234,47 @@ const styles = StyleSheet.create({
     color: COLORS.darkCharcoal,
     fontWeight: '600',
     marginTop: 2,
+  },
+  //
+  statsRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 5,
+  },
+  statsItem: {
+    flex: 1, // Ensures both boxes take equal width
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: COLORS.whiteColor,
+    padding: 12,
+    borderRadius: 15,
+    elevation: 2,
+    shadowColor: COLORS.primaryBlack,
+    shadowOpacity: 0.05,
+    shadowRadius: 5,
+  },
+  statsIconCircle: {
+    width: 35,
+    height: 35,
+    borderRadius: 17.5,
+    backgroundColor: COLORS.secondaryRed,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 10,
+  },
+  statsTextContainer: {
+    flex: 1,
+  },
+  statsLabel: {
+    fontSize: 10,
+    color: COLORS.lightGreyText,
+    fontWeight: 'bold',
+    textTransform: 'uppercase',
+  },
+  statsValue: {
+    fontSize: 16,
+    color: COLORS.darkCharcoal,
+    fontWeight: 'bold',
+    marginTop: 1,
   },
 });

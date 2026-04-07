@@ -9,6 +9,9 @@ export interface ProfileResponseModel {
         email?: string;
         mobile?: string;
         role?: string;
+        status?: string;
+        total_room_search?: number;
+        total_uploads?: number;
         isEmailVerified?: boolean;
         createdAt?: string;
         updatedAt?: string;
