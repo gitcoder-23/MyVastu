@@ -42,7 +42,7 @@ const SessionHandler = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     // Start timer if user is logged in
     if (accessToken) {
-      timerRef.current = setInterval(triggerRefresh, 5000); // 5 seconds
+      timerRef.current = setInterval(triggerRefresh, 480000); // 8 minutes
     }
 
     const subscription = AppState.addEventListener(
