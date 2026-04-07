@@ -1,62 +1,43 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import {
   StyleSheet,
   Text,
   View,
-  Image,
   TouchableOpacity,
   ScrollView,
   Linking,
-  Platform,
 } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
+import { Avatar } from '@kolking/react-native-avatar';
 import { COLORS } from '../../../constants/colors';
 import AppStatusBar from '../../../app_header/AppStatusBar';
-import { AssetImages } from '../../../constants/assetImages';
 import { useAppDispatch, useAppSelector } from '../../../app/redux/hooks';
 import { GetProfileAction } from '../../../app/redux/actions/profileAction';
-import { ProfileResponseModel } from '../../../app/redux/models/profileModel';
 
 const MyProfile = () => {
   const dispatch = useAppDispatch();
 
   const { accessToken } = useAppSelector(state => state.authApp);
 
-  const { profileResponse, isProfileLoading } = useAppSelector(
-    state => state.profile,
-  );
-  const [profileData, setProfileData] = useState<ProfileResponseModel>({});
+  const { profileResponse } = useAppSelector(state => state.profile);
 
   useEffect(() => {
     dispatch(GetProfileAction({}));
   }, []);
-  const address = '43259 Crescent Blvd, Novi, MI 48375';
-  const phone1 = '(248) 243-9108';
-  const phone2 = '734-674-1927';
 
   const makeCall = (phoneNumber: string) => {
     const url = `tel:${phoneNumber.replace(/[^\d]/g, '')}`;
     Linking.openURL(url);
   };
 
-  const openMaps = () => {
-    const url = Platform.select({
-      ios: `maps:0,0?q=${address}`,
-      android: `geo:0,0?q=${address}`,
-    });
-    if (url) Linking.openURL(url);
+  const makeEmail = (email: string) => {
+    const url = `mailto:${email}`;
+    Linking.openURL(url);
   };
 
   useEffect(() => {
     if (accessToken) {
-      dispatch(GetProfileAction({}))
-        .unwrap()
-        .then((res: any) => {
-          console.log('@@@res', res);
-        })
-        .catch((err: any) => {
-          console.log('profile@@@err', err);
-        });
+      dispatch(GetProfileAction({})).unwrap();
     }
   }, [accessToken, dispatch]);
 
@@ -67,36 +48,34 @@ const MyProfile = () => {
         barStyle="light-content"
       />
 
-      {/* Header Banner */}
-      {/* <View style={styles.header}>
-        <Text style={styles.headerTitle}>Contact Us</Text>
-      </View> */}
-      <View style={styles.mainContainer}>
+      <View>
         <ScrollView contentContainerStyle={styles.scrollContent}>
-          {/* Agent Profile Card */}
           <View style={styles.profileCard}>
-            <Image
-              source={AssetImages.sunilPaingolImg}
+            <Avatar
+              name={profileResponse?.data?.name || 'User'}
+              size={80}
+              textStyle={{ fontWeight: 'bold' }}
               style={styles.agentImage}
             />
-            <Text style={styles.agentName}>Sunil Paingol</Text>
-            <Text style={styles.agentTitle}>Principal Realtor</Text>
+
+            <Text style={styles.agentName}>{profileResponse?.data?.name}</Text>
             <View style={styles.redUnderline} />
           </View>
 
           {/* Contact Methods */}
           <View style={styles.infoSection}>
-            {/* Phone Numbers */}
             <TouchableOpacity
               style={styles.contactItem}
-              onPress={() => makeCall(phone1)}
+              onPress={() => makeCall(profileResponse?.data?.mobile || '')}
             >
               <View style={styles.iconCircle}>
                 <Ionicons name="call" size={22} color={COLORS.primaryRed} />
               </View>
               <View style={styles.textContainer}>
                 <Text style={styles.label}>Primary Phone</Text>
-                <Text style={styles.value}>{phone1}</Text>
+                <Text style={styles.value}>
+                  {profileResponse?.data?.mobile}
+                </Text>
               </View>
               <Ionicons
                 name="chevron-forward"
@@ -104,21 +83,16 @@ const MyProfile = () => {
                 color={COLORS.lightGreyText}
               />
             </TouchableOpacity>
-
             <TouchableOpacity
               style={styles.contactItem}
-              onPress={() => makeCall(phone2)}
+              onPress={() => makeEmail(profileResponse?.data?.email || '')}
             >
               <View style={styles.iconCircle}>
-                <Ionicons
-                  name="phone-portrait"
-                  size={22}
-                  color={COLORS.primaryRed}
-                />
+                <Ionicons name="mail" size={22} color={COLORS.primaryRed} />
               </View>
               <View style={styles.textContainer}>
-                <Text style={styles.label}>Secondary Phone</Text>
-                <Text style={styles.value}>{phone2}</Text>
+                <Text style={styles.label}>Email</Text>
+                <Text style={styles.value}>{profileResponse?.data?.email}</Text>
               </View>
               <Ionicons
                 name="chevron-forward"
@@ -126,36 +100,6 @@ const MyProfile = () => {
                 color={COLORS.lightGreyText}
               />
             </TouchableOpacity>
-
-            {/* Address */}
-            <TouchableOpacity style={styles.contactItem} onPress={openMaps}>
-              <View style={styles.iconCircle}>
-                <Ionicons name="location" size={22} color={COLORS.primaryRed} />
-              </View>
-              <View style={styles.textContainer}>
-                <Text style={styles.label}>Office Address</Text>
-                <Text style={styles.value}>{address}</Text>
-              </View>
-              <Ionicons
-                name="map-outline"
-                size={20}
-                color={COLORS.lightGreyText}
-              />
-            </TouchableOpacity>
-          </View>
-
-          {/* Social / Footer Tagline */}
-          <View style={styles.footer}>
-            <Image
-              source={AssetImages.appLogo}
-              style={styles.footerLogo}
-              resizeMode="contain"
-            />
-            <Text style={styles.footerText}>The Paingol Group Realtors</Text>
-            <Text style={styles.tagline}>Excellence in every move.</Text>
-            <Text style={styles.poweredBy}>
-              Powered by: Zenith Partners Inc.
-            </Text>
           </View>
         </ScrollView>
       </View>
@@ -169,10 +113,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: COLORS.backgroundLight,
-  },
-  mainContainer: {
-    // flex: 1,
-    // backgroundColor: COLORS.backgroundLight,
   },
   header: {
     backgroundColor: COLORS.darkCharcoal,
@@ -197,20 +137,17 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.whiteColor,
     borderRadius: 20,
     padding: 25,
-    // marginTop: -30, // Overlaps the header
     alignItems: 'center',
     elevation: 10,
-    shadowColor: '#000',
+    shadowColor: COLORS.primaryBlack,
     shadowOpacity: 0.15,
     shadowRadius: 15,
   },
   agentImage: {
-    width: 120,
-    height: 120,
     borderRadius: 60,
-    borderWidth: 4,
+    borderWidth: 2,
     borderColor: COLORS.primaryRed,
-    marginBottom: 15,
+    marginBottom: 20,
   },
   agentName: {
     fontSize: 22,
@@ -240,7 +177,7 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     marginBottom: 15,
     elevation: 2,
-    shadowColor: '#000',
+    shadowColor: COLORS.primaryBlack,
     shadowOpacity: 0.05,
     shadowRadius: 5,
   },
@@ -267,32 +204,5 @@ const styles = StyleSheet.create({
     color: COLORS.darkCharcoal,
     fontWeight: '600',
     marginTop: 2,
-  },
-  footer: {
-    marginTop: 20,
-    alignItems: 'center',
-  },
-  footerText: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: COLORS.darkCharcoal,
-  },
-  tagline: {
-    fontSize: 12,
-    color: COLORS.primaryRed,
-    fontStyle: 'italic',
-    marginTop: 5,
-  },
-  poweredBy: {
-    fontSize: 12,
-    color: COLORS.black1,
-    fontStyle: 'normal',
-    marginTop: 5,
-  },
-  footerLogo: {
-    width: 100,
-    height: 40,
-    marginBottom: 10,
-    alignSelf: 'center',
   },
 });
