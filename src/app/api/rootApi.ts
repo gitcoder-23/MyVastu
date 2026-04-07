@@ -9,40 +9,42 @@ export const rootApiNew = axios.create({
     baseURL: baseUrlNew,
 });
 
+let requestInterceptor: any;
+// This callback will be filled by SessionHandler
+let onSessionExpired: (() => void) | null = null;
 
-let interceptor: any;
+export const setSessionExpiredCallback = (callback: () => void) => {
+    onSessionExpired = callback;
+};
 
 const resetInterceptor = (token: string) => {
     console.log('@@@[API CALLING WITH AUTH TOKEN: ', token);
-    if (!interceptor) {
-        axios.interceptors.request.eject(interceptor);
+    if (requestInterceptor !== undefined) {
+        rootApi.interceptors.request.eject(requestInterceptor);
     }
 
-    // Add reaquest interceptor
-    interceptor = rootApi.interceptors.request.use((config: any) => {
+    requestInterceptor = rootApi.interceptors.request.use((config: any) => {
         console.log('@@@[API CALLING WITH AUTH CONFIG: ', token);
-
         config.headers.Authorization = token ? `Bearer ${token}` : '';
-
         return config;
     });
 };
 
-export default rootApi;
+// GLOBAL RESPONSE INTERCEPTOR
+rootApi.interceptors.response.use(
+    (response) => response,
+    (error) => {
+        console.log('API Error Status:', error.response?.status);
+        if (error.response && error.response.status === 401) {
+            console.log('Unauthorized detected, triggering popup...');
+            if (onSessionExpired) {
+                onSessionExpired(); // Trigger the modal in the UI
+            }
+        }
+        return Promise.reject(error);
+    }
+);
 
+export default rootApi;
 export { resetInterceptor };
 
-
-
-
-
-
-// rootApi.interceptors.response.use(
-//     (response) => response,
-//     (error) => {
-//         if (error.response?.status === 401) {
-//             console.log('401 Unauthorized error');
-//         }
-//         return Promise.reject(error);
-//     }
-// );

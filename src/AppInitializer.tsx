@@ -6,6 +6,7 @@ import { resetInterceptor } from './app/api/rootApi';
 import AppStatusBar from './app_header/AppStatusBar';
 import AppNavigation from './app_navigation/AppNavigation';
 import { COLORS } from './constants/colors';
+import SessionHandler from './SessionHandler';
 
 export const AppInitializer = () => {
   const { accessToken } = useAppSelector(state => state.authApp);
@@ -17,15 +18,17 @@ export const AppInitializer = () => {
   }, [accessToken]);
   return (
     <>
-      <View style={styles.container}>
-        <AppStatusBar
-          backgroundColor={COLORS.darkCharcoal}
-          barStyle="dark-content"
-        />
-        <NavigationContainer>
-          <AppNavigation />
-        </NavigationContainer>
-      </View>
+      <SessionHandler>
+        <View style={styles.container}>
+          <AppStatusBar
+            backgroundColor={COLORS.darkCharcoal}
+            barStyle="dark-content"
+          />
+          <NavigationContainer>
+            <AppNavigation />
+          </NavigationContainer>
+        </View>
+      </SessionHandler>
     </>
   );
 };
