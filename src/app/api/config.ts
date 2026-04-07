@@ -19,7 +19,7 @@ export const baseUrlNew = 'https://api.vastu.dtftsolutions.com/api/v1';
 
 export const baseWebUrlDev = 'https://admin.bastu.dtftsolutions.com';
 
-export const updatePlaceWebUrl = (angle: number) => `${baseWebUrlDev}/vastu?angle=${angle}`;
+export const updatePlaceWebUrl = (angle: number, token?: string) => `${baseWebUrlDev}/vastu?angle=${angle}&token=${token}`;
 
 // Endpoint list
 export const registerApi = '/auth/register';

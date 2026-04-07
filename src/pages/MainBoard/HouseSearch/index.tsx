@@ -30,12 +30,13 @@ import Animated, {
 } from 'react-native-reanimated';
 import { fetchFacingGoogleDirection } from '../../../app/services/googleServices';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
-import { useAppDispatch } from '../../../app/redux/hooks';
+import { useAppDispatch, useAppSelector } from '../../../app/redux/hooks';
 import { PostRoomAction } from '../../../app/redux/actions/roomAction';
 
 const HouseSearch = () => {
   const navigation: any = useNavigation();
   const dispatch = useAppDispatch();
+  const { accessToken } = useAppSelector(state => state.authApp);
   const [placeDetails, setPlaceDetails] = useState<any>(null);
   const ref = useRef<GooglePlacesAutocompleteRef>(null);
 
@@ -159,8 +160,8 @@ const HouseSearch = () => {
   }));
 
   const handleUpdate = (angle: number) => {
-    const url = updatePlaceWebUrl(angle);
-    console.log('Opening WebView with URL:', url);
+    const url = updatePlaceWebUrl(angle, accessToken);
+    console.log('WebView-with-URL=>', url);
     setWebUrl(url);
     navigation.navigate('AppWebView', { webUrl: url });
   };
