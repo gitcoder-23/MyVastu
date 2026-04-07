@@ -1,5 +1,7 @@
 import axios from 'axios';
 import { baseUrl, baseUrlNew } from './config';
+import store from '../redux/store';
+
 const rootApi = axios.create({
     baseURL: baseUrl,
 });
@@ -29,6 +31,15 @@ const resetInterceptor = (token: string) => {
         return config;
     });
 };
+
+rootApi.interceptors.request.use((config) => {
+    const state = store.getState();
+    const token = state.authApp.accessToken;
+    if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+}, (error) => Promise.reject(error));
 
 // GLOBAL RESPONSE INTERCEPTOR
 rootApi.interceptors.response.use(

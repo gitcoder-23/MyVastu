@@ -1,7 +1,7 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { loginApi, registerApi } from '../../api/config';
+import { loginApi, refreshTokenApi, registerApi } from '../../api/config';
 import rootApi from '../../api/rootApi';
-import { AuthResponseModel } from '../models/authModel';
+import { AuthResponseModel, RefreshResponseModel } from '../models/authModel';
 
 type registerActionType = {
     name: string;
@@ -36,6 +36,20 @@ export const LoginAction = createAsyncThunk<
 >('login/post', async (postLogin, { rejectWithValue }) => {
     try {
         const response = await rootApi.post(loginApi, postLogin);
+        return response.data;
+    } catch (err: any) {
+        return rejectWithValue(err.response?.data);
+    }
+});
+
+export const RefreshTokenAction = createAsyncThunk<
+    RefreshResponseModel,
+    { refreshToken: string },
+    { rejectValue: any }
+>('auth/refresh', async (payload, { rejectWithValue }) => {
+    try {
+        // Use rootApi or rootApiNew depending on your config
+        const response = await rootApi.post(refreshTokenApi, payload);
         return response.data;
     } catch (err: any) {
         return rejectWithValue(err.response?.data);

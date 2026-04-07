@@ -12,6 +12,15 @@ export interface AuthResponseModel {
     error?: null;
     statusCode?: number;
 }
+export interface RefreshResponseModel {
+    success?: boolean;
+    message?: string;
+    data?: {
+        accessToken?: string,
+        refreshToken?: string,
+        expiresIn?: number
+    }
+}
 
 export interface AuthRegisterUserModel {
     id?: string;

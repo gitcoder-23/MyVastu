@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { LoginAction, RegisterAction } from '../actions/authAction';
+import { LoginAction, RefreshTokenAction, RegisterAction } from '../actions/authAction';
 import { AuthResponseModel, AuthRegisterUserModel } from '../models/authModel';
 
 export interface AuthAppState {
@@ -40,6 +40,10 @@ const authAppSlice = createSlice({
             state.accessToken = action.payload.token;
             state.errorMessage = 'Login success';
             state.isLoginLoading = false;
+        },
+        updateTokens: (state, action: PayloadAction<{ accessToken: string; refreshToken: string }>) => {
+            state.accessToken = action.payload.accessToken;
+            state.refreshToken = action.payload.refreshToken;
         },
         setLogout: state => {
             state.accessToken = '';
@@ -118,9 +122,19 @@ const authAppSlice = createSlice({
             state.accessToken = '';
             state.refreshToken = '';
         });
+        // Refresh Token
+        builder.addCase(RefreshTokenAction.fulfilled, (state, action) => {
+            const responseData = action.payload;
+            state.accessToken = responseData.data?.accessToken || '';
+            state.refreshToken = responseData.data?.refreshToken || '';
+        });
+        builder.addCase(RefreshTokenAction.rejected, (state) => {
+            state.accessToken = '';
+            state.refreshToken = '';
+        });
     },
 });
 
-export const { setLogin, setLogout } = authAppSlice.actions;
+export const { setLogin, setLogout, updateTokens } = authAppSlice.actions;
 
 export default authAppSlice.reducer;

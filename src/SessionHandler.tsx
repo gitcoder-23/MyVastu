@@ -10,16 +10,24 @@ import {
 } from 'react-native';
 import { COLORS } from './constants/colors';
 import { useAppDispatch, useAppSelector } from './app/redux/hooks';
-import { setLogout } from './app/redux/slices/authAppSlice';
+import { setLogout, updateTokens } from './app/redux/slices/authAppSlice';
 import { setSessionExpiredCallback } from './app/api/rootApi';
+import { RefreshTokenAction } from './app/redux/actions/authAction';
 
 const SessionHandler = ({ children }: { children: React.ReactNode }) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const { accessToken } = useAppSelector(state => state.authApp);
+  const { accessToken, refreshToken } = useAppSelector(state => state.authApp);
   const dispatch = useAppDispatch();
-
-  // FIXED TYPE: Using ReturnType<typeof setInterval> or number handles both Node and Web environments
   const appState = useRef(AppState.currentState);
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  // Function to refresh token
+  const triggerRefresh = () => {
+    if (refreshToken) {
+      console.log('Auto-refreshing tokens...');
+      dispatch(RefreshTokenAction({ refreshToken }));
+    }
+  };
 
   useEffect(() => {
     setSessionExpiredCallback(() => {
@@ -30,6 +38,35 @@ const SessionHandler = ({ children }: { children: React.ReactNode }) => {
       setSessionExpiredCallback(() => {});
     };
   }, []);
+
+  useEffect(() => {
+    // Start timer if user is logged in
+    if (accessToken) {
+      timerRef.current = setInterval(triggerRefresh, 5000); // 5 seconds
+    }
+
+    const subscription = AppState.addEventListener(
+      'change',
+      handleAppStateChange,
+    );
+
+    return () => {
+      if (timerRef.current) clearInterval(timerRef.current);
+      subscription.remove();
+    };
+  }, [accessToken, refreshToken]);
+
+  const handleAppStateChange = (nextAppState: AppStateStatus) => {
+    if (
+      appState.current.match(/inactive|background/) &&
+      nextAppState === 'active'
+    ) {
+      console.log('App has come to the foreground!');
+      // Check if session is still valid or trigger an immediate refresh
+      triggerRefresh();
+    }
+    appState.current = nextAppState;
+  };
 
   const handleLogout = () => {
     setIsModalVisible(false);
