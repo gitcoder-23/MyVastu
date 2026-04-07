@@ -71,9 +71,7 @@ const DashboardScreen = () => {
           <View>
             <Text style={styles.welcomeText}>Hello,</Text>
             <Text style={styles.userName}>
-              {isProfileLoading
-                ? 'Loading...'
-                : profileResponse?.data?.name || ''}
+              {profileResponse?.data?.name || ''}
             </Text>
           </View>
           <TouchableOpacity style={styles.profileButton}>
