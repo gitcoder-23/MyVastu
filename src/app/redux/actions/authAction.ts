@@ -36,8 +36,12 @@ export const LoginAction = createAsyncThunk<
 >('login/post', async (postLogin, { rejectWithValue }) => {
     try {
         const response = await rootApi.post(loginApi, postLogin);
+        console.log('LoginAction==>', response.data);
+
         return response.data;
     } catch (err: any) {
+
+        console.log('LoginAction-err==>', err.response?.data);
         return rejectWithValue(err.response?.data);
     }
 });

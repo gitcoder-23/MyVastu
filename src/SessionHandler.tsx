@@ -71,6 +71,7 @@ const SessionHandler = ({ children }: { children: React.ReactNode }) => {
   const handleLogout = () => {
     setIsModalVisible(false);
     dispatch(setLogout());
+    dispatch(updateTokens({ accessToken: '', refreshToken: '' }));
   };
 
   return (
