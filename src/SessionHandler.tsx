@@ -16,7 +16,9 @@ import { RefreshTokenAction } from './app/redux/actions/authAction';
 
 const SessionHandler = ({ children }: { children: React.ReactNode }) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const { accessToken, refreshToken } = useAppSelector(state => state.authApp);
+  const { accessToken, refreshToken, isUserLogin } = useAppSelector(
+    state => state.authApp,
+  );
   const dispatch = useAppDispatch();
   const appState = useRef(AppState.currentState);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -31,13 +33,15 @@ const SessionHandler = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     setSessionExpiredCallback(() => {
-      setIsModalVisible(true);
+      if (accessToken) {
+        setIsModalVisible(true);
+      }
     });
 
     return () => {
       setSessionExpiredCallback(() => {});
     };
-  }, []);
+  }, [accessToken]);
 
   useEffect(() => {
     // Start timer if user is logged in

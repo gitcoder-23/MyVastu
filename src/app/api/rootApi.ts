@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { baseUrl, baseUrlNew } from './config';
+import { baseUrl, baseUrlNew, loginApi, refreshTokenApi, registerApi } from './config';
 import store from '../redux/store';
 
 const rootApi = axios.create({
@@ -45,16 +45,45 @@ rootApi.interceptors.request.use((config) => {
 rootApi.interceptors.response.use(
     (response) => response,
     (error) => {
-        console.log('API Error Status:', error.response?.status);
-        if (error.response && error.response.status === 401) {
-            console.log('Unauthorized detected, triggering popup...');
+        const status = error.response?.status;
+        const requestUrl = error.config?.url; // Get the URL of the failed request
+
+        console.log('API Error Status:', status, 'URL:', requestUrl);
+
+        // Define endpoints that should NOT trigger the "Session Expired" popup
+        // Adjust these strings to match your actual auth constants/endpoints
+        const isAuthEndpoint = requestUrl?.includes(loginApi) ||
+            requestUrl?.includes(registerApi)
+        // ||
+        // requestUrl?.includes(refreshTokenApi);
+        console.log('isAuthEndpoint=>', isAuthEndpoint);
+
+
+        if (status === 401 && !isAuthEndpoint) {
+            console.log('Unauthorized detected on protected route, triggering popup...');
             if (onSessionExpired) {
                 onSessionExpired(); // Trigger the modal in the UI
             }
         }
+
         return Promise.reject(error);
     }
 );
+
+// GLOBAL RESPONSE INTERCEPTOR
+// rootApi.interceptors.response.use(
+//     (response) => response,
+//     (error) => {
+//         console.log('API Error Status:', error.response?.status);
+//         if (error.response && error.response.status === 401) {
+//             console.log('Unauthorized detected, triggering popup...');
+//             if (onSessionExpired) {
+//                 onSessionExpired(); // Trigger the modal in the UI
+//             }
+//         }
+//         return Promise.reject(error);
+//     }
+// );
 
 export default rootApi;
 export { resetInterceptor };

@@ -15,6 +15,7 @@ export interface AuthAppState {
     loginResponse: AuthResponseModel | null;
     loginUser: AuthRegisterUserModel | null;
     isLoginLoading: boolean;
+    isUserLogin: boolean;
 }
 
 const initialState: AuthAppState = {
@@ -29,6 +30,7 @@ const initialState: AuthAppState = {
     loginResponse: null,
     loginUser: null,
     isLoginLoading: false,
+    isUserLogin: false,
 };
 
 const authAppSlice = createSlice({
@@ -40,6 +42,7 @@ const authAppSlice = createSlice({
             state.accessToken = action.payload.token;
             state.errorMessage = 'Login success';
             state.isLoginLoading = false;
+            state.isUserLogin = true;
         },
         updateTokens: (state, action: PayloadAction<{ accessToken: string; refreshToken: string }>) => {
             state.accessToken = action.payload.accessToken;
@@ -52,6 +55,7 @@ const authAppSlice = createSlice({
             state.loginUser = null;
             state.errorMessage = 'Logout success';
             state.isLoginLoading = false;
+            state.isUserLogin = false;
         },
     },
     extraReducers: function (builder) {
@@ -94,6 +98,7 @@ const authAppSlice = createSlice({
             state.isLoginLoading = true;
             state.isError = false;
             state.errorMessage = '';
+            state.isUserLogin = false;
         });
 
         // Login - fulfilled (success)
@@ -101,6 +106,7 @@ const authAppSlice = createSlice({
             LoginAction.fulfilled,
             (state, action: PayloadAction<AuthResponseModel>) => {
                 state.isLoginLoading = false;
+                state.isUserLogin = true;
                 state.isError = false;
                 const responseData = action.payload;
                 state.loginResponse = responseData;
@@ -114,6 +120,7 @@ const authAppSlice = createSlice({
         // Login - rejected (failure)
         builder.addCase(LoginAction.rejected, (state, action) => {
             state.isLoginLoading = false;
+            state.isUserLogin = false;
             state.isError = true;
             const responseData = action.payload as AuthResponseModel;
             state.errorMessage = responseData?.message || 'Login Failed';
