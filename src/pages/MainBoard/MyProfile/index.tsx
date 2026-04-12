@@ -59,7 +59,11 @@ const MyProfile = () => {
             />
 
             <Text style={styles.agentName}>{profileResponse?.data?.name}</Text>
-            <View style={styles.redUnderline} />
+
+            <Text style={styles.creditTitle}>
+              Credit Point: <Text style={styles.creditValue}>200</Text>
+            </Text>
+            {/* <View style={styles.redUnderline} /> */}
           </View>
 
           {/* Contact Methods */}
@@ -189,11 +193,23 @@ const styles = StyleSheet.create({
     color: COLORS.greyText,
     marginTop: 4,
   },
+  creditTitle: {
+    fontSize: 14,
+    color: COLORS.greyText,
+    marginTop: 4,
+    fontWeight: 'bold',
+  },
+  creditValue: {
+    fontSize: 14,
+    color: COLORS.primaryRed,
+    fontWeight: 'bold',
+  },
   redUnderline: {
     width: 40,
     height: 3,
     backgroundColor: COLORS.primaryRed,
-    marginTop: 15,
+    marginTop: 10,
+    marginBottom: 10,
     borderRadius: 2,
   },
   infoSection: {
