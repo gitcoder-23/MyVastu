@@ -30,6 +30,7 @@ export const forgotPasswordApi = '/auth/forgot-password';
 export const getProfileApi = '/auth/profile';
 export const postRooms = '/rooms';
 export const getCreditsApi = '/credit';
+export const addCreditApi = '/credit/purchase';
 
 
 // Upload side-plan & Analysis

@@ -49,3 +49,9 @@ export const dashboardMenuItems: MenuItem[] = [
         color: COLORS.primaryRed,
     },
 ];
+
+export const CREDIT_LIST = [
+    { id: '1', value: 10 },
+    { id: '2', value: 20 },
+    { id: '3', value: 30 },
+];

@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { GetCreditAction, GetProfileAction } from '../actions/profileAction';
+import { GetCreditAction, GetProfileAction, PostPurchaseCreditAction } from '../actions/profileAction';
 import { CreditResponseModel, ProfileResponseModel } from '../models/profileModel';
 
 export interface ProfileAppState {
@@ -7,6 +7,8 @@ export interface ProfileAppState {
     isProfileLoading: boolean;
     creditResponse: CreditResponseModel | null;
     isCreditLoading: boolean;
+    isCreditPostLoading: boolean;
+    isCreditSuccess: boolean;
 }
 
 const initialState: ProfileAppState = {
@@ -14,6 +16,8 @@ const initialState: ProfileAppState = {
     isProfileLoading: false,
     creditResponse: null,
     isCreditLoading: false,
+    isCreditPostLoading: false,
+    isCreditSuccess: false,
 };
 
 const profileSlice = createSlice({
@@ -62,6 +66,30 @@ const profileSlice = createSlice({
         // Credit - rejected (failure)
         builder.addCase(GetCreditAction.rejected, (state, action) => {
             state.isCreditLoading = false;
+            const responseData = action.payload as CreditResponseModel;
+            state.creditResponse = responseData || null;
+        });
+
+        // Credit - pending
+        builder.addCase(PostPurchaseCreditAction.pending, state => {
+            state.isCreditPostLoading = true;
+        });
+
+        // Credit - fulfilled (success)
+        builder.addCase(
+            PostPurchaseCreditAction.fulfilled,
+            (state, action: PayloadAction<CreditResponseModel>) => {
+                state.isCreditSuccess = true;
+                state.isCreditPostLoading = false;
+                const responseData = action.payload;
+                state.creditResponse = responseData;
+            },
+        );
+
+        // Credit - rejected (failure)
+        builder.addCase(PostPurchaseCreditAction.rejected, (state, action) => {
+            state.isCreditSuccess = false;
+            state.isCreditPostLoading = false;
             const responseData = action.payload as CreditResponseModel;
             state.creditResponse = responseData || null;
         });

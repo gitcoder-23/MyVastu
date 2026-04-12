@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   StyleSheet,
   Text,
@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   ScrollView,
   Linking,
+  Alert,
 } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { Avatar } from '@kolking/react-native-avatar';
@@ -15,10 +16,15 @@ import { useAppDispatch, useAppSelector } from '../../../app/redux/hooks';
 import {
   GetCreditAction,
   GetProfileAction,
+  PostPurchaseCreditAction,
 } from '../../../app/redux/actions/profileAction';
+import { CREDIT_LIST } from '../../../constants/mock_data';
 
 const MyProfile = () => {
   const dispatch = useAppDispatch();
+  const [selectedCreditId, setSelectedCreditId] = useState<
+    string | number | null
+  >(null);
 
   const { accessToken } = useAppSelector(state => state.authApp);
 
@@ -47,6 +53,25 @@ const MyProfile = () => {
     }
   }, [accessToken, dispatch]);
 
+  const isCreditAvailable = !!(
+    creditResponse?.data?.credits && creditResponse?.data?.credits > 0
+  );
+
+  const handleCreditPurchase = (amount: number, id: string | number) => {
+    console.log('amount', amount);
+    setSelectedCreditId(id);
+    dispatch(PostPurchaseCreditAction({ amount }))
+      .unwrap()
+      .then(res => {
+        dispatch(GetCreditAction({}));
+        Alert.alert(`Success`, 'Credit Added Successfully');
+      })
+      .catch(() => {
+        Alert.alert(`Failed`, 'Credit Not Added.');
+        setSelectedCreditId(null);
+      });
+  };
+
   return (
     <View style={styles.container}>
       <AppStatusBar
@@ -72,7 +97,51 @@ const MyProfile = () => {
                 {creditResponse?.data?.credits}
               </Text>
             </Text>
-            {/* <View style={styles.redUnderline} /> */}
+          </View>
+
+          <View style={styles.creditSelectionRow}>
+            {CREDIT_LIST.map(amount => {
+              const isSelected = selectedCreditId === amount.id;
+
+              return (
+                <TouchableOpacity
+                  key={amount.id}
+                  // disabled={isCreditAvailable}
+                  style={[
+                    styles.creditCard,
+                    // isCreditAvailable && {
+                    //   opacity: 0.5,
+                    //   borderColor: COLORS.inputBorder,
+                    // },
+                    isSelected &&
+                      !isCreditAvailable && {
+                        borderColor: COLORS.primaryRed,
+                        borderWidth: 1,
+                      },
+                  ]}
+                  onPress={() => handleCreditPurchase(amount.value, amount.id)}
+                  activeOpacity={0.7}
+                >
+                  <Ionicons
+                    name="add-circle"
+                    size={18}
+                    color={COLORS.primaryRed}
+                    // color={
+                    //   isCreditAvailable ? COLORS.iconGrey : COLORS.primaryRed
+                    // }
+                  />
+                  <Text style={styles.creditCardLabel}>Credit</Text>
+                  <Text
+                    style={[
+                      styles.creditCardValue,
+                      isCreditAvailable && { color: COLORS.greyText },
+                    ]}
+                  >
+                    {amount.value}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
           </View>
 
           {/* Contact Methods */}
@@ -213,14 +282,6 @@ const styles = StyleSheet.create({
     color: COLORS.primaryRed,
     fontWeight: 'bold',
   },
-  redUnderline: {
-    width: 40,
-    height: 3,
-    backgroundColor: COLORS.primaryRed,
-    marginTop: 10,
-    marginBottom: 10,
-    borderRadius: 2,
-  },
   infoSection: {
     marginTop: 25,
   },
@@ -301,5 +362,38 @@ const styles = StyleSheet.create({
     color: COLORS.darkCharcoal,
     fontWeight: 'bold',
     marginTop: 1,
+  },
+  /////////
+  creditSelectionRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 15,
+    marginBottom: 0,
+  },
+  creditCard: {
+    flex: 1,
+    backgroundColor: COLORS.whiteColor,
+    borderRadius: 15,
+    paddingVertical: 15,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginHorizontal: 5,
+    elevation: 4,
+    shadowColor: COLORS.primaryBlack,
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+    borderWidth: 1,
+    borderColor: COLORS.secondaryRed,
+  },
+  creditCardLabel: {
+    fontSize: 12,
+    color: COLORS.greyText,
+    fontWeight: '600',
+    marginTop: 4,
+  },
+  creditCardValue: {
+    fontSize: 18,
+    color: COLORS.primaryRed,
+    fontWeight: 'bold',
   },
 });

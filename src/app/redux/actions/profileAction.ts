@@ -1,7 +1,7 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { CreditResponseModel, ProfileResponseModel } from '../models/profileModel';
 import rootApi from '../../api/rootApi';
-import { getCreditsApi, getProfileApi } from '../../api/config';
+import { addCreditApi, getCreditsApi, getProfileApi } from '../../api/config';
 
 
 
@@ -20,7 +20,7 @@ export const GetProfileAction = createAsyncThunk<
 
 export const GetCreditAction = createAsyncThunk<
     CreditResponseModel,
-    {}, // No payload needed
+    {},
     { rejectValue: CreditResponseModel }
 >('credit/get', async (_, { rejectWithValue }) => {
     try {
@@ -31,4 +31,21 @@ export const GetCreditAction = createAsyncThunk<
         return rejectWithValue(err.response?.data);
     }
 });
+
+
+
+export const PostPurchaseCreditAction = createAsyncThunk<
+    CreditResponseModel,
+    { amount: number },
+    { rejectValue: CreditResponseModel }
+>('credit/post', async ({ amount }, { rejectWithValue }) => {
+    try {
+        const response = await rootApi.post(addCreditApi, { amount });
+        console.log('PostPurchaseCreditAction-response', response.data);
+        return response.data;
+    } catch (err: any) {
+        return rejectWithValue(err.response?.data);
+    }
+});
+
 
