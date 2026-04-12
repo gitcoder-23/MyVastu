@@ -2,15 +2,15 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import React from 'react';
 import { COLORS } from '../../constants/colors';
 import { WebView } from 'react-native-webview';
-import { useNavigation, useRoute } from '@react-navigation/native';
-import { Ionicons } from '@expo/vector-icons';
+import { useRoute } from '@react-navigation/native';
 
 const AppWebView = () => {
   const route: any = useRoute();
-  const navigation = useNavigation();
   const { webUrl } = route.params;
   return (
-    <View style={{ flex: 1, backgroundColor: COLORS.whiteColor }}>
+    <View
+      style={{ flex: 1, paddingBottom: 30, backgroundColor: COLORS.whiteColor }}
+    >
       {/* <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <Ionicons name="chevron-back" size={28} color={COLORS.black1} />

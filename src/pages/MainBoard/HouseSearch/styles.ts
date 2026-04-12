@@ -5,6 +5,7 @@ export const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: COLORS.backgroundLight,
+        paddingBottom: 30,
     },
     searchSection: {
         padding: 15,
