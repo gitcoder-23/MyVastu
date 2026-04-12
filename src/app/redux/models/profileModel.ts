@@ -19,3 +19,17 @@ export interface ProfileResponseModel {
     errors?: null;
     statusCode?: number;
 }
+
+export interface CreditResponseModel {
+    success?: boolean;
+    message?: string;
+    data?: {
+        id?: string;
+        user_id?: string;
+        credits?: number;
+        createdAt?: string;
+        updatedAt?: string;
+    } | null;
+    errors?: null;
+    statusCode?: number;
+}

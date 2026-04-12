@@ -12,17 +12,23 @@ import { Avatar } from '@kolking/react-native-avatar';
 import { COLORS } from '../../../constants/colors';
 import AppStatusBar from '../../../app_header/AppStatusBar';
 import { useAppDispatch, useAppSelector } from '../../../app/redux/hooks';
-import { GetProfileAction } from '../../../app/redux/actions/profileAction';
+import {
+  GetCreditAction,
+  GetProfileAction,
+} from '../../../app/redux/actions/profileAction';
 
 const MyProfile = () => {
   const dispatch = useAppDispatch();
 
   const { accessToken } = useAppSelector(state => state.authApp);
 
-  const { profileResponse } = useAppSelector(state => state.profile);
+  const { profileResponse, creditResponse } = useAppSelector(
+    state => state.profile,
+  );
 
   useEffect(() => {
     dispatch(GetProfileAction({}));
+    dispatch(GetCreditAction({}));
   }, []);
 
   const makeCall = (phoneNumber: string) => {
@@ -61,7 +67,10 @@ const MyProfile = () => {
             <Text style={styles.agentName}>{profileResponse?.data?.name}</Text>
 
             <Text style={styles.creditTitle}>
-              Credit Point: <Text style={styles.creditValue}>200</Text>
+              Credit Point:{' '}
+              <Text style={styles.creditValue}>
+                {creditResponse?.data?.credits}
+              </Text>
             </Text>
             {/* <View style={styles.redUnderline} /> */}
           </View>

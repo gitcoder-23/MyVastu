@@ -29,6 +29,7 @@ export const refreshTokenApi = '/auth/refresh';
 export const forgotPasswordApi = '/auth/forgot-password';
 export const getProfileApi = '/auth/profile';
 export const postRooms = '/rooms';
+export const getCreditsApi = '/credit';
 
 
 // Upload side-plan & Analysis

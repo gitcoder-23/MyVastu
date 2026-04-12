@@ -1,15 +1,19 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { GetProfileAction } from '../actions/profileAction';
-import { ProfileResponseModel } from '../models/profileModel';
+import { GetCreditAction, GetProfileAction } from '../actions/profileAction';
+import { CreditResponseModel, ProfileResponseModel } from '../models/profileModel';
 
 export interface ProfileAppState {
     profileResponse: ProfileResponseModel | null;
     isProfileLoading: boolean;
+    creditResponse: CreditResponseModel | null;
+    isCreditLoading: boolean;
 }
 
 const initialState: ProfileAppState = {
     profileResponse: null,
     isProfileLoading: false,
+    creditResponse: null,
+    isCreditLoading: false,
 };
 
 const profileSlice = createSlice({
@@ -38,6 +42,28 @@ const profileSlice = createSlice({
             state.isProfileLoading = false;
             const responseData = action.payload as ProfileResponseModel;
             state.profileResponse = responseData || null;
+        });
+
+        // Credit - pending
+        builder.addCase(GetCreditAction.pending, state => {
+            state.isCreditLoading = true;
+        });
+
+        // Credit - fulfilled (success)
+        builder.addCase(
+            GetCreditAction.fulfilled,
+            (state, action: PayloadAction<CreditResponseModel>) => {
+                state.isCreditLoading = false;
+                const responseData = action.payload;
+                state.creditResponse = responseData;
+            },
+        );
+
+        // Credit - rejected (failure)
+        builder.addCase(GetCreditAction.rejected, (state, action) => {
+            state.isCreditLoading = false;
+            const responseData = action.payload as CreditResponseModel;
+            state.creditResponse = responseData || null;
         });
     },
 });
