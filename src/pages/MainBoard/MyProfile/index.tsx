@@ -98,50 +98,55 @@ const MyProfile = () => {
               </Text>
             </Text>
           </View>
+          <View>
+            <Text style={styles.buyTitle}>Buy Credits</Text>
 
-          <View style={styles.creditSelectionRow}>
-            {CREDIT_LIST.map(amount => {
-              const isSelected = selectedCreditId === amount.id;
+            <View style={styles.creditSelectionRow}>
+              {CREDIT_LIST.map(amount => {
+                const isSelected = selectedCreditId === amount.id;
 
-              return (
-                <TouchableOpacity
-                  key={amount.id}
-                  // disabled={isCreditAvailable}
-                  style={[
-                    styles.creditCard,
-                    // isCreditAvailable && {
-                    //   opacity: 0.5,
-                    //   borderColor: COLORS.inputBorder,
-                    // },
-                    isSelected &&
-                      !isCreditAvailable && {
-                        borderColor: COLORS.primaryRed,
-                        borderWidth: 1,
-                      },
-                  ]}
-                  onPress={() => handleCreditPurchase(amount.value, amount.id)}
-                  activeOpacity={0.7}
-                >
-                  <Ionicons
-                    name="add-circle"
-                    size={18}
-                    color={COLORS.primaryRed}
-                    // color={
-                    //   isCreditAvailable ? COLORS.iconGrey : COLORS.primaryRed
-                    // }
-                  />
-                  <Text style={styles.creditCardLabel}>Credit</Text>
-                  <Text
+                return (
+                  <TouchableOpacity
+                    key={amount.id}
+                    // disabled={isCreditAvailable}
                     style={[
-                      styles.creditCardValue,
-                      isCreditAvailable && { color: COLORS.greyText },
+                      styles.creditCard,
+                      // isCreditAvailable && {
+                      //   opacity: 0.5,
+                      //   borderColor: COLORS.inputBorder,
+                      // },
+                      isSelected &&
+                        !isCreditAvailable && {
+                          borderColor: COLORS.primaryRed,
+                          borderWidth: 1,
+                        },
                     ]}
+                    onPress={() =>
+                      handleCreditPurchase(amount.value, amount.id)
+                    }
+                    activeOpacity={0.7}
                   >
-                    {amount.value}
-                  </Text>
-                </TouchableOpacity>
-              );
-            })}
+                    <Ionicons
+                      name="add-circle"
+                      size={18}
+                      color={COLORS.primaryRed}
+                      // color={
+                      //   isCreditAvailable ? COLORS.iconGrey : COLORS.primaryRed
+                      // }
+                    />
+                    <Text style={styles.creditCardLabel}>Credit</Text>
+                    <Text
+                      style={[
+                        styles.creditCardValue,
+                        isCreditAvailable && { color: COLORS.greyText },
+                      ]}
+                    >
+                      {amount.value}
+                    </Text>
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
           </View>
 
           {/* Contact Methods */}
@@ -364,6 +369,13 @@ const styles = StyleSheet.create({
     marginTop: 1,
   },
   /////////
+  buyTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: COLORS.darkCharcoal,
+    marginTop: 20,
+    marginLeft: 10,
+  },
   creditSelectionRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
