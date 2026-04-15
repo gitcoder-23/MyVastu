@@ -53,6 +53,18 @@ export const styles = StyleSheet.create({
         padding: 20,
         elevation: 4,
     },
+    noLocationFoundContainer: {
+        marginTop: 40,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    noLocationFound: {
+        color: COLORS.primaryRed,
+        fontSize: 16,
+        marginTop: 20,
+        textAlign: 'center',
+    },
+
     cardHeader: {
         flexDirection: 'row',
         alignItems: 'center',

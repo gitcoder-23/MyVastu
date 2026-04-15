@@ -1,4 +1,4 @@
-import React, { ComponentProps } from 'react';
+import React, { useEffect } from 'react';
 import {
   StyleSheet,
   Text,
@@ -13,30 +13,48 @@ import AppStatusBar from '../../../app_header/AppStatusBar';
 import { COLORS } from '../../../constants/colors';
 import { dashboardMenuItems } from '../../../constants/mock_data';
 import { useNavigation } from '@react-navigation/native';
-import { useAppDispatch } from '../../../app/redux/hooks';
+import { useAppDispatch, useAppSelector } from '../../../app/redux/hooks';
 import { setLogout } from '../../../app/redux/slices/authAppSlice';
+import { GetProfileAction } from '../../../app/redux/actions/profileAction';
 
 const { width } = Dimensions.get('window');
 
 const DashboardScreen = () => {
-  const dispatch = useAppDispatch();
   const navigation: any = useNavigation();
+  const dispatch = useAppDispatch();
+
+  const { accessToken } = useAppSelector(state => state.authApp);
+  const { profileResponse, isProfileLoading } = useAppSelector(
+    state => state.profile,
+  );
+
+  console.log('profileResponse', profileResponse, accessToken);
 
   const onServicePress = (id: number) => {
     if (id === 1) {
       navigation.navigate('Location');
+    } else if (id === 2) {
+      navigation.navigate('MyProfile');
     } else if (id === 3) {
       navigation.navigate('ContactUs');
     } else if (id === 6) {
       dispatch(setLogout());
-      // setTimeout(() => {
-      //   navigation.reset({
-      //     index: 0,
-      //     routes: [{ name: 'Login' }],
-      //   });
-      // }, 0);
     }
   };
+
+  useEffect(() => {
+    if (accessToken) {
+      dispatch(GetProfileAction({}))
+        .unwrap()
+        .then((res: any) => {
+          console.log('@@@res', res);
+        })
+        .catch((err: any) => {
+          console.log('@@@err', err);
+        });
+    }
+  }, [accessToken, dispatch]);
+
   return (
     <SafeAreaView style={styles.container}>
       <AppStatusBar
@@ -52,7 +70,11 @@ const DashboardScreen = () => {
         <View style={styles.headerRow}>
           <View>
             <Text style={styles.welcomeText}>Hello,</Text>
-            <Text style={styles.userName}>John Doe</Text>
+            <Text style={styles.userName}>
+              {isProfileLoading
+                ? 'Loading...'
+                : profileResponse?.data?.name || ''}
+            </Text>
           </View>
           <TouchableOpacity style={styles.profileButton}>
             <Ionicons

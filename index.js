@@ -16,7 +16,7 @@ if (__DEV__) {
   require('./ReactotronConfig');
 }
 
-import { AppRegistry } from 'react-native';
+import { ActivityIndicator, AppRegistry } from 'react-native';
 import App from './App';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
@@ -28,7 +28,7 @@ const MyVastu = () => {
   return (
     <>
       <Provider store={store}>
-        <PersistGate loading={null} persistor={persistor}>
+        <PersistGate loading={<ActivityIndicator />} persistor={persistor}>
           <App />
         </PersistGate>
       </Provider>

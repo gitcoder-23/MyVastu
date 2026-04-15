@@ -79,7 +79,6 @@ const LoginScreen = () => {
         );
         setLoginInputState({ email: '', mobile: '', password: '' });
         setShowPassword(false);
-        // navigation.replace('Dashboard');
       })
       .catch((err: AuthResponseModel) => {
         console.log('LoginError=>', err);

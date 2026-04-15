@@ -11,10 +11,12 @@ import LoginScreen from '../pages/AuthScreen/Login';
 import DashboardScreen from '../pages/MainBoard/Dashboard';
 import HouseSearch from '../pages/MainBoard/HouseSearch';
 import ContactUs from '../pages/MainBoard/ContactUs';
-import { useAppSelector } from '../app/redux/hooks';
+import { useAppDispatch, useAppSelector } from '../app/redux/hooks';
 import { resetInterceptor } from '../app/api/rootApi';
 import SidePlanView from '../pages/MainBoard/SidePlanView';
 import AppWebView from '../pages/AppWebView';
+import MyProfile from '../pages/MainBoard/MyProfile';
+import { GetProfileAction } from '../app/redux/actions/profileAction';
 
 const Stack = createStackNavigator<AppNavigationStackParamList>();
 const myOptions: StackNavigationOptions = {
@@ -31,12 +33,14 @@ const myOptions: StackNavigationOptions = {
 };
 
 const AppNavigation = () => {
+  const dispatch = useAppDispatch();
   const { accessToken } = useAppSelector(state => state.authApp);
   console.log('@@@accessToken-nav', accessToken);
 
   useEffect(() => {
     if (accessToken) {
       resetInterceptor(accessToken);
+      dispatch(GetProfileAction({}));
     }
   }, [accessToken]);
 
@@ -59,7 +63,11 @@ const AppNavigation = () => {
               <Stack.Screen
                 name="ContactUs"
                 component={ContactUs}
-                options={{ ...myOptions, headerShown: true, title: 'Profile' }}
+                options={{
+                  ...myOptions,
+                  headerShown: true,
+                  title: 'Contact Us',
+                }}
               />
               <Stack.Screen
                 name="SidePlanView"
@@ -78,6 +86,15 @@ const AppNavigation = () => {
                   ...myOptions,
                   headerShown: true,
                   title: 'Vastu Analysis',
+                }}
+              />
+              <Stack.Screen
+                name="MyProfile"
+                component={MyProfile}
+                options={{
+                  ...myOptions,
+                  headerShown: true,
+                  title: 'My Profile',
                 }}
               />
             </Stack.Group>
