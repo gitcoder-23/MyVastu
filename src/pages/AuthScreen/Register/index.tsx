@@ -31,6 +31,7 @@ const RegisterScreen = () => {
   const dispatch = useAppDispatch();
   const [selectedCountry, setSelectedCountry] = useState<null | ICountry>(null);
   const { isRegisterLoading } = useAppSelector(state => state.authApp);
+
   const [registerInputState, setRegisterInputState] = useState({
     name: '',
     email: '',
@@ -42,9 +43,17 @@ const RegisterScreen = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
+  // Logic checks for UI rules
+  const password = registerInputState.password;
+  const hasEightChars = password.length >= 8;
+  const hasUppercase = /[A-Z]/.test(password);
+  const hasNumber = /\d/.test(password);
+  const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+
   const handlePhoneChange = (value: string) => {
     setRegisterInputState({ ...registerInputState, mobile: value });
   };
+
   const handleSelectedCountry = (country: ICountry) => {
     setSelectedCountry(country);
   };
@@ -60,9 +69,7 @@ const RegisterScreen = () => {
       selectedCountry,
       phoneInputRef.current,
     );
-    if (!isValid) {
-      return;
-    }
+    if (!isValid) return;
 
     const callingCode = selectedCountry?.idd?.root;
     const phoneNumber = registerInputState.mobile.replace(/\s+/g, '');
@@ -72,12 +79,10 @@ const RegisterScreen = () => {
       mobile: callingCode + phoneNumber,
       password: registerInputState.password.trim(),
     };
-    console.log('postRegister=>', postRegister);
 
     dispatch(RegisterAction(postRegister) as any)
       .unwrap()
       .then((res: AuthResponseModel) => {
-        console.log('RegisterResponse=>', res);
         Alert.alert(
           `Hi ${res.data?.user?.name || 'User'}`,
           res.message || 'Registration Successful',
@@ -92,8 +97,6 @@ const RegisterScreen = () => {
                   password: '',
                   confirmPassword: '',
                 });
-                setShowPassword(false);
-                setShowConfirmPassword(false);
                 navigation.navigate('Login');
               },
             },
@@ -102,7 +105,6 @@ const RegisterScreen = () => {
         );
       })
       .catch((err: any) => {
-        console.log('RegisterError=>', err);
         Alert.alert(
           'Registration Failed',
           err?.message || 'Something went wrong. Please try again.',
@@ -110,16 +112,17 @@ const RegisterScreen = () => {
       });
   };
 
-  console.log('isRegisterLoading==>', isRegisterLoading);
-
   return (
     <SafeAreaView style={styles.container}>
       <AppStatusBar
         backgroundColor={COLORS.backgroundLight}
         barStyle="dark-content"
       />
-      <View style={{ flex: 1 }}>
-        <ScrollView contentContainerStyle={styles.scrollContent}>
+      <ScrollView
+        contentContainerStyle={styles.scrollContent}
+        keyboardShouldPersistTaps="handled"
+      >
+        <View style={{ flex: 1, height: '100%', justifyContent: 'center' }}>
           {/* Header Section */}
           <View style={styles.header}>
             <Image
@@ -129,10 +132,12 @@ const RegisterScreen = () => {
             />
             <Text style={styles.subtitle}>Harmonizing your living space</Text>
           </View>
+
           {/* Form Card */}
           <View style={styles.formCard}>
             <Text style={styles.formTitle}>Create Account</Text>
 
+            {/* Name Input */}
             <View style={styles.inputWrapper}>
               <Ionicons
                 name="person-outline"
@@ -151,6 +156,7 @@ const RegisterScreen = () => {
               />
             </View>
 
+            {/* Email Input */}
             <View style={styles.inputWrapper}>
               <Ionicons
                 name="mail-outline"
@@ -166,10 +172,15 @@ const RegisterScreen = () => {
                 autoCapitalize="none"
                 value={registerInputState.email}
                 onChangeText={text =>
-                  setRegisterInputState({ ...registerInputState, email: text })
+                  setRegisterInputState({
+                    ...registerInputState,
+                    email: text,
+                  })
                 }
               />
             </View>
+
+            {/* Phone Input */}
             <View style={styles.phoneInputWrapper}>
               <PhoneInput
                 ref={phoneInputRef}
@@ -190,6 +201,7 @@ const RegisterScreen = () => {
               />
             </View>
 
+            {/* Password Input */}
             <View style={styles.inputWrapper}>
               <Ionicons
                 name="lock-closed-outline"
@@ -203,6 +215,8 @@ const RegisterScreen = () => {
                 placeholderTextColor={COLORS.lightGreyText}
                 secureTextEntry={!showPassword}
                 value={registerInputState.password}
+                textContentType="oneTimeCode" // Prevents iOS Yellow Autofill
+                autoComplete="off"
                 onChangeText={text =>
                   setRegisterInputState({
                     ...registerInputState,
@@ -219,6 +233,7 @@ const RegisterScreen = () => {
               </TouchableOpacity>
             </View>
 
+            {/* Confirm Password Input */}
             <View style={styles.inputWrapper}>
               <Ionicons
                 name="lock-closed-outline"
@@ -232,18 +247,17 @@ const RegisterScreen = () => {
                 placeholderTextColor={COLORS.lightGreyText}
                 secureTextEntry={!showConfirmPassword}
                 value={registerInputState.confirmPassword}
+                textContentType="oneTimeCode" // Prevents iOS Yellow Autofill
+                autoComplete="off"
                 onChangeText={text =>
                   setRegisterInputState({
                     ...registerInputState,
                     confirmPassword: text,
                   })
                 }
-                autoCapitalize="none"
               />
               <TouchableOpacity
                 onPress={() => setShowConfirmPassword(!showConfirmPassword)}
-                style={styles.eyeButton}
-                hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
               >
                 <Ionicons
                   name={showConfirmPassword ? 'eye-outline' : 'eye-off-outline'}
@@ -252,88 +266,73 @@ const RegisterScreen = () => {
                 />
               </TouchableOpacity>
             </View>
+
             {/* Password Validation Rules */}
             <View style={styles.rulesContainer}>
               <Text style={styles.rulesTitle}>Password must contain:</Text>
 
+              {/* 8 Characters Rule */}
               <View style={styles.ruleItem}>
                 <Ionicons
-                  name={
-                    registerInputState.password.length >= 8
-                      ? 'checkmark-circle'
-                      : 'ellipse-outline'
-                  }
+                  name={hasEightChars ? 'checkmark-circle' : 'ellipse-outline'}
                   size={16}
                   color={
-                    registerInputState.password.length >= 8
-                      ? COLORS.successGreen
-                      : COLORS.lightGreyText
+                    hasEightChars ? COLORS.successGreen : COLORS.lightGreyText
                   }
                 />
                 <Text
-                  style={[
-                    styles.ruleText,
-                    registerInputState.password.length >= 8 &&
-                      styles.ruleActive,
-                  ]}
+                  style={[styles.ruleText, hasEightChars && styles.ruleActive]}
                 >
                   At least 8 characters
                 </Text>
               </View>
 
+              {/* Uppercase Rule */}
               <View style={styles.ruleItem}>
                 <Ionicons
-                  name={
-                    /[A-Z]/.test(registerInputState.password)
-                      ? 'checkmark-circle'
-                      : 'ellipse-outline'
-                  }
+                  name={hasUppercase ? 'checkmark-circle' : 'ellipse-outline'}
                   size={16}
                   color={
-                    /[A-Z]/.test(registerInputState.password)
-                      ? COLORS.successGreen
-                      : COLORS.lightGreyText
+                    hasUppercase ? COLORS.successGreen : COLORS.lightGreyText
                   }
                 />
                 <Text
-                  style={[
-                    styles.ruleText,
-                    /[A-Z]/.test(registerInputState.password) &&
-                      styles.ruleActive,
-                  ]}
+                  style={[styles.ruleText, hasUppercase && styles.ruleActive]}
                 >
                   One uppercase letter
                 </Text>
               </View>
 
+              {/* Number Rule */}
               <View style={styles.ruleItem}>
                 <Ionicons
-                  name={
-                    /[!@#$%^&*(),.?":{}|<>]/.test(registerInputState.password)
-                      ? 'checkmark-circle'
-                      : 'ellipse-outline'
-                  }
+                  name={hasNumber ? 'checkmark-circle' : 'ellipse-outline'}
+                  size={16}
+                  color={hasNumber ? COLORS.successGreen : COLORS.lightGreyText}
+                />
+                <Text style={[styles.ruleText, hasNumber && styles.ruleActive]}>
+                  At least one number
+                </Text>
+              </View>
+
+              {/* Special Character Rule */}
+              <View style={styles.ruleItem}>
+                <Ionicons
+                  name={hasSpecialChar ? 'checkmark-circle' : 'ellipse-outline'}
                   size={16}
                   color={
-                    /[!@#$%^&*(),.?":{}|<>]/.test(registerInputState.password)
-                      ? COLORS.successGreen
-                      : COLORS.lightGreyText
+                    hasSpecialChar ? COLORS.successGreen : COLORS.lightGreyText
                   }
                 />
                 <Text
-                  style={[
-                    styles.ruleText,
-                    /[!@#$%^&*(),.?":{}|<>]/.test(
-                      registerInputState.password,
-                    ) && styles.ruleActive,
-                  ]}
+                  style={[styles.ruleText, hasSpecialChar && styles.ruleActive]}
                 >
                   One special character (e.g. @, #, $)
                 </Text>
               </View>
             </View>
-            {/* Password Validation Rules End */}
 
+            {/* Signup Button */}
             <TouchableOpacity
               onPress={() => !isRegisterLoading && onRegister()}
               style={[
@@ -344,19 +343,19 @@ const RegisterScreen = () => {
             >
               <Text style={styles.buttonText}>
                 {isRegisterLoading ? 'Loading...' : 'SIGN UP'}
-                {/* SIGN UP */}
               </Text>
             </TouchableOpacity>
           </View>
 
+          {/* Footer Link */}
           <TouchableOpacity onPress={onGoLogin} style={styles.footerLink}>
             <Text style={styles.footerText}>
               Already have an account?{' '}
               <Text style={styles.linkBold}>Login</Text>
             </Text>
           </TouchableOpacity>
-        </ScrollView>
-      </View>
+        </View>
+      </ScrollView>
     </SafeAreaView>
   );
 };
