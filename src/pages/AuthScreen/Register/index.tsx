@@ -4,11 +4,10 @@ import {
   View,
   TextInput,
   TouchableOpacity,
-  KeyboardAvoidingView,
-  Platform,
   ScrollView,
   Alert,
   Image,
+  Keyboard,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AppStatusBar from '../../../app_header/AppStatusBar';
@@ -55,6 +54,7 @@ const RegisterScreen = () => {
   };
 
   const onRegister = () => {
+    Keyboard.dismiss();
     const isValid = registerValidator(
       registerInputState,
       selectedCountry,
@@ -118,10 +118,7 @@ const RegisterScreen = () => {
         backgroundColor={COLORS.backgroundLight}
         barStyle="dark-content"
       />
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={{ flex: 1 }}
-      >
+      <View style={{ flex: 1 }}>
         <ScrollView contentContainerStyle={styles.scrollContent}>
           {/* Header Section */}
           <View style={styles.header}>
@@ -279,7 +276,7 @@ const RegisterScreen = () => {
             </Text>
           </TouchableOpacity>
         </ScrollView>
-      </KeyboardAvoidingView>
+      </View>
     </SafeAreaView>
   );
 };

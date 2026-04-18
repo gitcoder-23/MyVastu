@@ -4,11 +4,10 @@ import {
   View,
   TextInput,
   TouchableOpacity,
-  KeyboardAvoidingView,
-  Platform,
   ScrollView,
   Alert,
   Image,
+  Keyboard,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -49,6 +48,7 @@ const LoginScreen = () => {
   };
 
   const onGoRegister = () => {
+    Keyboard.dismiss();
     navigation.navigate('Register');
   };
 
@@ -95,10 +95,7 @@ const LoginScreen = () => {
         backgroundColor={COLORS.backgroundLight}
         barStyle="dark-content"
       />
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={{ flex: 1 }}
-      >
+      <View style={{ flex: 1 }}>
         <ScrollView contentContainerStyle={styles.scrollContent}>
           {/* Header Section */}
           <View style={styles.header}>
@@ -210,7 +207,7 @@ const LoginScreen = () => {
             </Text>
           </TouchableOpacity>
         </ScrollView>
-      </KeyboardAvoidingView>
+      </View>
     </SafeAreaView>
   );
 };
