@@ -37,6 +37,14 @@ const DashboardScreen = () => {
       navigation.navigate('MyProfile');
     } else if (id === 3) {
       navigation.navigate('ContactUs');
+    } else if (id === 4) {
+      navigation.navigate('AppWebView', {
+        webUrl: 'https://thepaingolgroup.com/privacy-policy/',
+      });
+    } else if (id === 5) {
+      navigation.navigate('AppWebView', {
+        webUrl: 'https://thepaingolgroup.com/terms-and-conditions/',
+      });
     } else if (id === 6) {
       dispatch(setLogout());
     }

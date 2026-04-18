@@ -85,7 +85,7 @@ const AppNavigation = () => {
                 options={{
                   ...myOptions,
                   headerShown: true,
-                  title: 'Vastu Analysis',
+                  title: 'My Vastu',
                 }}
               />
               <Stack.Screen
