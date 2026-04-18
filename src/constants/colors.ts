@@ -21,6 +21,7 @@ export const COLORS = {
 
 
     whiteColor1: '#F9F9F9',
+    successGreen: '#4CAF50',
 
     // Transparent variations
     redTransparent: '#e31d1a1a',

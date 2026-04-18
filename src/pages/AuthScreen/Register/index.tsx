@@ -252,10 +252,90 @@ const RegisterScreen = () => {
                 />
               </TouchableOpacity>
             </View>
+            {/* Password Validation Rules */}
+            <View style={styles.rulesContainer}>
+              <Text style={styles.rulesTitle}>Password must contain:</Text>
+
+              <View style={styles.ruleItem}>
+                <Ionicons
+                  name={
+                    registerInputState.password.length >= 8
+                      ? 'checkmark-circle'
+                      : 'ellipse-outline'
+                  }
+                  size={16}
+                  color={
+                    registerInputState.password.length >= 8
+                      ? COLORS.successGreen
+                      : COLORS.lightGreyText
+                  }
+                />
+                <Text
+                  style={[
+                    styles.ruleText,
+                    registerInputState.password.length >= 8 &&
+                      styles.ruleActive,
+                  ]}
+                >
+                  At least 8 characters
+                </Text>
+              </View>
+
+              <View style={styles.ruleItem}>
+                <Ionicons
+                  name={
+                    /[A-Z]/.test(registerInputState.password)
+                      ? 'checkmark-circle'
+                      : 'ellipse-outline'
+                  }
+                  size={16}
+                  color={
+                    /[A-Z]/.test(registerInputState.password)
+                      ? COLORS.successGreen
+                      : COLORS.lightGreyText
+                  }
+                />
+                <Text
+                  style={[
+                    styles.ruleText,
+                    /[A-Z]/.test(registerInputState.password) &&
+                      styles.ruleActive,
+                  ]}
+                >
+                  One uppercase letter
+                </Text>
+              </View>
+
+              <View style={styles.ruleItem}>
+                <Ionicons
+                  name={
+                    /[!@#$%^&*(),.?":{}|<>]/.test(registerInputState.password)
+                      ? 'checkmark-circle'
+                      : 'ellipse-outline'
+                  }
+                  size={16}
+                  color={
+                    /[!@#$%^&*(),.?":{}|<>]/.test(registerInputState.password)
+                      ? COLORS.successGreen
+                      : COLORS.lightGreyText
+                  }
+                />
+                <Text
+                  style={[
+                    styles.ruleText,
+                    /[!@#$%^&*(),.?":{}|<>]/.test(
+                      registerInputState.password,
+                    ) && styles.ruleActive,
+                  ]}
+                >
+                  One special character (e.g. @, #, $)
+                </Text>
+              </View>
+            </View>
+            {/* Password Validation Rules End */}
 
             <TouchableOpacity
               onPress={() => !isRegisterLoading && onRegister()}
-              // onPress={() => onRegister()}
               style={[
                 styles.button,
                 isRegisterLoading ? { opacity: 0.5 } : null,

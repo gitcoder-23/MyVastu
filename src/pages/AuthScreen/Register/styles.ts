@@ -146,4 +146,30 @@ export const styles = StyleSheet.create({
         fontWeight: '400',
         paddingLeft: 0,
     },
+    ////////
+    rulesContainer: {
+        marginTop: 10,
+        marginBottom: 20,
+        paddingHorizontal: 5,
+    },
+    rulesTitle: {
+        fontSize: 13,
+        fontWeight: '600',
+        color: COLORS.greyText,
+        marginBottom: 8,
+    },
+    ruleItem: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 5,
+    },
+    ruleText: {
+        fontSize: 12,
+        color: COLORS.lightGreyText,
+        marginLeft: 8,
+    },
+    ruleActive: {
+        color: '#4CAF50', // Success green color
+        fontWeight: '500',
+    },
 });
