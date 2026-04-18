@@ -22,6 +22,12 @@ mobile: 9898989897
 password: Rana@123456
 
 
+usa
+email: trump@gmail.com
+mobile: +1-2123456789
+password: Trump@1234
+
+
  // setTimeout(() => {
       //   navigation.reset({
       //     index: 0,
