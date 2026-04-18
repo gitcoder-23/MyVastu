@@ -178,7 +178,7 @@ const RegisterScreen = () => {
                 selectedCountry={selectedCountry}
                 onChangeSelectedCountry={handleSelectedCountry}
                 placeholder="Mobile Number"
-                defaultCountry="IN"
+                defaultCountry="US"
                 phoneInputStyles={{
                   container: styles.phoneContainer,
                   flagContainer: styles.flagContainer,
