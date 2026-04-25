@@ -17,10 +17,16 @@ export const dashboardMenuItems: MenuItem[] = [
         icon: 'search-outline',
         color: COLORS.primaryRed,
     },
+    // {
+    //     id: 2,
+    //     title: 'About Us',
+    //     icon: 'information-circle-outline',
+    //     color: COLORS.primaryRed,
+    // },
     {
         id: 2,
-        title: 'About Us',
-        icon: 'information-circle-outline',
+        title: 'My Profile',
+        icon: 'person-outline',
         color: COLORS.primaryRed,
     },
     {
@@ -42,4 +48,10 @@ export const dashboardMenuItems: MenuItem[] = [
         icon: 'log-out-outline',
         color: COLORS.primaryRed,
     },
+];
+
+export const CREDIT_LIST = [
+    { id: '1', value: 10 },
+    { id: '2', value: 20 },
+    { id: '3', value: 30 },
 ];

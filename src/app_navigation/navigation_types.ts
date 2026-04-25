@@ -1,5 +1,6 @@
 export type DrawerMenuParamList = {
     navigation?: undefined;
+    MyProfile: undefined;
 };
 
 export type NavigationMenuStackParamList = {
@@ -13,4 +14,8 @@ export type AppNavigationStackParamList = {
     DrawerMenu: undefined;
     Location: undefined;
     ContactUs: undefined;
+    SidePlanView: undefined;
+    AppWebView: undefined;
+    MyProfile: undefined;
+    // AppWebView: { webUrl: string };
 };

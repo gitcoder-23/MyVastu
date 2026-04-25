@@ -1,11 +1,12 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 import {
-  StyleSheet,
   Text,
   View,
   ScrollView,
   TouchableOpacity,
   Keyboard,
+  Image,
+  ActivityIndicator,
 } from 'react-native';
 import {
   GooglePlacesAutocomplete,
@@ -14,40 +15,208 @@ import {
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { COLORS } from '../../../constants/colors';
 import AppStatusBar from '../../../app_header/AppStatusBar';
+import { styles } from './styles';
+import {
+  GOOGLE_PLACES_API_KEY,
+  googleMapStaticFallbackApi,
+  googleMapStreetViewMetadataApi,
+  googleMapStreetViewUrl,
+  googleNoImageFound,
+  updatePlaceWebUrl,
+} from '../../../app/api/config';
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+} from 'react-native-reanimated';
+import { fetchFacingGoogleDirection } from '../../../app/services/googleServices';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
+import { useAppDispatch, useAppSelector } from '../../../app/redux/hooks';
+import { PostRoomAction } from '../../../app/redux/actions/roomAction';
 
 const HouseSearch = () => {
+  const navigation: any = useNavigation();
+  const dispatch = useAppDispatch();
+  const { accessToken } = useAppSelector(state => state.authApp);
   const [placeDetails, setPlaceDetails] = useState<any>(null);
   const ref = useRef<GooglePlacesAutocompleteRef>(null);
 
-  const GOOGLE_PLACES_API_KEY = 'AIzaSyBUOey4Ezc9bmlVZbvSv5QNFaUprO9Mgwg';
+  const rotation = useSharedValue(0);
+  const [displayFacing, setDisplayFacing] = useState('');
+  const [angleValue, setAngleValue] = useState(0);
+  const [noLocationFound, setNoLocationFound] = useState('');
+  // NEW STATE: For WebView visibility and URL
+  const [webUrl, setWebUrl] = useState('');
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const [imageLabel, setImageLabel] = useState('Location Preview');
+  const [isImageLoading, setIsImageLoading] = useState(false);
 
-  // Logic to determine cardinal orientation and rotation angle
-  const getPoleData = (lat: number, lng: number) => {
-    let vertical = lat >= 0 ? 'North' : 'South';
-    let horizontal = lng >= 0 ? 'East' : 'West';
-
-    let label = '';
-    let angle = 0;
-
-    if (Math.abs(lat) > Math.abs(lng) * 2) {
-      label = `${vertical} Facing`;
-      angle = vertical === 'North' ? 0 : 180;
-    } else if (Math.abs(lng) > Math.abs(lat) * 2) {
-      label = `${horizontal} Facing`;
-      angle = horizontal === 'East' ? 90 : 270;
-    } else {
-      label = `${vertical}-${horizontal} Facing`;
-      if (vertical === 'North') angle = horizontal === 'East' ? 45 : 315;
-      else angle = horizontal === 'East' ? 135 : 225;
-    }
-
-    return { label, angle };
-  };
-
-  const handleClear = () => {
+  // Define the cleanup logic in a separate function
+  // Update your resetAllStates callback
+  const resetAllStates = useCallback(() => {
     ref.current?.setAddressText('');
     setPlaceDetails(null);
+    setDisplayFacing('');
+    rotation.value = 0;
+    setWebUrl('');
+    setAngleValue(0);
+    setImageUrl(null); // Reset image
+    setImageLabel('Location Preview');
     Keyboard.dismiss();
+    setNoLocationFound('');
+  }, [rotation]);
+
+  useFocusEffect(
+    useCallback(() => {
+      resetAllStates();
+
+      return () => {};
+    }, [resetAllStates]),
+  );
+
+  const handleClear = () => {
+    resetAllStates();
+  };
+
+  const getDirection = (angle: number) => {
+    if ((angle >= 348.75 && angle <= 360) || (angle >= 0 && angle <= 11.25)) {
+      return 'North';
+    }
+    if (angle <= 33.75) return 'North-northeast';
+    if (angle <= 56.25) return 'Northeast';
+    if (angle <= 78.75) return 'East-northeast';
+    if (angle <= 101.25) return 'East';
+    if (angle <= 123.75) return 'East-southeast';
+    if (angle <= 146.25) return 'Southeast';
+    if (angle <= 168.75) return 'South-southeast';
+    if (angle <= 191.25) return 'South';
+    if (angle <= 213.75) return 'South-southwest';
+    if (angle <= 236.25) return 'Southwest';
+    if (angle <= 258.75) return 'West-southwest';
+    if (angle <= 281.25) return 'West';
+    if (angle <= 303.75) return 'West-northwest';
+    if (angle <= 326.25) return 'Northwest';
+    if (angle <= 348.75) return 'North-northwest';
+
+    return 'No direction found';
+  };
+
+  const fetchFacingDirection = async (
+    lat: number,
+    lng: number,
+    details: any,
+  ) => {
+    try {
+      // Attempt 1: 20m
+      let result = await fetchFacingGoogleDirection(lat, lng, 20);
+
+      // Attempt 2: Expand to 100m if 20m fails
+      if (!result) {
+        console.log('No result at 20m, trying 100m...');
+        result = await fetchFacingGoogleDirection(lat, lng, 100);
+      }
+
+      if (result) {
+        const roundedAngle = Math.round(result.pseudoAngle);
+        setDisplayFacing(getDirection(roundedAngle));
+        rotation.value = roundedAngle;
+        setAngleValue(roundedAngle);
+        const payloadRoom = {
+          address: details?.formatted_address,
+          angle: roundedAngle,
+          direction: getDirection(roundedAngle),
+          lat: lat,
+          lng: lng,
+        };
+        console.log('payloadRoom==>', payloadRoom);
+
+        dispatch(PostRoomAction(payloadRoom));
+      } else {
+        // FIX: Instead of 0 (North), show "Unavailable"
+        setDisplayFacing('No direction found');
+        rotation.value = 0;
+        setAngleValue(-1); // Use -1 to indicate "None found"
+      }
+    } catch (error) {
+      setDisplayFacing('No direction found');
+      setAngleValue(-1);
+    }
+  };
+
+  const onPressLocationDetails = (details: any, data: any) => {
+    console.log('onPressLocationDetails-details==>', details);
+    console.log('onPressLocationDetails-data==>', data);
+    setPlaceDetails(details);
+    if (details?.geometry?.location) {
+      setNoLocationFound('');
+      const { lat, lng } = details.geometry.location;
+      fetchFacingDirection(lat, lng, details);
+      fetchStreetView(lat, lng);
+    } else {
+      setNoLocationFound('No location found');
+    }
+  };
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ rotate: `${rotation.value}deg` }],
+  }));
+
+  const handleUpdate = (angle: number) => {
+    const url = updatePlaceWebUrl(angle, accessToken);
+    console.log('WebView-with-URL=>', url);
+    setWebUrl(url);
+    navigation.navigate('AppWebView', { webUrl: url });
+  };
+
+  console.log('angleValue==>', angleValue);
+
+  const fetchStreetView = async (lat: number, lng: number) => {
+    setIsImageLoading(true);
+    try {
+      const metaUrl = googleMapStreetViewMetadataApi(lat, lng, 20);
+
+      const res = await fetch(metaUrl);
+      const data = await res.json();
+
+      if (data.status === 'OK') {
+        const isGoogle = data.copyright?.includes('Google');
+        const streetUrl = googleMapStreetViewUrl(data.pano_id);
+
+        setImageUrl(streetUrl);
+        setImageLabel(isGoogle ? 'Street View' : 'Location Preview');
+      } else {
+        // Static Map Fallback if Street View is unavailable
+        const staticUrl = googleMapStaticFallbackApi(lat, lng);
+        setImageUrl(staticUrl);
+        setImageLabel('Location Preview');
+      }
+    } catch (error) {
+      setImageUrl(googleNoImageFound);
+      setImageLabel('Location Preview');
+    } finally {
+      setIsImageLoading(false);
+    }
+  };
+
+  const renderPlacePhoto = () => {
+    if (isImageLoading) {
+      return (
+        <View style={styles.noImageContainer}>
+          <ActivityIndicator size="large" color={COLORS.primaryRed} />
+        </View>
+      );
+    }
+
+    if (!imageUrl) return null;
+
+    return (
+      <View style={styles.imageCard}>
+        <Text style={styles.label}>{imageLabel}</Text>
+        <Image
+          source={{ uri: imageUrl }}
+          style={styles.placeImage}
+          resizeMode="cover"
+        />
+      </View>
+    );
   };
 
   return (
@@ -63,7 +232,7 @@ const HouseSearch = () => {
           placeholder="Search House or Location"
           fetchDetails={true}
           onPress={(data, details = null) => {
-            setPlaceDetails(details);
+            onPressLocationDetails(details, data);
           }}
           query={{
             key: GOOGLE_PLACES_API_KEY,
@@ -92,7 +261,11 @@ const HouseSearch = () => {
         contentContainerStyle={styles.content}
         keyboardShouldPersistTaps="handled"
       >
-        {placeDetails ? (
+        {noLocationFound ? (
+          <View style={styles.noLocationFoundContainer}>
+            <Text style={styles.noLocationFound}>{noLocationFound}</Text>
+          </View>
+        ) : placeDetails ? (
           <View style={styles.detailsCard}>
             <View style={styles.cardHeader}>
               <Ionicons name="location" size={24} color={COLORS.primaryRed} />
@@ -119,65 +292,24 @@ const HouseSearch = () => {
                         { color: COLORS.primaryRed, fontWeight: 'bold' },
                       ]}
                     >
-                      {
-                        getPoleData(
-                          placeDetails.geometry.location.lat,
-                          placeDetails.geometry.location.lng,
-                        ).label
-                      }
+                      {displayFacing}
                     </Text>
                   </View>
 
-                  {/* COMPASS VISUAL */}
                   <View style={styles.compassContainer}>
                     <Text style={styles.compassNorthLabel}>N</Text>
                     <View style={styles.compassCircle}>
-                      {/* This is the needle that rotates */}
-                      <View
-                        style={[
-                          styles.needleWrapper,
-                          {
-                            transform: [
-                              {
-                                rotate: `${
-                                  getPoleData(
-                                    placeDetails.geometry.location.lat,
-                                    placeDetails.geometry.location.lng,
-                                  ).angle
-                                }deg`,
-                              },
-                            ],
-                          },
-                        ]}
+                      <Animated.View
+                        style={[styles.needleWrapper, animatedStyle]}
                       >
                         <Ionicons
                           name="navigate"
                           size={30}
                           color={COLORS.whiteColor}
                         />
-                      </View>
+                      </Animated.View>
                     </View>
                   </View>
-                  {/* <View style={styles.compassWrapper}>
-                    <Ionicons
-                      name="compass"
-                      size={50}
-                      color={COLORS.primaryRed}
-                      style={{
-                        transform: [
-                          {
-                            rotate: `${
-                              getPoleData(
-                                placeDetails.geometry.location.lat,
-                                placeDetails.geometry.location.lng,
-                              ).angle
-                            }deg`,
-                          },
-                        ],
-                      }}
-                    />
-                    <Text style={styles.compassNorth}>N</Text>
-                  </View> */}
                 </View>
 
                 <View style={styles.coordinatesContainer}>
@@ -199,7 +331,18 @@ const HouseSearch = () => {
                     </Text>
                   </View>
                 </View>
+                {renderPlacePhoto()}
               </>
+            )}
+            {angleValue > 0 && (
+              <TouchableOpacity
+                onPress={() => handleUpdate(angleValue)}
+                style={styles.uploadButtonContainer}
+              >
+                <View style={styles.uploadButton}>
+                  <Text style={styles.uploadButtonText}>Upload House Plan</Text>
+                </View>
+              </TouchableOpacity>
             )}
           </View>
         ) : (
@@ -220,169 +363,3 @@ const HouseSearch = () => {
 };
 
 export default HouseSearch;
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: COLORS.backgroundLight,
-  },
-  searchSection: {
-    padding: 15,
-    backgroundColor: COLORS.primaryRed,
-    zIndex: 1,
-    elevation: 5,
-    shadowColor: '#000',
-    shadowOpacity: 0.2,
-    shadowRadius: 10,
-  },
-  autocompleteContainer: {
-    backgroundColor: 'transparent',
-  },
-  autocompleteInput: {
-    height: 50,
-    color: COLORS.black1,
-    fontSize: 16,
-    borderRadius: 8,
-    paddingHorizontal: 15,
-    backgroundColor: COLORS.whiteColor,
-  },
-  clearIcon: {
-    position: 'absolute',
-    right: 25,
-    top: 15,
-    zIndex: 10,
-  },
-  resultList: {
-    backgroundColor: COLORS.whiteColor,
-    borderRadius: 8,
-    marginTop: 5,
-    elevation: 5,
-    position: 'absolute',
-    top: 55,
-    width: '100%',
-  },
-  content: {
-    padding: 15,
-    paddingTop: 10,
-    flexGrow: 1,
-  },
-  detailsCard: {
-    backgroundColor: COLORS.whiteColor,
-    marginTop: 40,
-    borderRadius: 15,
-    padding: 20,
-    elevation: 4,
-  },
-  cardHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 15,
-  },
-  locationName: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: COLORS.primaryRed,
-    marginLeft: 10,
-    flex: 1,
-  },
-  divider: {
-    height: 1,
-    backgroundColor: COLORS.inputBorder,
-    marginBottom: 15,
-  },
-  infoRow: {
-    marginBottom: 15,
-  },
-  poleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 15,
-    backgroundColor: COLORS.backgroundLight,
-    padding: 10,
-    borderRadius: 10,
-  },
-
-  compassContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: 70,
-  },
-  compassNorthLabel: {
-    fontSize: 12,
-    fontWeight: 'bold',
-    color: COLORS.primaryRed,
-    marginBottom: 2,
-  },
-  compassCircle: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    backgroundColor: COLORS.primaryRed, // Red circle from your image
-    alignItems: 'center',
-    justifyContent: 'center',
-    elevation: 3,
-    shadowColor: COLORS.primaryBlack,
-    shadowOpacity: 0.2,
-    shadowRadius: 3,
-  },
-  needleWrapper: {
-    width: 40,
-    height: 40,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-
-  compassWrapper: {
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  compassNorth: {
-    fontSize: 10,
-    fontWeight: 'bold',
-    color: COLORS.primaryRed,
-    position: 'absolute',
-    top: -7,
-  },
-  label: {
-    fontSize: 14,
-    color: COLORS.greyText,
-    marginBottom: 5,
-  },
-  value: {
-    fontSize: 16,
-    color: COLORS.black1,
-    lineHeight: 22,
-  },
-  coordinatesContainer: {
-    flexDirection: 'row',
-    backgroundColor: COLORS.secondaryRed,
-    borderRadius: 12,
-    padding: 15,
-    marginTop: 10,
-  },
-  coordBox: {
-    flex: 1,
-    alignItems: 'center',
-  },
-  coordLabel: {
-    fontSize: 12,
-    color: COLORS.primaryRed,
-    fontWeight: '600',
-    marginBottom: 4,
-  },
-  coordValue: {
-    fontSize: 15,
-    color: COLORS.black1,
-    fontWeight: 'bold',
-  },
-  emptyState: {
-    alignItems: 'center',
-    marginTop: 100,
-  },
-  emptyText: {
-    color: COLORS.lightGreyText,
-    fontSize: 16,
-    marginTop: 20,
-    textAlign: 'center',
-  },
-});

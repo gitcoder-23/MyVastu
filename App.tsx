@@ -5,7 +5,7 @@
  * @format
  */
 
-import { AppInitializer } from './src/app_initializer/AppInitializer';
+import { AppInitializer } from './src/AppInitializer';
 
 function App() {
   return (
