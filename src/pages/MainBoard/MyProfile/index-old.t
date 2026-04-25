@@ -108,8 +108,13 @@ const MyProfile = () => {
                 return (
                   <TouchableOpacity
                     key={amount.id}
+                    // disabled={isCreditAvailable}
                     style={[
                       styles.creditCard,
+                      // isCreditAvailable && {
+                      //   opacity: 0.5,
+                      //   borderColor: COLORS.inputBorder,
+                      // },
                       isSelected &&
                         !isCreditAvailable && {
                           borderColor: COLORS.primaryRed,
@@ -125,6 +130,9 @@ const MyProfile = () => {
                       name="add-circle"
                       size={18}
                       color={COLORS.primaryRed}
+                      // color={
+                      //   isCreditAvailable ? COLORS.iconGrey : COLORS.primaryRed
+                      // }
                     />
                     <Text style={styles.creditCardLabel}>Credit</Text>
                     <Text

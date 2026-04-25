@@ -14,6 +14,10 @@ export const COLORS = {
     lightGreyText: '#999999',
     iconGrey: '#666666',
     black1: '#333333',
+    blackColor1: '#00000080',
+    greenColor1: '#21C16B',
+
+
     inputBackground: '#F5F5F5',
     shadowBlack7: '#00000099',
     shadowBlack8: '#444',
