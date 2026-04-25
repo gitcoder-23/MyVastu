@@ -19,11 +19,8 @@ import {
   PostPurchaseCreditAction,
 } from '../../../app/redux/actions/profileAction';
 import { CREDIT_LIST } from '../../../constants/mock_data';
-import { useStripe } from '@stripe/stripe-react-native';
 
 const MyProfile = () => {
-  const { initPaymentSheet, presentPaymentSheet } = useStripe();
-
   const dispatch = useAppDispatch();
   const [selectedCreditId, setSelectedCreditId] = useState<
     string | number | null
@@ -111,8 +108,13 @@ const MyProfile = () => {
                 return (
                   <TouchableOpacity
                     key={amount.id}
+                    // disabled={isCreditAvailable}
                     style={[
                       styles.creditCard,
+                      // isCreditAvailable && {
+                      //   opacity: 0.5,
+                      //   borderColor: COLORS.inputBorder,
+                      // },
                       isSelected &&
                         !isCreditAvailable && {
                           borderColor: COLORS.primaryRed,
@@ -128,6 +130,9 @@ const MyProfile = () => {
                       name="add-circle"
                       size={18}
                       color={COLORS.primaryRed}
+                      // color={
+                      //   isCreditAvailable ? COLORS.iconGrey : COLORS.primaryRed
+                      // }
                     />
                     <Text style={styles.creditCardLabel}>Credit</Text>
                     <Text
@@ -404,3 +409,94 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
 });
+
+
+const handleCreditPurchase = async (amount: number, id: string | number) => {
+    setSelectedCreditId(id);
+
+    try {
+      // Step A: Call your backend to create a Payment Intent
+      // Your PostPurchaseCreditAction should return: { paymentIntent, customer, ephemeralKey }
+      const response = await dispatch(
+        PostPurchaseCreditAction({ amount }),
+      ).unwrap();
+
+      // Step B: Initialize the Payment Sheet with dummy/test data from backend
+      const { error: initError } = await initPaymentSheet({
+        merchantDisplayName: 'MyVastu',
+        paymentIntentClientSecret: response.paymentIntent, // The secret from your API
+        allowsDelayedPaymentMethods: true,
+        defaultBillingDetails: {
+          name: profileResponse?.data?.name,
+        },
+      });
+
+      if (initError) {
+        Alert.alert('Error', initError.message);
+        return;
+      }
+
+      // Step C: Present the Payment Sheet to the user
+      const { error: presentError } = await presentPaymentSheet();
+
+      if (presentError) {
+        // User cancelled or payment failed
+        Alert.alert(`Payment ${presentError.code}`, presentError.message);
+        setSelectedCreditId(null);
+      } else {
+        // Step D: Payment Successful
+        dispatch(GetCreditAction({}));
+        Alert.alert('Success', `Payment confirmed! ${amount} credits added.`);
+        setSelectedCreditId(null);
+      }
+    } catch (e) {
+      Alert.alert('Error', 'Could not initiate payment.');
+      setSelectedCreditId(null);
+    }
+  };
+
+  const handleCreditPurchase = async (amount: number, id: string | number) => {
+  setSelectedCreditId(id);
+
+  // --- DUMMY MOCK START ---
+  // In a real app, this data MUST come from your backend server
+  const mockResponse = {
+    paymentIntent: 'pi_3Pxxxx_secret_xxxx', // This is a dummy secret format
+    customer: 'cus_xxxx',
+    ephemeralKey: 'ek_test_xxxx',
+  };
+  // --- DUMMY MOCK END ---
+
+  try {
+    // 1. Initialize the Payment Sheet
+    const { error: initError } = await initPaymentSheet({
+      merchantDisplayName: 'MyVastu Realtors',
+      paymentIntentClientSecret: mockResponse.paymentIntent, 
+      // Set this to true to use Stripe's test environment
+      testEnv: true, 
+      merchantCountryCode: 'IN', // Or your specific country
+    });
+
+    if (initError) {
+      // NOTE: With a fake 'pi_secret', this will trigger an error 
+      // because Stripe validates the string format.
+      Alert.alert('Initialization Failed', 'Stripe requires a real Client Secret from your dashboard to open the sheet.');
+      setSelectedCreditId(null);
+      return;
+    }
+
+    // 2. Open the UI
+    const { error: presentError } = await presentPaymentSheet();
+
+    if (presentError) {
+      Alert.alert('Payment Cancelled', presentError.message);
+    } else {
+      Alert.alert('Success', `${amount} Credits added to your account!`);
+      dispatch(GetCreditAction({}));
+    }
+  } catch (e) {
+    console.log(e);
+  } finally {
+    setSelectedCreditId(null);
+  }
+};

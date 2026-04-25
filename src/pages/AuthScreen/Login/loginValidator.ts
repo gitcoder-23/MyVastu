@@ -1,5 +1,5 @@
 import { Alert } from 'react-native';
-import { ICountry, IPhoneInputRef } from 'react-native-international-phone-number';
+import { ICountry, IPhoneInputRef, isValidPhoneNumber } from 'react-native-international-phone-number';
 import { validEmailPatternRx } from '../../../utils/functions';
 
 export const loginValidator = (loginInputState: any, selectedCountry: null | ICountry, phoneInputRef: IPhoneInputRef | null): boolean => {
@@ -17,10 +17,10 @@ export const loginValidator = (loginInputState: any, selectedCountry: null | ICo
         return false;
     }
 
-    if (!phoneInputRef?.isValid) {
+    if (!isValidPhoneNumber(loginInputState.mobile, selectedCountry)) {
         Alert.alert(
             'Invalid Phone Number',
-            'Please enter a valid phone number based one the country code.',
+            'Please enter a valid phone number based on the country code.',
         );
         return false;
     }

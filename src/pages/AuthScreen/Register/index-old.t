@@ -93,9 +93,33 @@ const RegisterScreen = () => {
           confirmPassword: '',
         });
         navigation.navigate('Login');
+
+        // Alert.alert(
+        //   `Hi ${res.data?.user?.name || 'User'}`,
+        //   res.message || 'Registration Successful',
+        //   [
+        //     {
+        //       text: 'OK',
+        //       onPress: () => {
+        //         setRegisterInputState({
+        //           name: '',
+        //           email: '',
+        //           mobile: '',
+        //           password: '',
+        //           confirmPassword: '',
+        //         });
+        //         navigation.navigate('Login');
+        //       },
+        //     },
+        //   ],
+        //   { cancelable: false },
+        // );
       })
       .catch((err: any) => {
-        CustomToastAlert('error', 'Failed!', 'Registration Failed');
+        Alert.alert(
+          'Registration Failed',
+          err?.message || 'Something went wrong. Please try again.',
+        );
       });
   };
 
